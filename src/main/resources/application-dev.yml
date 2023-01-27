@@ -35,3 +35,11 @@ springdoc:
     display-request-duration: true
   show-actuator: true
   default-produces-media-type: application/json
+
+gpt:
+  key1: ${gpt_key1:sk-nothing}
+  key2: ${gpt_key2:sk-nothing}
+  key3: ${gpt_key3:sk-nothing}
+  key4: ${gpt_key4:sk-nothing}
+  key5: ${gpt_key5:sk-nothing}
+  timeout: 100
