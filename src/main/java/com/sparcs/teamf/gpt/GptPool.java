@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.springframework.stereotype.Component;
 
 @Component
-public class GptPool implements Gpt {
+class GptPool implements Gpt {
 
     private final List<GptClient> gptClients;
     private final AtomicInteger index = new AtomicInteger(0);
