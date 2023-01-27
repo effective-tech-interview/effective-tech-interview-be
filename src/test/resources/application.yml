@@ -27,3 +27,6 @@ spring:
 jasypt:
   encryptor:
     password: jasyptEncryptorPassword
+
+springdoc:
+  version: '1.0'

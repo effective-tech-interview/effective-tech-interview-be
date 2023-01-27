@@ -23,3 +23,15 @@ spring:
 jasypt:
   encryptor:
     password: ${encrypt_key}
+
+springdoc:
+  version: '1.0'
+  api-docs:
+    path: /docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+    disable-swagger-default-url: true
+    display-request-duration: true
+  show-actuator: true
+  default-produces-media-type: application/json
