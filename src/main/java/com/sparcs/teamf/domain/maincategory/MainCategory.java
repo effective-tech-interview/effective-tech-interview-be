@@ -1,18 +1,19 @@
-package com.sparcs.teamf.domain.category;
+package com.sparcs.teamf.domain.maincategory;
 
-import javax.persistence.Column;
+import com.sparcs.teamf.domain.midcategory.MidCategory;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MidCategory {
+public class MainCategory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,9 +21,6 @@ public class MidCategory {
 
     private String name;
 
-    private String imageUrl;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    private MainCategory mainCategory;
-
+    @OneToMany(mappedBy = "mainCategory")
+    private List<MidCategory> midCategories = new ArrayList<>();
 }

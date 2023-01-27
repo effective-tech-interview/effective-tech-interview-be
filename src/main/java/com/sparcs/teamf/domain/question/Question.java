@@ -1,6 +1,6 @@
 package com.sparcs.teamf.domain.question;
 
-import com.sparcs.teamf.domain.category.MidCategory;
+import com.sparcs.teamf.domain.midcategory.MidCategory;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
