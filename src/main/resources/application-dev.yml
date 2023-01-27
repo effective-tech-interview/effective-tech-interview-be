@@ -8,14 +8,14 @@ spring:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     open-in-view: false
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show-sql: true
     properties:
       hibernate:
         format_sql: true
 
   datasource:
-    url: ENC(8wXgU9bsE17cYyRV8ppdA5IoAucJdUeeNnZtJdw1nYo+f5FsL6ydM31xD8XpIStYGh9i7SbKc44nJ9E3edEJ0LIMiOfbCjEdyoDqjp2CN7iGa/O6ih8/Pb1Fq+snhUzUs5wzkZ+9SP6rAVl8BiwQ5B+NaQXR0bqm/QnjTzk+kigeeVtUngIkBHlOYhv9j2a4RITfaMdmVAkzbjk1Zk/j1g==)
+    url: ENC(RhSSG3M1L+pPuJK4OVHzl5LkWKa6UPeFM+npLlAGD6ftqaqlKHZXt0dS5bYpBPUoo1dAM2Nj9BCmbaop0W4cTxGjCh4QcePh6dmwj8CEWmFeD2McNC9A6Y5X4qrTXTJ+q+lAre+0nBJb7Iz56CmW2koSNFnsMkfSYhgbmJ5GMFHJK+8p4RsG0EBTdBnL4X8/svA2UovNIXCly06A2j9lNw==)
     username: ENC(kSbVij29Q5IxlMTyH1g0rw==)
     password: ENC(f2DZKexIllOKp9G6wKa2T+E/dqGcnngS)
     driver-class-name: com.mysql.cj.jdbc.Driver
