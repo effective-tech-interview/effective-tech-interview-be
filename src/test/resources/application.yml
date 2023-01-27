@@ -1,0 +1,29 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+spring:
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    open-in-view: false
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:test
+    username: sa
+    password:
+
+  h2:
+    console:
+      enabled: true
+
+jasypt:
+  encryptor:
+    password: jasyptEncryptorPassword
