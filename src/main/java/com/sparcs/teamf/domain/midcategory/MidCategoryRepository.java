@@ -1,5 +1,7 @@
 package com.sparcs.teamf.domain.midcategory;
 
-public interface MidCategoryRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface MidCategoryRepository extends JpaRepository<MidCategory, Long> {
 
 }

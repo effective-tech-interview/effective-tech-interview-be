@@ -14,7 +14,6 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MainCategory {
 
