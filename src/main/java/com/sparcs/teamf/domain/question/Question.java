@@ -28,6 +28,7 @@ public class Question {
     @Column(nullable = false)
     private String question;
 
+    @Column(length = 2000)
     private String answer;
 
     private Long parentQuestionId;
