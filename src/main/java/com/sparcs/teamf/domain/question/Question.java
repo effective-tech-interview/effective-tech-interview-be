@@ -20,16 +20,15 @@ public class Question {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
-
-    @Column(nullable = false)
-    public String question;
-
-    public String answer;
-
+    private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mid_category_id")
-    public MidCategory midCategory;
+    private MidCategory midCategory;
+
+    @Column(nullable = false)
+    private String question;
+
+    private String answer;
 
     private Long parentQuestionId;
 
@@ -40,5 +39,9 @@ public class Question {
 
     public void updateParentQuestionId(Long parentQuestionId) {
         this.parentQuestionId = parentQuestionId;
+    }
+
+    public void updateAnswer(String answer) {
+        this.answer = answer;
     }
 }

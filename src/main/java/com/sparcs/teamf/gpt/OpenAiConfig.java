@@ -12,7 +12,7 @@ import org.springframework.core.env.Environment;
 class OpenAiConfig {
 
     private static final String BASE_GPT_KEY = "gpt.key";
-    private static final String NOTHING = "sb-nothing";
+    private static final String NOTHING = "sk-nothing";
 
     private final List<String> openAiKeys;
     @Value("${gpt.timeout}")
