@@ -13,7 +13,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(HttpException.class)
     public ResponseEntity<ErrorResponseDto> httpExceptionHandle(HttpException e) {
-        log.error("httpException : {}", e);
+        log.error("httpException : {} {}", e, e.getMessage());
         return ResponseEntity.status(e.getCode())
                 .body(new ErrorResponseDto(e.getCode(), e.getMessage()));
     }

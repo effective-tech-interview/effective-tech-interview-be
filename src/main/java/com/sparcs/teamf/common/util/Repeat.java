@@ -2,7 +2,6 @@ package com.sparcs.teamf.common.util;
 
 
 import com.sparcs.teamf.api.error.exception.HttpException;
-import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -13,14 +12,13 @@ public class Repeat {
     private Repeat() {
     }
 
-    public static <T> Optional<T> repeat(Supplier<Optional<T>> supplier,
-            Predicate<Optional<T>> needToRepeat,
+    public static <T> T repeat(Supplier<T> supplier,
+            Predicate<T> needToRepeat,
             Supplier<HttpException> exceptionSupplier) throws InterruptedException {
 
         for (int attempt = 0; attempt < DEFAULT_MAX_ATTEMPTS; attempt++) {
             try {
-                Optional<T> result;
-                result = supplier.get();
+                T result = supplier.get();
                 if (needToRepeat.test(result)) {
                     Thread.sleep(1000);
                     continue;
