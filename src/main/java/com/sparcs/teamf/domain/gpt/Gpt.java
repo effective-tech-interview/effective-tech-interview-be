@@ -8,5 +8,5 @@ public interface Gpt {
 
     void loadNextQuestion(Question question);
 
-    void loadBasicQuestion(Question question);
+    Question loadBaseQuestions(Question question);
 }

@@ -50,15 +50,23 @@ public class GptWrapper implements Gpt {
     @Override
     @Async
     @Transactional
-    public void loadBasicQuestion(Question question) {
+    public Question loadBaseQuestions(Question question) {
+        Question tailQuestion = loadAnswerAndTailQuestion(question);
+        Question tailOfTailQuestion = loadAnswerAndTailQuestion(tailQuestion);
+        Question tailOfTailOfTailQuestion = loadAnswerAndTailQuestion(tailOfTailQuestion);
+        return loadAnswerAndTailQuestion(tailOfTailOfTailQuestion);
+    }
+
+    private Question loadAnswerAndTailQuestion(Question question) {
         String answer = generateAnswer(question);
-        String nextQuestion = generateNextQuestion(question, answer);
-        Question generated = new Question(nextQuestion, question.getMidCategory());
+        String tailQuestion = generateNextQuestion(question, answer);
+        Question generatedTailQuestion = questionRepository.save(new Question(tailQuestion, question.getMidCategory()));
         Question alreadyExistQuestion = questionRepository.findById(question.getId())
                 .orElseThrow(() -> new IllegalStateException("호출시 생성해줌"));
         alreadyExistQuestion.updateAnswer(answer);
-        generated.updateParentQuestionId(alreadyExistQuestion.getId());
-        questionRepository.save(generated);
+
+        generatedTailQuestion.updateParentQuestionId(alreadyExistQuestion.getId());
+        return generatedTailQuestion;
     }
 
     private String generateAnswer(Question question) {

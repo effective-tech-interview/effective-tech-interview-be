@@ -30,7 +30,7 @@ public class AddQuestionService {
         MidCategory midCategory = midCategoryRepository.findById(midCategoryId)
                 .orElseThrow(IllegalMidCategoryException::new);
         Question newQuestion = questionRepository.save(new Question(question, midCategory));
-        gpt.loadBasicQuestion(newQuestion);
+        gpt.loadBaseQuestions(newQuestion);
         return new AddQuestionResponse(question);
     }
 }
