@@ -1,5 +1,6 @@
 package com.sparcs.teamf.domain.midcategory;
 
+import com.sparcs.teamf.domain.BaseEntity;
 import com.sparcs.teamf.domain.maincategory.MainCategory;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -14,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MidCategory {
+public class MidCategory extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

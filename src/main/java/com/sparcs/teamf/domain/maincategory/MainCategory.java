@@ -1,5 +1,6 @@
 package com.sparcs.teamf.domain.maincategory;
 
+import com.sparcs.teamf.domain.BaseEntity;
 import com.sparcs.teamf.domain.midcategory.MidCategory;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MainCategory {
+public class MainCategory extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

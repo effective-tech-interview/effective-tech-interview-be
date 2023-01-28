@@ -1,5 +1,6 @@
 package com.sparcs.teamf.domain.question;
 
+import com.sparcs.teamf.domain.BaseEntity;
 import com.sparcs.teamf.domain.midcategory.MidCategory;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Question {
+public class Question extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
