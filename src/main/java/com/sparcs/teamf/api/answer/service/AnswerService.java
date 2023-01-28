@@ -8,7 +8,6 @@ import com.sparcs.teamf.domain.gpt.Gpt;
 import com.sparcs.teamf.domain.question.Question;
 import com.sparcs.teamf.domain.question.QuestionRepository;
 import java.util.Optional;
-import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +18,6 @@ public class AnswerService {
     private final QuestionRepository questionRepository;
     private final Gpt gpt;
 
-    @Transactional
     public AnswerResponse getAnswer(long questionId) throws InterruptedException {
         Optional<Question> target = findQuestionById(questionId);
         if (target.isEmpty()) {

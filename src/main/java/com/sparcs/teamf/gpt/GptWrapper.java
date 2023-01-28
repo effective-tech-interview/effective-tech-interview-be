@@ -3,7 +3,10 @@ package com.sparcs.teamf.gpt;
 import com.sparcs.teamf.domain.gpt.Gpt;
 import com.sparcs.teamf.domain.question.Question;
 import com.sparcs.teamf.domain.question.QuestionRepository;
+import java.util.List;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -24,13 +27,24 @@ public class GptWrapper implements Gpt {
     }
 
     @Override
+    @Async
+    @Transactional
     public void loadNextQuestion(Question question) {
-        String answer = generateAnswer(question);
-        String nextQuestion = generateNextQuestion(question, answer);
-        Question generated = new Question(nextQuestion, question.getMidCategory());
-        question.updateAnswer(answer);
-        generated.updateParentQuestionId(question.getId());
-        questionRepository.save(generated);
+        List<Question> nextQuestionList = questionRepository.findQuestionByParentQuestionId(question.getId());
+        if (nextQuestionList.isEmpty()) {
+            throw new IllegalStateException("존재하면 안되는 상태");
+        }
+        Question nextQuestion = nextQuestionList.get(0);
+
+        if (nextQuestion.getAnswer() != null) {
+            return;
+        }
+        String answer = generateAnswer(nextQuestion);
+        String nextOfNextQuestion = generateNextQuestion(question, answer);
+        Question generated = new Question(nextOfNextQuestion, question.getMidCategory());
+        nextQuestion.updateAnswer(answer);
+        generated.updateParentQuestionId(nextQuestion.getId());
+        Question saved = questionRepository.save(generated);
     }
 
     private String generateAnswer(Question question) {

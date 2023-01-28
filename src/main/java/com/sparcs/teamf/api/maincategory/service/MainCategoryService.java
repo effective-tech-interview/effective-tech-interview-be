@@ -19,8 +19,6 @@ public class MainCategoryService {
         List<MainCategoryResponse> mainCategoryDtos = mainCategories.stream()
                 .map(mainCategory -> new MainCategoryResponse(mainCategory.getId(), mainCategory.getName()))
                 .toList();
-
-        System.out.println(mainCategoryDtos);
         return new MainCategoriesResponse(mainCategoryDtos);
     }
 }

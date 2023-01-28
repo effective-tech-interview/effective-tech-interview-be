@@ -24,7 +24,7 @@ public class MidCategory {
 
     private String imageUrl;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private MainCategory mainCategory;
 
 }
