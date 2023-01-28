@@ -30,7 +30,7 @@ public class MidCategoryService {
                         midCategory.getImageUrl()))
                 .toList();
 
-        return new MidCategoriesResponse(mainCategory.getName(), midCategoryResponses);
+        return new MidCategoriesResponse(midCategoryResponses);
     }
 
     @Transactional
