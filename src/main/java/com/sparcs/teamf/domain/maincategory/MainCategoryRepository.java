@@ -1,5 +1,7 @@
 package com.sparcs.teamf.domain.maincategory;
 
-public interface MainCategoryRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface MainCategoryRepository extends JpaRepository<MainCategory, Long> {
 
 }
