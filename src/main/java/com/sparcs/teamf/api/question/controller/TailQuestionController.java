@@ -20,4 +20,6 @@ public class TailQuestionController {
             throws InterruptedException {
         return tailQuestionService.getTailQuestion(questionId);
     }
+
+
 }
