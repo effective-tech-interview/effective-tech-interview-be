@@ -2,7 +2,6 @@ package com.sparcs.teamf.api.answer.service;
 
 import com.sparcs.teamf.api.answer.dto.AnswerResponse;
 import com.sparcs.teamf.api.answer.exception.AnswerNotFoundException;
-import com.sparcs.teamf.api.answer.exception.QuestionNotFoundException;
 import com.sparcs.teamf.common.util.Repeat;
 import com.sparcs.teamf.domain.gpt.Gpt;
 import com.sparcs.teamf.domain.question.Question;
@@ -19,12 +18,6 @@ public class AnswerService {
     private final Gpt gpt;
 
     public AnswerResponse getAnswer(long questionId) throws InterruptedException {
-        Optional<Question> target = findQuestionById(questionId);
-        if (target.isEmpty()) {
-            throw new QuestionNotFoundException();
-        }
-        gpt.loadNextQuestion(target.get());
-
         Optional<Question> question = Repeat.repeat(() -> findQuestionById(questionId),
                 this::needToRepeat,
                 AnswerNotFoundException::new);

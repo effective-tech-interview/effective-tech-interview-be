@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "Question")
-@RequestMapping("/v1/question")
+@RequestMapping("/v1/questions")
 public class AddQuestionController {
 
     private final AddQuestionService addQuestionService;
