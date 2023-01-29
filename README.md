@@ -1,3 +1,5 @@
+<img src="https://user-images.githubusercontent.com/62706048/215301900-0c6b9f55-10be-4ed8-a6a2-bab0d89ae936.png" alt="teamf logo" align="right" height="30" >
+
 # 🧹 team-f-be
 
 > 웹 페이지 주소  https://team-f-client-ra1mz07mm-qtail.vercel.app/
@@ -92,9 +94,9 @@
 
 >
 
-- 운영 환경
+- 환경 변수 및 시크릿
 
-  > Elastic Beanstalk
+  > `-Djasypt.encryptor.password={jasypt 비밀번호} -Dgpt.key1={openAi API Key} -Dgpt.key2={openAi API Key2}`
 
 >
 
