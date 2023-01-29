@@ -57,23 +57,9 @@ chore : 그 외 자잘한 수정
 
 >
 
-- CI/CD
-
-  > [Github Actions](https://github.com/depromeet/fairer-be/actions)
-
->
-
 - 문서화
 
   > [Swagger](http://ec2-13-125-232-180.ap-northeast-2.compute.amazonaws.com:8080/swagger-ui/index.html)
-
->
-
-- ETC
-
-  > JWT, Oauth2(google)
-
-  > Spring Batch
 
 >
 
@@ -124,8 +110,8 @@ $ ./gradlew build
 2. 빌드된 파일 (*.jar) 실행
 
 ```
-$ fairer-0.0.1-SNAPSHOT.jar
-$ java -jar fairer-0.0.1-SNAPSHOT.jar
+$ teamf-0.0.1-SNAPSHOT.jar
+$ java -jar teamf-0.0.1-SNAPSHOT.jar
 ```
 
 <br/>
@@ -140,7 +126,7 @@ $ java -jar fairer-0.0.1-SNAPSHOT.jar
 
 `docs` : 문서화에 대한 커밋
 
-
+`chore` : 기타 작업에 대한 커밋
 <br/>
 
 ## 📞 Contact
