@@ -95,7 +95,7 @@ chore : 그 외 자잘한 수정
 
 ## 📝ERD
 
-<img src="https://user-images.githubusercontent.com/77181984/176247477-e1c0277b-e4d1-4049-817c-16e08668976b.PNG" width="550"/>
+![image](https://user-images.githubusercontent.com/80899085/215300640-3bd09230-2c9d-4504-8f16-15db25d86607.png)
 
 <br/>
 
@@ -128,8 +128,3 @@ $ java -jar teamf-0.0.1-SNAPSHOT.jar
 
 `chore` : 기타 작업에 대한 커밋
 <br/>
-
-## 📞 Contact
-
-[![Facebook](https://img.shields.io/badge/facebook-1877f2?style=flat-square&logo=facebook&logoColor=white&link=https://www.facebook.com/fairer.official/)](https://www.facebook.com/fairer.official)
-[![instagram](https://img.shields.io/badge/instagram-E4405F?style=flat-square&logo=Instagram&logoColor=white&link=https://www.instagram.com/fairer.official/)](https://www.instagram.com/fairer.official/)
