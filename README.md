@@ -57,12 +57,6 @@ chore : 그 외 자잘한 수정
 
 >
 
-- 운영 환경
-
-  > Elastic Beanstalk
-
->
-
 - CI/CD
 
   > [Github Actions](https://github.com/depromeet/fairer-be/actions)
