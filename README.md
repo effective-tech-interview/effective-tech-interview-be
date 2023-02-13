@@ -8,7 +8,7 @@
 
 ## 🎬 Preview
 
-<img alt="온보딩" src="https://user-images.githubusercontent.com/62706048/215301335-51acf430-c1f9-46fb-b77a-77ad7af8f620.png" width="200"/> &nbsp;&nbsp; <img alt="첫 시작" src="https://user-images.githubusercontent.com/62706048/215301336-a2f18276-89c6-4224-9d0c-b216035b0613.png" width="200"/> &nbsp;&nbsp; <img alt="예시 페이지" src="https://user-images.githubusercontent.com/62706048/215301346-fef73581-8df9-49ce-aeea-f67a76554ded.png" width="200"/>
+<img alt="첫 시작" src="https://user-images.githubusercontent.com/62706048/215301336-a2f18276-89c6-4224-9d0c-b216035b0613.png" width="200"/> &nbsp;&nbsp; <img alt="온보딩" src="https://user-images.githubusercontent.com/62706048/215301335-51acf430-c1f9-46fb-b77a-77ad7af8f620.png" width="200"/> &nbsp;&nbsp; <img alt="예시 페이지" src="https://user-images.githubusercontent.com/62706048/215301346-fef73581-8df9-49ce-aeea-f67a76554ded.png" width="200"/>
 
 
 
@@ -51,7 +51,7 @@
   
   <td align=center>
   <a href="https://github.com/be-student">
-  <img src="https://user-images.githubusercontent.com/62706048/212285826-1c27e691-9e85-4911-af73-83c3541c9617.png" width="120px"  />
+  <img src="https://user-images.githubusercontent.com/62706048/218370956-83e06032-045b-4046-ab50-c2fb1a8babaa.png" width="120px"  />
   <br/>
   Backend💻
   <br/>
@@ -60,10 +60,10 @@
   </td>
   
   <td align=center>
-  <a href="https://github.com/L2HYUNN">
+  <a href="https://github.com/neoJSH">
   <img src="https://user-images.githubusercontent.com/62706048/215300737-40fb893b-ae16-4108-a918-d9cc77dec872.png" width="120px"  />
   <br/>
-  Designer💻
+  Designer🎨
   <br/>
   진승희
   </a>
@@ -118,20 +118,22 @@
 ## 🗂 Directory
 
 ```
-📂 fairer
-    📂 api
+📂 teamf
     📂 domain
-    📂 dto
-    📂 global
-     ├── 📂 config
-     ├── 📂 exception
+    📂 common
+    📂 api
+     ├── 📂 error
      |	 ├── 📂 dto
+     |	 ├── 📂 exception
      |   └── 📂 handler
-     ├── 📂 resolver
-     └── 📂 util
-    📂 repository
-    📂 service
-    📂 vo
+     ├── 📂 question
+     |	 ├── 📂 controller
+     |	 ├── 📂 dto
+     |   ├── 📂 exception
+     |   └── 📂 service
+     ├── 📂 answer
+     └── 📂 ...
+    📂 gpt
 	- Application.java
 ```
 
