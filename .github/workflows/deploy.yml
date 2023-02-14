@@ -2,7 +2,7 @@ name: prod-deploy
 
 on:
   push:
-    branches: [ "feat/aws" ]
+    branches: [ "main" ]
 
 jobs:
   deploy:
