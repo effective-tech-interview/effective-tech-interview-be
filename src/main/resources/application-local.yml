@@ -20,6 +20,18 @@ spring:
     password: ENC(f2DZKexIllOKp9G6wKa2T+E/dqGcnngS)
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ENC(zOUALWv13l06OjocjynQpBLWxZSwgWMTMQAeKUPAtV0=)
+    password: ENC(slZP9Opdy8PxCMZ8BOPeXVdiCLAc+i/K+7iKOMa62M8=)
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
 jasypt:
   encryptor:
     password: ${encrypt_key}
