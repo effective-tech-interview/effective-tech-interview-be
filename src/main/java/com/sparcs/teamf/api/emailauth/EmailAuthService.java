@@ -1,5 +1,6 @@
 package com.sparcs.teamf.api.emailauth;
 
+import com.sparcs.teamf.api.member.error.DuplicateEmailException;
 import com.sparcs.teamf.domain.emailauth.EmailAuth;
 import com.sparcs.teamf.domain.emailauth.EmailAuthRepository;
 import com.sparcs.teamf.domain.member.MemberRepository;
@@ -23,7 +24,7 @@ public class EmailAuthService {
 
     private void verifyEmail(String email) {
         if (memberRepository.existsByEmail(email)) {
-            throw new IllegalStateException();
+            throw new DuplicateEmailException();
         }
     }
 }
