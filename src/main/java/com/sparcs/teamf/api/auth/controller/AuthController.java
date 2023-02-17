@@ -1,7 +1,7 @@
 package com.sparcs.teamf.api.auth.controller;
 
-import com.sparcs.teamf.api.auth.dto.AuthenticateEmailRequest;
-import com.sparcs.teamf.api.auth.dto.SendEmailRequest;
+import com.sparcs.teamf.api.emailauth.dto.AuthenticateEmailRequest;
+import com.sparcs.teamf.api.emailauth.dto.SendEmailRequest;
 import com.sparcs.teamf.api.emailauth.EmailAuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

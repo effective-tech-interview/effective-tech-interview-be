@@ -1,4 +1,4 @@
-package com.sparcs.teamf.api.auth.dto;
+package com.sparcs.teamf.api.emailauth.dto;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
