@@ -3,6 +3,7 @@ package com.sparcs.teamf.api.signup.service;
 import com.sparcs.teamf.api.emailauth.error.InvalidEmailOrVerificationCodeException;
 import com.sparcs.teamf.api.emailauth.error.UnverifiedEmailException;
 import com.sparcs.teamf.api.member.error.DuplicateEmailException;
+import com.sparcs.teamf.api.signup.config.NicknameGenerator;
 import com.sparcs.teamf.api.signup.error.PasswordMismatchException;
 import com.sparcs.teamf.domain.emailauth.EmailAuth;
 import com.sparcs.teamf.domain.emailauth.EmailAuthRepository;
@@ -19,6 +20,7 @@ public class SignupService {
 
     private final EmailAuthRepository emailAuthRepository;
     private final MemberRepository memberRepository;
+    private final NicknameGenerator nicknameGenerator;
 
     public void signup(String email, String password, String confirmPassword) {
         if (!password.equals(confirmPassword)) {
@@ -49,6 +51,6 @@ public class SignupService {
     }
 
     private String generateRandomNickname() {
-        return "random";
+        return nicknameGenerator.generate();
     }
 }
