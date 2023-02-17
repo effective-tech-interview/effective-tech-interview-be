@@ -1,0 +1,11 @@
+package com.sparcs.teamf.api.emailauth.error;
+
+import com.sparcs.teamf.api.error.exception.HttpException;
+import org.springframework.http.HttpStatus;
+
+public class VerificationCodeMismatchException extends HttpException {
+
+    public VerificationCodeMismatchException() {
+        super(HttpStatus.BAD_REQUEST, "verification code mismatch");
+    }
+}
