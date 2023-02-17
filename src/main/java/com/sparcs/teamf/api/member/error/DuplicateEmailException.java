@@ -6,6 +6,6 @@ import org.springframework.http.HttpStatus;
 public class DuplicateEmailException extends HttpException {
 
     public DuplicateEmailException() {
-        super(HttpStatus.CONFLICT, "email address already exists");
+        super(HttpStatus.CONFLICT, "the email is already registered");
     }
 }

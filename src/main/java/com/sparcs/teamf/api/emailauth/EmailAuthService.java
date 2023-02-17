@@ -21,13 +21,13 @@ public class EmailAuthService {
     private final MemberRepository memberRepository;
 
     public void sendEmailForSignup(String email) {
-        verifyEmail(email);
+        isEmailAlreadyRegistered(email);
 
         int verificationCode = emailService.send(email);
         emailAuthRepository.save(EmailAuth.of(email, verificationCode));
     }
 
-    private void verifyEmail(String email) {
+    private void isEmailAlreadyRegistered(String email) {
         if (memberRepository.existsByEmail(email)) {
             throw new DuplicateEmailException();
         }
