@@ -2,6 +2,7 @@ package com.sparcs.teamf.api.signup.controller;
 
 import com.sparcs.teamf.api.signup.dto.SignupRequest;
 import com.sparcs.teamf.api.signup.service.SignupService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ public class SignupController {
     private final SignupService signupService;
 
     @PostMapping
+    @Operation(summary = "회원 가입")
     public void signup(@RequestBody @Valid SignupRequest request) {
         signupService.signup(request.email(), request.password(), request.confirmPassword());
     }
