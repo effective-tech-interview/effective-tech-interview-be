@@ -1,5 +1,6 @@
 package com.sparcs.teamf.domain.emailauth;
 
+import com.sparcs.teamf.domain.BaseEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class EmailAuth {
+public class EmailAuth extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,5 +36,9 @@ public class EmailAuth {
 
     public static EmailAuth of(String email, Integer verificationCode) {
         return new EmailAuth(email, verificationCode);
+    }
+
+    public void authenticate() {
+        this.isAuthenticated = true;
     }
 }
