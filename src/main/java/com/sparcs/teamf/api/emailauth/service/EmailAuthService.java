@@ -1,4 +1,4 @@
-package com.sparcs.teamf.api.emailauth;
+package com.sparcs.teamf.api.emailauth.service;
 
 import com.sparcs.teamf.api.emailauth.dto.AuthenticateEmailResponse;
 import com.sparcs.teamf.api.emailauth.error.InvalidEmailOrVerificationCodeException;

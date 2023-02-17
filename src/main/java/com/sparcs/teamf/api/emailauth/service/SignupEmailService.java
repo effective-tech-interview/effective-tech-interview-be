@@ -1,4 +1,4 @@
-package com.sparcs.teamf.api.emailauth;
+package com.sparcs.teamf.api.emailauth.service;
 
 import java.util.concurrent.ThreadLocalRandom;
 import lombok.RequiredArgsConstructor;
