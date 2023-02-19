@@ -1,6 +1,5 @@
 package com.sparcs.teamf.api.emailauth.service;
 
-import com.sparcs.teamf.api.emailauth.error.EmailVerificationExpiredException;
 import com.sparcs.teamf.api.emailauth.error.EmailRequestRequiredException;
 import com.sparcs.teamf.api.emailauth.error.VerificationCodeMismatchException;
 import com.sparcs.teamf.api.member.error.DuplicateEmailException;
@@ -34,7 +33,6 @@ public class EmailAuthService {
         EmailAuth emailAuth = emailAuthRepository.findFirstByEmailOrderByCreatedDateDesc(email)
                 .orElseThrow(EmailRequestRequiredException::new);
 
-        handleAlreadyVerifiedEmail(emailAuth);
         verifyVerificationCodeMismatch(emailAuth.getVerificationCode(), inputVerificationCode);
         emailAuth.authenticate();
     }
@@ -47,12 +45,6 @@ public class EmailAuthService {
 
     private int generateVerificationCode() {
         return random.nextInt(100000, 999999);
-    }
-
-    private void handleAlreadyVerifiedEmail(EmailAuth emailAuth) {
-        if (emailAuth.getIsAuthenticated()) {
-            throw new EmailVerificationExpiredException();
-        }
     }
 
     private void verifyVerificationCodeMismatch(int sentVerificationCode, int inputVerificationCode) {
