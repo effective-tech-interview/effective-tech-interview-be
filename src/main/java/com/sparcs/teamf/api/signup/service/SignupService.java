@@ -26,28 +26,24 @@ public class SignupService {
         if (!password.equals(confirmPassword)) {
             throw new PasswordMismatchException();
         }
-        isEmailAlreadyRegistered(email);
-        isEmailVerified(email);
-        saveMember(email, password);
+        checkEmailAlreadyRegistered(email);
+        checkEmailVerified(email);
+        Member member = Member.of(generateRandomNickname(), email, password);
+        memberRepository.save(member);
     }
 
-    private void isEmailAlreadyRegistered(String email) {
+    private void checkEmailAlreadyRegistered(String email) {
         if (memberRepository.existsByEmail(email)) {
             throw new DuplicateEmailException();
         }
     }
 
-    private void isEmailVerified(String email) {
+    private void checkEmailVerified(String email) {
         EmailAuth emailAuth = emailAuthRepository.findFirstByEmailOrderByCreatedDateDesc(email)
                 .orElseThrow(EmailRequestRequiredException::new);
         if (!emailAuth.getIsAuthenticated()) {
             throw new UnverifiedEmailException();
         }
-    }
-
-    private void saveMember(String email, String password) {
-        Member member = Member.of(generateRandomNickname(), email, password);
-        memberRepository.save(member);
     }
 
     private String generateRandomNickname() {
