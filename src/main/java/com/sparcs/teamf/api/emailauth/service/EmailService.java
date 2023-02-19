@@ -1,5 +1,5 @@
 package com.sparcs.teamf.api.emailauth.service;
 
 public interface EmailService {
-    int send(String email);
+    void send(String email, int verificationCode);
 }

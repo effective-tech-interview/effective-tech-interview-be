@@ -1,6 +1,6 @@
 package com.sparcs.teamf.api.signup.service;
 
-import com.sparcs.teamf.api.emailauth.error.InvalidEmailOrVerificationCodeException;
+import com.sparcs.teamf.api.emailauth.error.EmailRequestRequiredException;
 import com.sparcs.teamf.api.emailauth.error.UnverifiedEmailException;
 import com.sparcs.teamf.api.member.error.DuplicateEmailException;
 import com.sparcs.teamf.api.signup.config.NicknameGenerator;
@@ -39,7 +39,7 @@ public class SignupService {
 
     private void isEmailVerified(String email) {
         EmailAuth emailAuth = emailAuthRepository.findFirstByEmailOrderByCreatedDateDesc(email)
-                .orElseThrow(InvalidEmailOrVerificationCodeException::new);
+                .orElseThrow(EmailRequestRequiredException::new);
         if (!emailAuth.getIsAuthenticated()) {
             throw new UnverifiedEmailException();
         }

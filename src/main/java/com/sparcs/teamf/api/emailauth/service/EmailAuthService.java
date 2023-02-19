@@ -1,12 +1,13 @@
 package com.sparcs.teamf.api.emailauth.service;
 
-import com.sparcs.teamf.api.emailauth.dto.AuthenticateEmailResponse;
-import com.sparcs.teamf.api.emailauth.error.InvalidEmailOrVerificationCodeException;
+import com.sparcs.teamf.api.emailauth.error.EmailVerificationExpiredException;
+import com.sparcs.teamf.api.emailauth.error.EmailRequestRequiredException;
 import com.sparcs.teamf.api.emailauth.error.VerificationCodeMismatchException;
 import com.sparcs.teamf.api.member.error.DuplicateEmailException;
 import com.sparcs.teamf.domain.emailauth.EmailAuth;
 import com.sparcs.teamf.domain.emailauth.EmailAuthRepository;
 import com.sparcs.teamf.domain.member.MemberRepository;
+import java.util.concurrent.ThreadLocalRandom;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,29 +20,44 @@ public class EmailAuthService {
     private final EmailService emailService;
     private final EmailAuthRepository emailAuthRepository;
     private final MemberRepository memberRepository;
+    private final ThreadLocalRandom random = ThreadLocalRandom.current();
 
     public void sendEmailForSignup(String email) {
-        isEmailAlreadyRegistered(email);
+        validateAlreadyRegistered(email);
 
-        int verificationCode = emailService.send(email);
+        int verificationCode = generateVerificationCode();
+        emailService.send(email, verificationCode);
         emailAuthRepository.save(EmailAuth.of(email, verificationCode));
     }
 
-    private void isEmailAlreadyRegistered(String email) {
+    public void authenticateEmailForSignup(String email, int inputVerificationCode) {
+        EmailAuth emailAuth = emailAuthRepository.findFirstByEmailOrderByCreatedDateDesc(email)
+                .orElseThrow(EmailRequestRequiredException::new);
+
+        handleAlreadyVerifiedEmail(emailAuth);
+        verifyVerificationCodeMismatch(emailAuth.getVerificationCode(), inputVerificationCode);
+        emailAuth.authenticate();
+    }
+
+    private void validateAlreadyRegistered(String email) {
         if (memberRepository.existsByEmail(email)) {
             throw new DuplicateEmailException();
         }
     }
 
-    public AuthenticateEmailResponse authenticateEmailForSignup(String email, int inputVerificationCode) {
-        EmailAuth latestEmailAuth = emailAuthRepository.findFirstByEmailOrderByCreatedDateDesc(email)
-                .filter(emailAuth -> !emailAuth.getIsAuthenticated())
-                .orElseThrow(InvalidEmailOrVerificationCodeException::new);
+    private int generateVerificationCode() {
+        return random.nextInt(100000, 999999);
+    }
 
-        if (inputVerificationCode != latestEmailAuth.getVerificationCode()) {
+    private void handleAlreadyVerifiedEmail(EmailAuth emailAuth) {
+        if (emailAuth.getIsAuthenticated()) {
+            throw new EmailVerificationExpiredException();
+        }
+    }
+
+    private void verifyVerificationCodeMismatch(int sentVerificationCode, int inputVerificationCode) {
+        if (sentVerificationCode != inputVerificationCode) {
             throw new VerificationCodeMismatchException();
         }
-        latestEmailAuth.authenticate();
-        return new AuthenticateEmailResponse("인증에 성공했습니다.");
     }
 }
