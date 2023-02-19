@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 public class EmailVerificationExpiredException extends HttpException {
 
     public EmailVerificationExpiredException() {
-        super(HttpStatus.BAD_REQUEST, "this email verification request has expired. please send an email request for verification again.");
+        super(HttpStatus.UNAUTHORIZED, "this email verification request has expired. please send an email request for verification again.");
     }
 
 }
