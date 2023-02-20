@@ -24,6 +24,18 @@ spring:
     console:
       enabled: true
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: springMailUsername
+    password: springMailPassword
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
 jasypt:
   encryptor:
     password: jasyptEncryptorPassword
