@@ -2,6 +2,7 @@ package com.sparcs.teamf.api.question.controller;
 
 import com.sparcs.teamf.api.question.dto.TailQuestionResponse;
 import com.sparcs.teamf.api.question.service.BasicQuestionService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,8 +19,8 @@ public class BasicQuestionController {
     private final BasicQuestionService basicQuestionService;
 
     @GetMapping
-    public TailQuestionResponse getQuestions(
-            @RequestParam(value = "midCategoryId", required = true) long midCategoryId) {
+    @Operation(summary = "기본 질문 랜덤 조회")
+    public TailQuestionResponse getQuestions(@RequestParam(value = "midCategoryId") long midCategoryId) {
         return basicQuestionService.getRandomQuestion(midCategoryId);
     }
 }

@@ -13,10 +13,12 @@ import org.springframework.stereotype.Service;
 public class BasicQuestionService {
 
     private final QuestionRepository questionRepository;
+    private final ThreadLocalRandom random = ThreadLocalRandom.current();
+
 
     public TailQuestionResponse getRandomQuestion(long categoryId) {
         List<Question> questions = questionRepository.findQuestionByParentQuestionIdIsNullAndMidCategory_Id(categoryId);
-        int questionIndex = ThreadLocalRandom.current().nextInt(questions.size());
+        int questionIndex = random.nextInt(questions.size());
         return new TailQuestionResponse(questions.get(questionIndex).getId(),
                 questions.get(questionIndex).getQuestion());
     }

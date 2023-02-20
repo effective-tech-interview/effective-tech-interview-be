@@ -2,6 +2,7 @@ package com.sparcs.teamf.api.answer.controller;
 
 import com.sparcs.teamf.api.answer.dto.AnswerResponse;
 import com.sparcs.teamf.api.answer.service.AnswerService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +19,7 @@ public class AnswerController {
     private final AnswerService answerService;
 
     @GetMapping("{questionId}/answer")
+    @Operation(summary = "질문에 대한 답변 조회")
     public AnswerResponse getAnswers(@PathVariable("questionId") String questionId) throws InterruptedException {
         return answerService.getAnswer(Long.parseLong(questionId));
     }

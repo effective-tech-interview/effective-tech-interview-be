@@ -3,6 +3,7 @@ package com.sparcs.teamf.api.midcategory.controller;
 import com.sparcs.teamf.api.midcategory.dto.MidCategoriesResponse;
 import com.sparcs.teamf.api.midcategory.dto.MidCategoryResponse;
 import com.sparcs.teamf.api.midcategory.service.MidCategoryService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,12 +21,14 @@ public class MidCategoryController {
     private final MidCategoryService midCategoryService;
 
     @GetMapping
+    @Operation(summary = "세부 카테고리 목록 조회")
     public MidCategoriesResponse getMidCategories(@RequestParam Long mainCategoryId) {
         return midCategoryService.getByMainCategory(mainCategoryId);
     }
 
     @GetMapping("/{midCategoryId}")
-    public MidCategoryResponse getMidCategories(@PathVariable long midCategoryId) {
+    @Operation(summary = "세부 카테고리 단일 조회")
+    public MidCategoryResponse getMidCategory(@PathVariable long midCategoryId) {
         return midCategoryService.getByMidCategoryId(midCategoryId);
     }
 }

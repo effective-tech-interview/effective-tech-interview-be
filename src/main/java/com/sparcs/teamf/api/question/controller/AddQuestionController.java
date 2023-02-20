@@ -3,6 +3,7 @@ package com.sparcs.teamf.api.question.controller;
 import com.sparcs.teamf.api.question.dto.AddQuestionRequest;
 import com.sparcs.teamf.api.question.dto.AddQuestionResponse;
 import com.sparcs.teamf.api.question.service.AddQuestionService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +20,7 @@ public class AddQuestionController {
     private final AddQuestionService addQuestionService;
 
     @PostMapping
+    @Operation(summary = "기본 질문, 꼬리 질문 생성 및 저장")
     public AddQuestionResponse addQuestion(@RequestBody AddQuestionRequest addQuestionRequest) {
         return addQuestionService.addQuestion(addQuestionRequest);
     }
