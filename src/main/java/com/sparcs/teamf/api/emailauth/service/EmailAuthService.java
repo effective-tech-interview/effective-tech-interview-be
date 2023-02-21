@@ -47,8 +47,8 @@ public class EmailAuthService {
         return random.nextInt(100000, 999999);
     }
 
-    private void verifyVerificationCodeMismatch(int sentVerificationCode, int inputVerificationCode) {
-        if (sentVerificationCode != inputVerificationCode) {
+    private void verifyVerificationCodeMismatch(int inputVerificationCode, int savedVerificationCode) {
+        if (inputVerificationCode != savedVerificationCode) {
             throw new VerificationCodeMismatchException();
         }
     }
