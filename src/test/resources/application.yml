@@ -52,5 +52,5 @@ gpt:
   timeout: 100
 
 jwt:
-  secret: jwtSecret
+  secret: jwtSecretKeyByteArrayRequires48bitsForTheJwtHMACSHAAlgorithm
   token-validity-in-seconds: 86400
