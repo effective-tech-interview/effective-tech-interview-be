@@ -12,11 +12,14 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import java.security.Key;
 import java.util.Date;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -47,12 +50,12 @@ public class TokenProvider implements InitializingBean {
                 .setSubject(email)
                 .claim("memberId", memberId)
                 .setExpiration(tokenExpiresIn)
-                .signWith(this.key, SignatureAlgorithm.HS256)
+                .signWith(this.key, SignatureAlgorithm.HS512)
                 .compact();
 
         String refreshToken = Jwts.builder()
-                .setExpiration(new Date(now +  this.tokenValidityInMilliseconds))
-                .signWith(key, SignatureAlgorithm.HS256)
+                .setExpiration(new Date(now + this.tokenValidityInMilliseconds))
+                .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
 
         return TokenResponse.builder()
@@ -71,8 +74,9 @@ public class TokenProvider implements InitializingBean {
                 .getBody();
         Integer memberId = (Integer) claims.get("memberId");
 
-        EffectiveMember principal = new EffectiveMember(Long.valueOf(memberId));
-        return new UsernamePasswordAuthenticationToken(principal, accessToken);
+        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        EffectiveMember principal = new EffectiveMember(Long.valueOf(memberId), authorities);
+        return new UsernamePasswordAuthenticationToken(principal, accessToken, authorities);
     }
 
     public boolean validateToken(String token) {

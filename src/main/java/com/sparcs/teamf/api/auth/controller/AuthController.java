@@ -1,5 +1,8 @@
 package com.sparcs.teamf.api.auth.controller;
 
+import com.sparcs.teamf.api.auth.dto.LoginRequest;
+import com.sparcs.teamf.api.auth.dto.TokenResponse;
+import com.sparcs.teamf.api.auth.service.AuthService;
 import com.sparcs.teamf.api.emailauth.dto.AuthenticateEmailRequest;
 import com.sparcs.teamf.api.emailauth.dto.SendEmailRequest;
 import com.sparcs.teamf.api.emailauth.service.EmailAuthService;
@@ -19,7 +22,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
 
+    private final AuthService authService;
     private final EmailAuthService emailAuthService;
+
+    @PostMapping("login")
+    @Operation(summary = "로그인")
+    public TokenResponse login(@RequestBody @Valid LoginRequest request) {
+        System.out.println("request = " + request);
+        return authService.login(request.email(), request.password());
+    }
 
     @PostMapping("/email/send")
     @Operation(summary = "이메일 인증 코드 전송")

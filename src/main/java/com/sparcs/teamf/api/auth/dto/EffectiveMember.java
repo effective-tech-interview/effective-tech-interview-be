@@ -1,6 +1,7 @@
 package com.sparcs.teamf.api.auth.dto;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,9 +9,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class EffectiveMember implements UserDetails {
 
     private final Long memberId;
+    private final List<GrantedAuthority> authorities;
 
-    public EffectiveMember(Long memberId) {
+    public EffectiveMember(Long memberId, List<GrantedAuthority> authorities) {
         this.memberId = memberId;
+        this.authorities = authorities;
     }
 
     public Long getMemberId() {
@@ -19,7 +22,7 @@ public class EffectiveMember implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return authorities;
     }
 
     @Override
