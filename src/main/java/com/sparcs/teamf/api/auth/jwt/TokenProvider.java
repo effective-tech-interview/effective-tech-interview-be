@@ -58,11 +58,7 @@ public class TokenProvider implements InitializingBean {
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
 
-        return TokenResponse.builder()
-                .memberId(memberId)
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
+        return new TokenResponse(memberId, accessToken, refreshToken);
     }
 
     public Authentication getAuthentication(String accessToken) {
