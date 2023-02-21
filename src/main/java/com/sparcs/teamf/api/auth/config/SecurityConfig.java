@@ -42,8 +42,7 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .cors().configurationSource(this::corsConfiguration).and()
                 .authorizeRequests()
-                .antMatchers(
-                        "/v1/signup", "/v1/auth/login")
+                .antMatchers("/v1/signup", "/v1/auth/login", "/v1/auth/email/**")
                 .permitAll()
                 .anyRequest().authenticated().and()
                 .addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
