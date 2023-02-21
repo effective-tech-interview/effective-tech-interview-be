@@ -1,9 +1,8 @@
 package com.sparcs.teamf.api.auth.config;
 
-import com.sparcs.teamf.api.auth.jwt.JwtAuthenticationFilter;
-import java.time.Duration;
+import com.sparcs.teamf.api.auth.jwt.JwtFilter;
+import com.sparcs.teamf.api.auth.jwt.TokenProvider;
 import java.util.Collections;
-import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -20,6 +19,9 @@ import org.springframework.web.cors.CorsConfiguration;
 @RequiredArgsConstructor
 @EnableWebSecurity
 public class SecurityConfig {
+
+    private final TokenProvider tokenProvider;
+
     @Bean
     public WebSecurityCustomizer configure() {
         return (web) -> web.ignoring().mvcMatchers(
@@ -35,8 +37,9 @@ public class SecurityConfig {
         return http
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .cors().configurationSource(this::corsConfiguration).and()
-                .authorizeHttpRequests()
+                .authorizeRequests()
                 .anyRequest().permitAll().and()
+                .addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
                 .csrf().disable()
                 .httpBasic().disable()
                 .formLogin().disable()
@@ -48,9 +51,8 @@ public class SecurityConfig {
         config.setAllowedOrigins(Collections.singletonList("*"));
         config.setAllowedMethods(Collections.singletonList("*"));
         config.setAllowCredentials(true);
-        config.setAllowedHeaders(Collections.singletonList("*"));
-        config.setExposedHeaders(List.of("Authorization"));
-        config.setMaxAge(Duration.ofSeconds(3600));
+        config.addAllowedHeader("*");
+        config.setMaxAge(3600L);
         return config;
     }
 
