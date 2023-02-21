@@ -1,5 +1,7 @@
 package com.sparcs.teamf.api.auth.config;
 
+import com.sparcs.teamf.api.auth.jwt.JwtAccessDeniedHandler;
+import com.sparcs.teamf.api.auth.jwt.JwtAuthenticationEntryPoint;
 import com.sparcs.teamf.api.auth.jwt.JwtFilter;
 import com.sparcs.teamf.api.auth.jwt.TokenProvider;
 import java.util.Collections;
@@ -21,7 +23,8 @@ import org.springframework.web.cors.CorsConfiguration;
 public class SecurityConfig {
 
     private final TokenProvider tokenProvider;
-
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     @Bean
     public WebSecurityCustomizer configure() {
         return (web) -> web.ignoring().mvcMatchers(
@@ -40,6 +43,9 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .anyRequest().permitAll().and()
                 .addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling()
+                .accessDeniedHandler(jwtAccessDeniedHandler)
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint).and()
                 .csrf().disable()
                 .httpBasic().disable()
                 .formLogin().disable()
