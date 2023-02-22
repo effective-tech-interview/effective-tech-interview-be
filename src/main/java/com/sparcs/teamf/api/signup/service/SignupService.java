@@ -1,7 +1,5 @@
 package com.sparcs.teamf.api.signup.service;
 
-import com.sparcs.teamf.api.auth.dto.TokenResponse;
-import com.sparcs.teamf.api.auth.jwt.TokenProvider;
 import com.sparcs.teamf.api.emailauth.error.EmailRequestRequiredException;
 import com.sparcs.teamf.api.emailauth.error.UnverifiedEmailException;
 import com.sparcs.teamf.api.member.error.DuplicateEmailException;
@@ -25,9 +23,8 @@ public class SignupService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final NicknameGenerator nicknameGenerator;
-    private final TokenProvider tokenProvider;
 
-    public TokenResponse signup(String email, String password, String confirmPassword) {
+    public void signup(String email, String password, String confirmPassword) {
         if (!password.equals(confirmPassword)) {
             throw new PasswordMismatchException();
         }
@@ -35,8 +32,7 @@ public class SignupService {
         checkEmailVerified(email);
 
         Member member = Member.of(generateRandomNickname(), email, passwordEncoder.encode(password));
-        Member savedMember = memberRepository.save(member);
-        return tokenProvider.createToken(savedMember.getId(), savedMember.getEmail());
+        memberRepository.save(member);
     }
 
     private void checkEmailAlreadyRegistered(String email) {

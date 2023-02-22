@@ -1,6 +1,5 @@
 package com.sparcs.teamf.api.signup.controller;
 
-import com.sparcs.teamf.api.auth.dto.TokenResponse;
 import com.sparcs.teamf.api.signup.dto.SignupRequest;
 import com.sparcs.teamf.api.signup.service.SignupService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,7 +21,7 @@ public class SignupController {
 
     @PostMapping
     @Operation(summary = "회원 가입")
-    public TokenResponse signup(@RequestBody @Valid SignupRequest request) {
-        return signupService.signup(request.email(), request.password(), request.confirmPassword());
+    public void signup(@RequestBody @Valid SignupRequest request) {
+        signupService.signup(request.email(), request.password(), request.confirmPassword());
     }
 }

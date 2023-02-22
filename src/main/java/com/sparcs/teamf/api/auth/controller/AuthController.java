@@ -8,8 +8,11 @@ import com.sparcs.teamf.api.emailauth.dto.SendEmailRequest;
 import com.sparcs.teamf.api.emailauth.service.EmailAuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,9 +30,11 @@ public class AuthController {
 
     @PostMapping("login")
     @Operation(summary = "로그인")
-    public TokenResponse login(@RequestBody @Valid LoginRequest request) {
-        System.out.println("request = " + request);
-        return authService.login(request.email(), request.password());
+    public void login(@RequestBody @Valid LoginRequest request, HttpServletResponse httpServletResponse) {
+
+        TokenResponse token = authService.login(request.email(), request.password());
+        httpServletResponse.addHeader("Authorization", "Bearer " + token.accessToken());
+        httpServletResponse.addHeader("X-Refresh-Token", token.refreshToken());
     }
 
     @PostMapping("/email/send")
