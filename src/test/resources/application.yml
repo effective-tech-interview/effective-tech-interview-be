@@ -50,3 +50,7 @@ gpt:
   key4: ${gpt_key4:sk-nothing}
   key5: ${gpt_key5:sk-nothing}
   timeout: 100
+
+jwt:
+  secret: jwtSecretKeyByteArrayRequires48bitsForTheJwtHMACSHAAlgorithm
+  token-validity-in-seconds: 86400

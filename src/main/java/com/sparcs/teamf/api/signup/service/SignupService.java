@@ -11,6 +11,7 @@ import com.sparcs.teamf.domain.member.Member;
 import com.sparcs.teamf.domain.member.MemberRepository;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,6 +21,7 @@ public class SignupService {
 
     private final EmailAuthRepository emailAuthRepository;
     private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
     private final NicknameGenerator nicknameGenerator;
 
     public void signup(String email, String password, String confirmPassword) {
@@ -28,7 +30,8 @@ public class SignupService {
         }
         checkEmailAlreadyRegistered(email);
         checkEmailVerified(email);
-        Member member = Member.of(generateRandomNickname(), email, password);
+
+        Member member = Member.of(generateRandomNickname(), email, passwordEncoder.encode(password));
         memberRepository.save(member);
     }
 
