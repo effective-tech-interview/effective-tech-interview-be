@@ -32,7 +32,7 @@ public class SecurityConfig {
                 "/actuator/**",
                 "/swagger-ui/**",
                 "/swagger-ui.html",
-                "/docs"
+                "/docs/**"
         );
     }
 
