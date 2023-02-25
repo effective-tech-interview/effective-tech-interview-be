@@ -43,7 +43,7 @@ public class AuthController {
         emailAuthService.sendEmailForSignup(request.email());
     }
 
-    @GetMapping("/email/authenticate")
+    @PostMapping("/email/authenticate")
     @Operation(summary = "이메일 인증 코드 확인")
     public void authenticateEmailForSignup(@RequestBody @Valid AuthenticateEmailRequest request) {
         emailAuthService.authenticateEmailForSignup(request.email(), request.verificationCode());
