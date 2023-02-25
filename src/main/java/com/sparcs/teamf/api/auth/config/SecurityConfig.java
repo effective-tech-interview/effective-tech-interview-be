@@ -57,7 +57,7 @@ public class SecurityConfig {
 
     private CorsConfiguration corsConfiguration(HttpServletRequest httpServletRequest) {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Collections.singletonList("*"));
+        config.addAllowedOriginPattern("*");
         config.setAllowedMethods(Collections.singletonList("*"));
         config.setAllowCredentials(true);
         config.addAllowedHeader("*");
