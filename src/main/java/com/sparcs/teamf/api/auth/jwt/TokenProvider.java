@@ -27,13 +27,16 @@ import org.springframework.stereotype.Component;
 public class TokenProvider implements InitializingBean {
 
     private final String secret;
-    private final long tokenValidityInMilliseconds;
+    private final long accessTokenValidityInSeconds;
+    private final long refreshTokenValidityInSeconds;
     private Key key;
 
     public TokenProvider(@Value("${jwt.secret}") String secret,
-                         @Value("${jwt.token-validity-in-seconds}") long tokenValidityInSeconds) {
+                         @Value("${jwt.access-token-validity-in-seconds}") long accessTokenValidityInSeconds,
+                         @Value("${jwt.refresh-token-validity-in-seconds}") long refreshTokenValidityInSeconds) {
         this.secret = secret;
-        this.tokenValidityInMilliseconds = tokenValidityInSeconds * 1000;
+        this.accessTokenValidityInSeconds = accessTokenValidityInSeconds * 1000;
+        this.refreshTokenValidityInSeconds = refreshTokenValidityInSeconds * 1000;
     }
 
     @Override
@@ -43,21 +46,8 @@ public class TokenProvider implements InitializingBean {
     }
 
     public TokenResponse createToken(Long memberId, String email) {
-        long now = (new Date()).getTime();
-
-        Date tokenExpiresIn = new Date(now + this.tokenValidityInMilliseconds);
-        String accessToken = Jwts.builder()
-                .setSubject(email)
-                .claim("memberId", memberId)
-                .setExpiration(tokenExpiresIn)
-                .signWith(this.key, SignatureAlgorithm.HS512)
-                .compact();
-
-        String refreshToken = Jwts.builder()
-                .setExpiration(new Date(now + this.tokenValidityInMilliseconds))
-                .signWith(key, SignatureAlgorithm.HS512)
-                .compact();
-
+        String accessToken = buildTokenWithClaims(memberId, email, accessTokenValidityInSeconds);
+        String refreshToken = buildTokenWithClaims(memberId, email, refreshTokenValidityInSeconds);
         return new TokenResponse(memberId, accessToken, refreshToken);
     }
 
@@ -89,5 +79,15 @@ public class TokenProvider implements InitializingBean {
             log.info("JWT claims string is empty.", e);
         }
         return false;
+    }
+
+    private String buildTokenWithClaims(Long memberId, String email, long tokenValidityInSeconds) {
+        long now = (new Date()).getTime();
+        return Jwts.builder()
+                .setSubject(email)
+                .claim("memberId", memberId)
+                .setExpiration(new Date(now + tokenValidityInSeconds))
+                .signWith(key, SignatureAlgorithm.HS512)
+                .compact();
     }
 }
