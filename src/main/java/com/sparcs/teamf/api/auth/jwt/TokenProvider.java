@@ -26,6 +26,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class TokenProvider implements InitializingBean {
+    private static final String MEMBER_ID = "memberId";
 
     private final String secret;
     private final long accessTokenValidityInSeconds;
@@ -59,10 +60,10 @@ public class TokenProvider implements InitializingBean {
                 .build()
                 .parseClaimsJws(accessToken)
                 .getBody();
-        Integer memberId = (Integer) claims.get("memberId");
+        Long memberId = claims.get(MEMBER_ID, Long.class);
 
         List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
-        EffectiveMember principal = new EffectiveMember(Long.valueOf(memberId), authorities);
+        EffectiveMember principal = new EffectiveMember(memberId, authorities);
         return new UsernamePasswordAuthenticationToken(principal, accessToken, authorities);
     }
 
@@ -75,7 +76,7 @@ public class TokenProvider implements InitializingBean {
                 .build()
                 .parseClaimsJws(refreshToken)
                 .getBody();
-        Long memberId = claims.get("memberId", Long.class);
+        Long memberId = claims.get(MEMBER_ID, Long.class);
         String email = claims.getSubject();
         return createToken(memberId, email);
     }
@@ -100,7 +101,7 @@ public class TokenProvider implements InitializingBean {
         long now = (new Date()).getTime();
         return Jwts.builder()
                 .setSubject(email)
-                .claim("memberId", memberId)
+                .claim(MEMBER_ID, memberId)
                 .setExpiration(new Date(now + tokenValidityInSeconds))
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
