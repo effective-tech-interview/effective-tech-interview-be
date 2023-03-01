@@ -81,6 +81,17 @@ public class TokenProvider implements InitializingBean {
         return false;
     }
 
+    public TokenResponse reissueToken(String expiredToken) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(expiredToken)
+                .getBody();
+        Long memberId = claims.get("memberId", Long.class);
+        String email = claims.getSubject();
+        return createToken(memberId, email);
+    }
+
     private String buildTokenWithClaims(Long memberId, String email, long tokenValidityInSeconds) {
         long now = (new Date()).getTime();
         return Jwts.builder()

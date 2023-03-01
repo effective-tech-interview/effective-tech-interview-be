@@ -26,6 +26,12 @@ public class AuthService {
         return new TokenResponse(member.getId(), tokenResponse.accessToken(), tokenResponse.refreshToken());
     }
 
+    public TokenResponse refresh(String refreshToken) {
+        TokenResponse tokenResponse = tokenProvider.reissueToken(refreshToken);
+        validateMemberId(tokenResponse.memberId());
+        return tokenResponse;
+    }
+
     private Member getMemberByEmail(String email) {
         return memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
     }
@@ -33,6 +39,12 @@ public class AuthService {
     private void verifyPassword(String inputPassword, String savedPassword) {
         if (!passwordEncoder.matches(inputPassword, savedPassword)) {
             throw new VerificationCodeMismatchException();
+        }
+    }
+
+    private void validateMemberId(Long memberId) {
+        if (!memberRepository.existsById(memberId)) {
+            throw new MemberNotFoundException();
         }
     }
 
