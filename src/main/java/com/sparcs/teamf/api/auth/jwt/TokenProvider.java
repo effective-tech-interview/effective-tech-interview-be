@@ -80,7 +80,7 @@ public class TokenProvider implements InitializingBean {
         return createToken(memberId, email);
     }
 
-    public boolean validateToken(String token) {
+    boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
