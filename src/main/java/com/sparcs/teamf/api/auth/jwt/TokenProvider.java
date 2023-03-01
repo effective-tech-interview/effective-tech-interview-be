@@ -2,6 +2,7 @@ package com.sparcs.teamf.api.auth.jwt;
 
 import com.sparcs.teamf.api.auth.dto.EffectiveMember;
 import com.sparcs.teamf.api.auth.dto.TokenResponse;
+import com.sparcs.teamf.api.auth.error.RefreshTokenValidationException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -65,6 +66,20 @@ public class TokenProvider implements InitializingBean {
         return new UsernamePasswordAuthenticationToken(principal, accessToken, authorities);
     }
 
+    public TokenResponse reissueToken(String refreshToken) {
+        if (!validateToken(refreshToken)) {
+            throw new RefreshTokenValidationException();
+        }
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(refreshToken)
+                .getBody();
+        Long memberId = claims.get("memberId", Long.class);
+        String email = claims.getSubject();
+        return createToken(memberId, email);
+    }
+
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
@@ -79,17 +94,6 @@ public class TokenProvider implements InitializingBean {
             log.info("JWT claims string is empty.", e);
         }
         return false;
-    }
-
-    public TokenResponse reissueToken(String expiredToken) {
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(expiredToken)
-                .getBody();
-        Long memberId = claims.get("memberId", Long.class);
-        String email = claims.getSubject();
-        return createToken(memberId, email);
     }
 
     private String buildTokenWithClaims(Long memberId, String email, long tokenValidityInSeconds) {
