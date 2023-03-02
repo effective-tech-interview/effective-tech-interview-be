@@ -28,20 +28,20 @@ public class SignupService {
         if (!password.equals(confirmPassword)) {
             throw new PasswordMismatchException();
         }
-        checkEmailAlreadyRegistered(email);
-        checkEmailVerified(email);
+        validateAlreadyRegistered(email);
+        handleUnverifiedEmail(email);
 
         Member member = Member.of(generateRandomNickname(), email, passwordEncoder.encode(password));
         memberRepository.save(member);
     }
 
-    private void checkEmailAlreadyRegistered(String email) {
+    private void validateAlreadyRegistered(String email) {
         if (memberRepository.existsByEmail(email)) {
             throw new DuplicateEmailException();
         }
     }
 
-    private void checkEmailVerified(String email) {
+    private void handleUnverifiedEmail(String email) {
         EmailAuth emailAuth = emailAuthRepository.findFirstByEmailOrderByCreatedDateDesc(email)
                 .orElseThrow(EmailRequestRequiredException::new);
         if (!emailAuth.getIsAuthenticated()) {

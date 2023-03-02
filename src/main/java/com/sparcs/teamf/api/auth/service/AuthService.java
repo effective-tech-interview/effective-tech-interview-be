@@ -21,9 +21,7 @@ public class AuthService {
     public TokenResponse login(String email, String password) {
         Member member = getMemberByEmail(email);
         validatePassword(password, member.getPassword());
-
-        TokenResponse tokenResponse = resolveToken(member.getId(), member.getEmail());
-        return new TokenResponse(member.getId(), tokenResponse.accessToken(), tokenResponse.refreshToken());
+        return tokenProvider.createToken(member.getId(), member.getEmail());
     }
 
     public TokenResponse refresh(String refreshToken) {
@@ -46,9 +44,5 @@ public class AuthService {
         if (!memberRepository.existsById(memberId)) {
             throw new MemberNotFoundException();
         }
-    }
-
-    private TokenResponse resolveToken(Long memberId, String email) {
-        return tokenProvider.createToken(memberId, email);
     }
 }
