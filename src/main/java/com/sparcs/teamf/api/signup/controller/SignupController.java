@@ -3,6 +3,8 @@ package com.sparcs.teamf.api.signup.controller;
 import com.sparcs.teamf.api.signup.dto.SignupRequest;
 import com.sparcs.teamf.api.signup.service.SignupService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,12 @@ public class SignupController {
 
     @PostMapping
     @Operation(summary = "회원 가입")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "successful operation"),
+            @ApiResponse(responseCode = "500", description = "internal server error"),
+            @ApiResponse(responseCode = "400", description = "bad request"),
+            @ApiResponse(responseCode = "401", description = "unauthorized"),
+            @ApiResponse(responseCode = "409", description = "the email is already registered")})
     public void signup(@RequestBody @Valid SignupRequest request) {
         signupService.signup(request.email(), request.password(), request.confirmPassword());
     }
