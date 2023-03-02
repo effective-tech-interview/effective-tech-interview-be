@@ -2,8 +2,8 @@ package com.sparcs.teamf.api.auth.service;
 
 import com.sparcs.teamf.api.auth.dto.TokenResponse;
 import com.sparcs.teamf.api.auth.jwt.TokenProvider;
-import com.sparcs.teamf.api.emailauth.error.VerificationCodeMismatchException;
-import com.sparcs.teamf.api.member.error.MemberNotFoundException;
+import com.sparcs.teamf.api.emailauth.exception.VerificationCodeMismatchException;
+import com.sparcs.teamf.api.member.exception.MemberNotFoundException;
 import com.sparcs.teamf.domain.member.Member;
 import com.sparcs.teamf.domain.member.MemberRepository;
 import lombok.RequiredArgsConstructor;

@@ -2,7 +2,7 @@ package com.sparcs.teamf.api.auth.jwt;
 
 import com.sparcs.teamf.api.auth.dto.EffectiveMember;
 import com.sparcs.teamf.api.auth.dto.TokenResponse;
-import com.sparcs.teamf.api.auth.error.RefreshTokenValidationException;
+import com.sparcs.teamf.api.auth.exception.RefreshTokenValidationException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
