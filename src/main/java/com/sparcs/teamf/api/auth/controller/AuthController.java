@@ -12,6 +12,7 @@ import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,6 +31,12 @@ public class AuthController {
         return authService.login(request.email(), request.password());
     }
 
+    @PostMapping("/refresh")
+    @Operation(summary = "엑세스 토큰 재발급")
+    public TokenResponse refresh(@RequestHeader(value = "Authorization") String refreshToken) {
+        return authService.refresh(getTokenFromHeader(refreshToken));
+    }
+
     @PostMapping("/email/send")
     @Operation(summary = "이메일 인증 코드 전송")
     public void sendEmailForSignup(@RequestBody @Valid SendEmailRequest request) {
@@ -40,5 +47,12 @@ public class AuthController {
     @Operation(summary = "이메일 인증 코드 확인")
     public void authenticateEmailForSignup(@RequestBody @Valid AuthenticateEmailRequest request) {
         emailAuthService.authenticateEmailForSignup(request.email(), request.verificationCode());
+    }
+
+    private String getTokenFromHeader(String token) {
+        if (token != null && token.startsWith("Bearer ")) {
+            return token.substring(7);
+        }
+        return token;
     }
 }

@@ -20,19 +20,31 @@ public class AuthService {
 
     public TokenResponse login(String email, String password) {
         Member member = getMemberByEmail(email);
-        verifyPassword(password, member.getPassword());
+        validatePassword(password, member.getPassword());
 
         TokenResponse tokenResponse = resolveToken(member.getId(), member.getEmail());
         return new TokenResponse(member.getId(), tokenResponse.accessToken(), tokenResponse.refreshToken());
+    }
+
+    public TokenResponse refresh(String refreshToken) {
+        TokenResponse tokenResponse = tokenProvider.reissueToken(refreshToken);
+        validateMemberId(tokenResponse.memberId());
+        return tokenResponse;
     }
 
     private Member getMemberByEmail(String email) {
         return memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
     }
 
-    private void verifyPassword(String inputPassword, String savedPassword) {
+    private void validatePassword(String inputPassword, String savedPassword) {
         if (!passwordEncoder.matches(inputPassword, savedPassword)) {
             throw new VerificationCodeMismatchException();
+        }
+    }
+
+    private void validateMemberId(Long memberId) {
+        if (!memberRepository.existsById(memberId)) {
+            throw new MemberNotFoundException();
         }
     }
 
