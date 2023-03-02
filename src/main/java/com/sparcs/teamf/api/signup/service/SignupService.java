@@ -1,10 +1,10 @@
 package com.sparcs.teamf.api.signup.service;
 
-import com.sparcs.teamf.api.emailauth.error.EmailRequestRequiredException;
-import com.sparcs.teamf.api.emailauth.error.UnverifiedEmailException;
-import com.sparcs.teamf.api.member.error.DuplicateEmailException;
+import com.sparcs.teamf.api.emailauth.exception.EmailRequestRequiredException;
+import com.sparcs.teamf.api.emailauth.exception.UnverifiedEmailException;
+import com.sparcs.teamf.api.member.exception.DuplicateEmailException;
 import com.sparcs.teamf.api.signup.config.NicknameGenerator;
-import com.sparcs.teamf.api.signup.error.PasswordMismatchException;
+import com.sparcs.teamf.api.signup.exception.PasswordMismatchException;
 import com.sparcs.teamf.domain.emailauth.EmailAuth;
 import com.sparcs.teamf.domain.emailauth.EmailAuthRepository;
 import com.sparcs.teamf.domain.member.Member;
