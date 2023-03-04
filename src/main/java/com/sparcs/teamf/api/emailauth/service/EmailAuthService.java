@@ -1,8 +1,8 @@
 package com.sparcs.teamf.api.emailauth.service;
 
-import com.sparcs.teamf.api.emailauth.error.EmailRequestRequiredException;
-import com.sparcs.teamf.api.emailauth.error.VerificationCodeMismatchException;
-import com.sparcs.teamf.api.member.error.DuplicateEmailException;
+import com.sparcs.teamf.api.emailauth.exception.EmailRequestRequiredException;
+import com.sparcs.teamf.api.emailauth.exception.VerificationCodeMismatchException;
+import com.sparcs.teamf.api.member.exception.DuplicateEmailException;
 import com.sparcs.teamf.domain.emailauth.EmailAuth;
 import com.sparcs.teamf.domain.emailauth.EmailAuthRepository;
 import com.sparcs.teamf.domain.member.MemberRepository;

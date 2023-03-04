@@ -53,4 +53,5 @@ gpt:
 
 jwt:
   secret: jwtSecretKeyByteArrayRequires48bitsForTheJwtHMACSHAAlgorithm
-  token-validity-in-seconds: 86400
+  access-token-validity-in-seconds: 86400
+  refresh-token-validity-in-seconds: 604800

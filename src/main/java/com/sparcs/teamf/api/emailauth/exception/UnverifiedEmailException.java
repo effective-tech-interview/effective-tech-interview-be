@@ -1,4 +1,4 @@
-package com.sparcs.teamf.api.emailauth.error;
+package com.sparcs.teamf.api.emailauth.exception;
 
 import com.sparcs.teamf.api.error.exception.HttpException;
 import org.springframework.http.HttpStatus;

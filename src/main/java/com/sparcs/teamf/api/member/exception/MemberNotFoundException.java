@@ -1,4 +1,4 @@
-package com.sparcs.teamf.api.member.error;
+package com.sparcs.teamf.api.member.exception;
 
 import com.sparcs.teamf.api.error.exception.HttpException;
 import org.springframework.http.HttpStatus;
