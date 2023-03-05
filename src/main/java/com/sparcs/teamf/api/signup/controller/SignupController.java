@@ -27,7 +27,7 @@ public class SignupController {
             @ApiResponse(responseCode = "200", description = "successful operation"),
             @ApiResponse(responseCode = "500", description = "internal server error"),
             @ApiResponse(responseCode = "400", description = "bad request"),
-            @ApiResponse(responseCode = "401", description = "unauthorized"),
+            @ApiResponse(responseCode = "403", description = "forbidden"),
             @ApiResponse(responseCode = "409", description = "the email is already registered")})
     public void signup(@RequestBody @Valid SignupRequest request) {
         signupService.signup(request.email(), request.password(), request.confirmPassword());
