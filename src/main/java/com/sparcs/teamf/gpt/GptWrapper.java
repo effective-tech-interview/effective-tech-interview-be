@@ -12,7 +12,6 @@ public class GptWrapper implements Gpt {
 
     @Override
     public String ask(String question) {
-        System.out.println(question);
         return gptPool.ask(question);
     }
 }
