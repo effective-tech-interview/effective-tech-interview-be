@@ -6,6 +6,6 @@ import org.springframework.http.HttpStatus;
 public class VerificationCodeMismatchException extends HttpException {
 
     public VerificationCodeMismatchException() {
-        super(HttpStatus.UNAUTHORIZED, "verification code mismatch");
+        super(HttpStatus.UNPROCESSABLE_ENTITY, "verification code mismatch");
     }
 }
