@@ -37,7 +37,6 @@ public class AuthController {
                     @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = TokenResponse.class))}),
             @ApiResponse(responseCode = "500", description = "internal server error", content = @Content),
             @ApiResponse(responseCode = "400", description = "bad request", content = @Content),
-            @ApiResponse(responseCode = "401", description = "unauthorized", content = @Content),
             @ApiResponse(responseCode = "404", description = "not found", content = @Content)})
     public TokenResponse login(@RequestBody @Valid LoginRequest request) {
         return authService.login(request.email(), request.password());
@@ -73,7 +72,8 @@ public class AuthController {
             @ApiResponse(responseCode = "200", description = "successful operation"),
             @ApiResponse(responseCode = "500", description = "internal server error"),
             @ApiResponse(responseCode = "400", description = "bad request"),
-            @ApiResponse(responseCode = "401", description = "unauthorized")})
+            @ApiResponse(responseCode = "401", description = "unauthorized"),
+            @ApiResponse(responseCode = "422", description = "invalid verification code")})
     public void authenticateEmailForSignup(@RequestBody @Valid AuthenticateEmailRequest request) {
         emailAuthService.authenticateEmailForSignup(request.email(), request.verificationCode());
     }
