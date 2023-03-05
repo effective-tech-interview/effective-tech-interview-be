@@ -18,14 +18,16 @@ public class AnswerService {
     private final Gpt gpt;
 
     public AnswerResponse getAnswer(long questionId) throws InterruptedException {
-        Optional<Question> question = Repeat.repeat(() -> findQuestionById(questionId),
-                this::needToRepeat,
-                AnswerNotFoundException::new);
-        if (question.isEmpty()) {
-            //존재할 수는 없는 케이스. 컴파일러를 위한 코드
+        var question = Repeat.repeat(() -> findQuestionById(questionId),
+                this::needToRepeat);
+        validateQuestion(question);
+        return new AnswerResponse(questionId, question.get().get().getAnswer());
+    }
+
+    private void validateQuestion(Optional<Optional<Question>> question) {
+        if (question.isEmpty() || question.get().isEmpty() || question.get().get().getAnswer() == null) {
             throw new AnswerNotFoundException();
         }
-        return new AnswerResponse(questionId, question.get().getAnswer());
     }
 
     private Optional<Question> findQuestionById(long questionId) {
