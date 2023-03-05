@@ -3,9 +3,9 @@ package com.sparcs.teamf.api.answer.service;
 import com.sparcs.teamf.api.answer.dto.AnswerResponse;
 import com.sparcs.teamf.api.answer.exception.AnswerNotFoundException;
 import com.sparcs.teamf.common.util.Repeat;
-import com.sparcs.teamf.domain.gpt.Gpt;
 import com.sparcs.teamf.domain.question.Question;
 import com.sparcs.teamf.domain.question.QuestionRepository;
+import com.sparcs.teamf.domain.question.QuestionService;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,17 +15,18 @@ import org.springframework.stereotype.Service;
 public class AnswerService {
 
     private final QuestionRepository questionRepository;
-    private final Gpt gpt;
+    private final QuestionService questionService;
 
     public AnswerResponse getAnswer(long questionId) throws InterruptedException {
         var question = Repeat.repeat(() -> findQuestionById(questionId),
                 this::needToRepeat);
-        validateQuestion(question);
+        validateQuestion(question, questionId);
         return new AnswerResponse(questionId, question.get().get().getAnswer());
     }
 
-    private void validateQuestion(Optional<Optional<Question>> question) {
+    private void validateQuestion(Optional<Optional<Question>> question, long questionId) {
         if (question.isEmpty() || question.get().isEmpty() || question.get().get().getAnswer() == null) {
+            questionService.generateNextQuestion(questionId);
             throw new AnswerNotFoundException();
         }
     }
