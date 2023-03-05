@@ -45,10 +45,6 @@ public class Question extends BaseEntity {
         this.parentQuestionId = parentQuestionId;
     }
 
-    public void updateParentQuestionId(Long parentQuestionId) {
-        this.parentQuestionId = parentQuestionId;
-    }
-
     public void updateAnswer(String answer) {
         this.answer = answer;
     }
