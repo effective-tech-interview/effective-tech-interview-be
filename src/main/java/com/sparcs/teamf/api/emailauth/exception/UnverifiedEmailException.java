@@ -6,6 +6,6 @@ import org.springframework.http.HttpStatus;
 public class UnverifiedEmailException extends HttpException {
 
     public UnverifiedEmailException() {
-        super(HttpStatus.UNAUTHORIZED, "unauthenticated email address");
+        super(HttpStatus.FORBIDDEN, "unauthenticated email address");
     }
 }
