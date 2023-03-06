@@ -34,14 +34,15 @@ public class EmailAuth extends BaseEntity {
     @Column(nullable = false)
     private Boolean isAuthenticated;
 
-    public EmailAuth(String email, Integer verificationCode) {
+    public EmailAuth(String email, Event event, Integer verificationCode) {
         this.email = email;
+        this.event = event;
         this.verificationCode = verificationCode;
         this.isAuthenticated = false;
     }
 
-    public static EmailAuth of(String email, Integer verificationCode) {
-        return new EmailAuth(email, verificationCode);
+    public static EmailAuth of(String email, Event event, Integer verificationCode) {
+        return new EmailAuth(email, event, verificationCode);
     }
 
     public void authenticate() {

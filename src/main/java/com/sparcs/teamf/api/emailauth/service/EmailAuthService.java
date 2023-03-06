@@ -1,5 +1,7 @@
 package com.sparcs.teamf.api.emailauth.service;
 
+import static com.sparcs.teamf.domain.emailauth.Event.REGISTRATION;
+
 import com.sparcs.teamf.api.emailauth.exception.EmailRequestRequiredException;
 import com.sparcs.teamf.api.emailauth.exception.VerificationCodeMismatchException;
 import com.sparcs.teamf.api.member.exception.DuplicateEmailException;
@@ -26,11 +28,11 @@ public class EmailAuthService {
 
         int verificationCode = generateVerificationCode();
         emailService.send(email, verificationCode);
-        emailAuthRepository.save(EmailAuth.of(email, verificationCode));
+        emailAuthRepository.save(EmailAuth.of(email, REGISTRATION, verificationCode));
     }
 
     public void authenticateEmailForSignup(String email, int inputVerificationCode) {
-        EmailAuth emailAuth = emailAuthRepository.findFirstByEmailOrderByCreatedDateDesc(email)
+        EmailAuth emailAuth = emailAuthRepository.findFirstByEmailAndEventOrderByCreatedDateDesc(email, REGISTRATION)
                 .orElseThrow(EmailRequestRequiredException::new);
 
         verifyVerificationCodeMismatch(emailAuth.getVerificationCode(), inputVerificationCode);

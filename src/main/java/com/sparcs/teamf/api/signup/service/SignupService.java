@@ -1,5 +1,7 @@
 package com.sparcs.teamf.api.signup.service;
 
+import static com.sparcs.teamf.domain.emailauth.Event.REGISTRATION;
+
 import com.sparcs.teamf.api.emailauth.exception.EmailRequestRequiredException;
 import com.sparcs.teamf.api.emailauth.exception.UnverifiedEmailException;
 import com.sparcs.teamf.api.member.exception.DuplicateEmailException;
@@ -42,7 +44,7 @@ public class SignupService {
     }
 
     private void handleUnverifiedEmail(String email) {
-        EmailAuth emailAuth = emailAuthRepository.findFirstByEmailOrderByCreatedDateDesc(email)
+        EmailAuth emailAuth = emailAuthRepository.findFirstByEmailAndEventOrderByCreatedDateDesc(email, REGISTRATION)
                 .orElseThrow(EmailRequestRequiredException::new);
         if (!emailAuth.getIsAuthenticated()) {
             throw new UnverifiedEmailException();
