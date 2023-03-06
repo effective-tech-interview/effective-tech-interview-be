@@ -72,7 +72,6 @@ public class AuthController {
             @ApiResponse(responseCode = "200", description = "successful operation"),
             @ApiResponse(responseCode = "500", description = "internal server error"),
             @ApiResponse(responseCode = "400", description = "bad request"),
-            @ApiResponse(responseCode = "401", description = "unauthorized"),
             @ApiResponse(responseCode = "422", description = "invalid verification code")})
     public void authenticateEmailForSignup(@RequestBody @Valid AuthenticateEmailRequest request) {
         emailAuthService.authenticateEmailForSignup(request.email(), request.verificationCode());
