@@ -83,6 +83,12 @@ public class AuthController {
         emailAuthService.sendPasswordResetCode(request.email());
     }
 
+    @PostMapping("/password-reset/email-verification")
+    @Operation(summary = "비밀번호 재설정 인증 코드 검증")
+    public void verifyPasswordResetCode(@RequestBody @Valid AuthenticateEmailRequest request) {
+        emailAuthService.verifyPasswordResetCode(request.email(), request.verificationCode());
+    }
+
     private String getTokenFromHeader(String token) {
         if (token != null && token.startsWith("Bearer ")) {
             return token.substring(7);

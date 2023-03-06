@@ -57,6 +57,14 @@ public class EmailAuthService {
         emailAuthRepository.save(EmailAuth.of(email, RESET_PASSWORD, verificationCode));
     }
 
+    public void verifyPasswordResetCode(String email, Integer inputVerificationCode) {
+        EmailAuth emailAuth = emailAuthRepository.findFirstByEmailAndEventOrderByCreatedDateDesc(email, RESET_PASSWORD)
+                .orElseThrow(EmailRequestRequiredException::new);
+
+        verifyVerificationCodeMismatch(emailAuth.getVerificationCode(), inputVerificationCode);
+        emailAuth.authenticate();
+    }
+
     private boolean isAlreadyRegistered(String email) {
         return memberRepository.existsByEmail(email);
     }
