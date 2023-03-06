@@ -9,6 +9,7 @@ import com.sparcs.teamf.domain.emailauth.EmailAuth;
 import com.sparcs.teamf.domain.emailauth.EmailAuthRepository;
 import com.sparcs.teamf.domain.member.MemberRepository;
 import java.util.concurrent.ThreadLocalRandom;
+import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,16 +19,18 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class EmailAuthService {
 
-    private final EmailService emailService;
+    @Resource(name = "signupEmailService")
+    private final EmailService signupEmailService;
     private final EmailAuthRepository emailAuthRepository;
     private final MemberRepository memberRepository;
     private final ThreadLocalRandom random = ThreadLocalRandom.current();
 
     public void sendEmailForSignup(String email) {
-        validateAlreadyRegistered(email);
-
+        if (isAlreadyRegistered(email)) {
+            throw new DuplicateEmailException();
+        }
         int verificationCode = generateVerificationCode();
-        emailService.send(email, verificationCode);
+        signupEmailService.send(email, verificationCode);
         emailAuthRepository.save(EmailAuth.of(email, REGISTRATION, verificationCode));
     }
 
@@ -39,10 +42,8 @@ public class EmailAuthService {
         emailAuth.authenticate();
     }
 
-    private void validateAlreadyRegistered(String email) {
-        if (memberRepository.existsByEmail(email)) {
-            throw new DuplicateEmailException();
-        }
+    private boolean isAlreadyRegistered(String email) {
+        return memberRepository.existsByEmail(email);
     }
 
     private int generateVerificationCode() {
