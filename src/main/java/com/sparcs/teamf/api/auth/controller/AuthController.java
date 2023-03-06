@@ -1,6 +1,7 @@
 package com.sparcs.teamf.api.auth.controller;
 
 import com.sparcs.teamf.api.auth.dto.LoginRequest;
+import com.sparcs.teamf.api.auth.dto.ResetPasswordEmailRequest;
 import com.sparcs.teamf.api.auth.dto.TokenResponse;
 import com.sparcs.teamf.api.auth.service.AuthService;
 import com.sparcs.teamf.api.emailauth.dto.AuthenticateEmailRequest;
@@ -87,6 +88,12 @@ public class AuthController {
     @Operation(summary = "비밀번호 재설정 인증 코드 검증")
     public void verifyPasswordResetCode(@RequestBody @Valid AuthenticateEmailRequest request) {
         emailAuthService.verifyPasswordResetCode(request.email(), request.verificationCode());
+    }
+
+    @PostMapping("/password-reset/reset")
+    @Operation(summary = "비밀번호 재설정")
+    public void resetPassword(@RequestBody @Valid ResetPasswordEmailRequest request) {
+        emailAuthService.resetPassword(request.email(), request.password(), request.confirmPassword());
     }
 
     private String getTokenFromHeader(String token) {
