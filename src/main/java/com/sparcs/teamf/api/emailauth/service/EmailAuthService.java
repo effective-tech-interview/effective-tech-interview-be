@@ -1,10 +1,12 @@
 package com.sparcs.teamf.api.emailauth.service;
 
 import static com.sparcs.teamf.domain.emailauth.Event.REGISTRATION;
+import static com.sparcs.teamf.domain.emailauth.Event.RESET_PASSWORD;
 
 import com.sparcs.teamf.api.emailauth.exception.EmailRequestRequiredException;
 import com.sparcs.teamf.api.emailauth.exception.VerificationCodeMismatchException;
 import com.sparcs.teamf.api.member.exception.DuplicateEmailException;
+import com.sparcs.teamf.api.member.exception.MemberNotFoundException;
 import com.sparcs.teamf.domain.emailauth.EmailAuth;
 import com.sparcs.teamf.domain.emailauth.EmailAuthRepository;
 import com.sparcs.teamf.domain.member.MemberRepository;
@@ -21,6 +23,10 @@ public class EmailAuthService {
 
     @Resource(name = "signupEmailService")
     private final EmailService signupEmailService;
+
+    @Resource(name = "resetPasswordEmailService")
+    private final EmailService resetPasswordEmailService;
+
     private final EmailAuthRepository emailAuthRepository;
     private final MemberRepository memberRepository;
     private final ThreadLocalRandom random = ThreadLocalRandom.current();
@@ -40,6 +46,15 @@ public class EmailAuthService {
 
         verifyVerificationCodeMismatch(emailAuth.getVerificationCode(), inputVerificationCode);
         emailAuth.authenticate();
+    }
+
+    public void sendPasswordResetCode(String email) {
+        if (!isAlreadyRegistered(email)) {
+            throw new MemberNotFoundException();
+        }
+        int verificationCode = generateVerificationCode();
+        resetPasswordEmailService.send(email, verificationCode);
+        emailAuthRepository.save(EmailAuth.of(email, RESET_PASSWORD, verificationCode));
     }
 
     private boolean isAlreadyRegistered(String email) {
