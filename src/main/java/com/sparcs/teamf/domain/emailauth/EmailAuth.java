@@ -3,6 +3,8 @@ package com.sparcs.teamf.domain.emailauth;
 import com.sparcs.teamf.domain.BaseEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,6 +23,10 @@ public class EmailAuth extends BaseEntity {
 
     @Column(nullable = false)
     private String email;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Event event;
 
     @Column(nullable = false)
     private Integer verificationCode;
