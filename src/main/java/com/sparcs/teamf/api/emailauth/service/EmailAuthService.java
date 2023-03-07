@@ -3,6 +3,8 @@ package com.sparcs.teamf.api.emailauth.service;
 import static com.sparcs.teamf.domain.emailauth.Event.REGISTRATION;
 import static com.sparcs.teamf.domain.emailauth.Event.RESET_PASSWORD;
 
+import com.sparcs.teamf.api.auth.dto.OneTimeTokenResponse;
+import com.sparcs.teamf.api.auth.jwt.TokenProvider;
 import com.sparcs.teamf.api.emailauth.exception.EmailRequestRequiredException;
 import com.sparcs.teamf.api.emailauth.exception.UnverifiedEmailException;
 import com.sparcs.teamf.api.emailauth.exception.VerificationCodeMismatchException;
@@ -34,6 +36,7 @@ public class EmailAuthService {
     private final EmailAuthRepository emailAuthRepository;
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final TokenProvider tokenProvider;
     private final ThreadLocalRandom random = ThreadLocalRandom.current();
 
     public void sendEmailForSignup(String email) {
@@ -62,12 +65,14 @@ public class EmailAuthService {
         emailAuthRepository.save(EmailAuth.of(email, RESET_PASSWORD, verificationCode));
     }
 
-    public void verifyPasswordResetCode(String email, Integer inputVerificationCode) {
+    public OneTimeTokenResponse verifyPasswordResetCode(String email, Integer inputVerificationCode) {
         EmailAuth emailAuth = emailAuthRepository.findFirstByEmailAndEventOrderByCreatedDateDesc(email, RESET_PASSWORD)
                 .orElseThrow(EmailRequestRequiredException::new);
+        Member member = memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
 
         verifyVerificationCodeMismatch(emailAuth.getVerificationCode(), inputVerificationCode);
         emailAuth.authenticate();
+        return tokenProvider.createOneTimeToken(member.getId(), email);
     }
 
     public void resetPassword(String email, String password, String confirmPassword) {
