@@ -57,7 +57,7 @@ public class AuthController {
     }
 
     @PostMapping("/email/send")
-    @Operation(summary = "이메일 인증 코드 전송")
+    @Operation(summary = "회원가입 이메일 인증 코드 전송")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "successful operation"),
             @ApiResponse(responseCode = "500", description = "internal server error"),
@@ -68,7 +68,7 @@ public class AuthController {
     }
 
     @PostMapping("/email/authenticate")
-    @Operation(summary = "이메일 인증 코드 확인")
+    @Operation(summary = "회원가입 이메일 인증 코드 확인")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "successful operation"),
             @ApiResponse(responseCode = "500", description = "internal server error"),
