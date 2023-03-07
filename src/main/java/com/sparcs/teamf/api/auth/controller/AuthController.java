@@ -80,12 +80,22 @@ public class AuthController {
 
     @PostMapping("/password-reset/email")
     @Operation(summary = "비밀번호 재설정 인증 코드 전송")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "successful operation"),
+            @ApiResponse(responseCode = "500", description = "internal server error"),
+            @ApiResponse(responseCode = "400", description = "bad request"),
+            @ApiResponse(responseCode = "404", description = "not found")})
     public void sendPasswordResetCode(@RequestBody @Valid SendEmailRequest request) {
         emailAuthService.sendPasswordResetCode(request.email());
     }
 
     @PostMapping("/password-reset/email-verification")
     @Operation(summary = "비밀번호 재설정 인증 코드 검증")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "successful operation"),
+            @ApiResponse(responseCode = "500", description = "internal server error"),
+            @ApiResponse(responseCode = "400", description = "bad request"),
+            @ApiResponse(responseCode = "404", description = "not found")})
     public OneTimeTokenResponse verifyPasswordResetCode(@RequestBody @Valid AuthenticateEmailRequest request) {
         return emailAuthService.verifyPasswordResetCode(request.email(), request.verificationCode());
     }
