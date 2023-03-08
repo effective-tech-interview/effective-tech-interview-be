@@ -19,6 +19,9 @@ spring:
     url: jdbc:h2:mem:test
     username: sa
     password:
+  redis:
+    host: localhost
+    port: 6379
 
   h2:
     console:
