@@ -13,7 +13,10 @@ spring:
     properties:
       hibernate:
         format_sql: true
-
+  redis:
+    host: localhost
+    port: 6379
+  
   datasource:
     url: ENC(RhSSG3M1L+pPuJK4OVHzl5LkWKa6UPeFM+npLlAGD6ftqaqlKHZXt0dS5bYpBPUoo1dAM2Nj9BCmbaop0W4cTxGjCh4QcePh6dmwj8CEWmFeD2McNC9A6Y5X4qrTXTJ+q+lAre+0nBJb7Iz56CmW2koSNFnsMkfSYhgbmJ5GMFHJK+8p4RsG0EBTdBnL4X8/svA2UovNIXCly06A2j9lNw==)
     username: ENC(kSbVij29Q5IxlMTyH1g0rw==)
