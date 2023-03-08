@@ -1,6 +1,7 @@
 package com.sparcs.teamf.api.auth.jwt;
 
 import com.sparcs.teamf.api.auth.dto.EffectiveMember;
+import com.sparcs.teamf.api.auth.dto.OneTimeTokenResponse;
 import com.sparcs.teamf.api.auth.dto.TokenResponse;
 import com.sparcs.teamf.api.auth.exception.RefreshTokenValidationException;
 import io.jsonwebtoken.Claims;
@@ -31,14 +32,17 @@ public class TokenProvider {
     private final String secret;
     private final long accessTokenValidityInSeconds;
     private final long refreshTokenValidityInSeconds;
+    private final long oneTimeTokenValidatyInSeconds;
     private Key key;
 
     public TokenProvider(@Value("${jwt.secret}") String secret,
                          @Value("${jwt.access-token-validity-in-seconds}") long accessTokenValidityInSeconds,
-                         @Value("${jwt.refresh-token-validity-in-seconds}") long refreshTokenValidityInSeconds) {
+                         @Value("${jwt.refresh-token-validity-in-seconds}") long refreshTokenValidityInSeconds,
+                         @Value("${jwt.one-time-token-validity-in-seconds}") long oneTimeTokenValidityInSeconds) {
         this.secret = secret;
         this.accessTokenValidityInSeconds = accessTokenValidityInSeconds * 1000;
         this.refreshTokenValidityInSeconds = refreshTokenValidityInSeconds * 1000;
+        this.oneTimeTokenValidatyInSeconds = oneTimeTokenValidityInSeconds * 1000;
     }
 
     @PostConstruct
@@ -79,6 +83,11 @@ public class TokenProvider {
         Long memberId = claims.get(MEMBER_ID, Long.class);
         String email = claims.getSubject();
         return createToken(memberId, email);
+    }
+
+    public OneTimeTokenResponse createOneTimeToken(Long memberId, String email) {
+        String oneTimeToken = buildTokenWithClaims(memberId, email, oneTimeTokenValidatyInSeconds);
+        return new OneTimeTokenResponse(oneTimeToken);
     }
 
     boolean validateToken(String token) {

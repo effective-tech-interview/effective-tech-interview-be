@@ -1,6 +1,7 @@
 package com.sparcs.teamf.api.auth.controller;
 
 import com.sparcs.teamf.api.auth.dto.LoginRequest;
+import com.sparcs.teamf.api.auth.dto.OneTimeTokenResponse;
 import com.sparcs.teamf.api.auth.dto.TokenResponse;
 import com.sparcs.teamf.api.auth.service.AuthService;
 import com.sparcs.teamf.api.emailauth.dto.AuthenticateEmailRequest;
@@ -56,7 +57,7 @@ public class AuthController {
     }
 
     @PostMapping("/email/send")
-    @Operation(summary = "이메일 인증 코드 전송")
+    @Operation(summary = "회원가입 이메일 인증 코드 전송")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "successful operation"),
             @ApiResponse(responseCode = "500", description = "internal server error"),
@@ -67,15 +68,36 @@ public class AuthController {
     }
 
     @PostMapping("/email/authenticate")
-    @Operation(summary = "이메일 인증 코드 확인")
+    @Operation(summary = "회원가입 이메일 인증 코드 확인")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "successful operation"),
             @ApiResponse(responseCode = "500", description = "internal server error"),
             @ApiResponse(responseCode = "400", description = "bad request"),
-            @ApiResponse(responseCode = "401", description = "unauthorized"),
             @ApiResponse(responseCode = "422", description = "invalid verification code")})
     public void authenticateEmailForSignup(@RequestBody @Valid AuthenticateEmailRequest request) {
         emailAuthService.authenticateEmailForSignup(request.email(), request.verificationCode());
+    }
+
+    @PostMapping("/password-reset/email")
+    @Operation(summary = "비밀번호 재설정 인증 코드 전송")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "successful operation"),
+            @ApiResponse(responseCode = "500", description = "internal server error"),
+            @ApiResponse(responseCode = "400", description = "bad request"),
+            @ApiResponse(responseCode = "404", description = "not found")})
+    public void sendPasswordResetCode(@RequestBody @Valid SendEmailRequest request) {
+        emailAuthService.sendPasswordResetCode(request.email());
+    }
+
+    @PostMapping("/password-reset/email-verification")
+    @Operation(summary = "비밀번호 재설정 인증 코드 검증")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "successful operation"),
+            @ApiResponse(responseCode = "500", description = "internal server error"),
+            @ApiResponse(responseCode = "400", description = "bad request"),
+            @ApiResponse(responseCode = "404", description = "not found")})
+    public OneTimeTokenResponse verifyPasswordResetCode(@RequestBody @Valid AuthenticateEmailRequest request) {
+        return emailAuthService.verifyPasswordResetCode(request.email(), request.verificationCode());
     }
 
     private String getTokenFromHeader(String token) {

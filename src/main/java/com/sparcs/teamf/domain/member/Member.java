@@ -36,4 +36,8 @@ public class Member extends BaseEntity {
     public static Member of(String nickname, String email, String password) {
         return new Member(nickname, email, password);
     }
+
+    public void updatePassword(String password) {
+        this.password = password;
+    }
 }
