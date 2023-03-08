@@ -4,6 +4,7 @@ import static com.sparcs.teamf.domain.emailauth.Event.RESET_PASSWORD;
 
 import com.sparcs.teamf.api.emailauth.exception.EmailRequestRequiredException;
 import com.sparcs.teamf.api.emailauth.exception.UnverifiedEmailException;
+import com.sparcs.teamf.api.member.dto.MemberProfileResponse;
 import com.sparcs.teamf.api.member.exception.MemberNotFoundException;
 import com.sparcs.teamf.api.signup.exception.PasswordMismatchException;
 import com.sparcs.teamf.domain.emailauth.EmailAuth;
@@ -31,6 +32,11 @@ public class MemberService {
         handleUnverifiedEmail(email);
         Member member = memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
         member.updatePassword(passwordEncoder.encode(password));
+    }
+
+    public MemberProfileResponse getMemberProfile(Long memberId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
+        return new MemberProfileResponse(member.getNickname(), member.getEmail());
     }
 
     private void handleUnverifiedEmail(String email) {
