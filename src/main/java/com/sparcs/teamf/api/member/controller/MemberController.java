@@ -5,7 +5,6 @@ import com.sparcs.teamf.api.auth.dto.ResetPasswordEmailRequest;
 import com.sparcs.teamf.api.member.dto.MemberProfileResponse;
 import com.sparcs.teamf.api.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
