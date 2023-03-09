@@ -52,7 +52,7 @@ public class MemberController {
             @ApiResponse(responseCode = "400", description = "bad request", content = @Content),
             @ApiResponse(responseCode = "401", description = "unauthorized", content = @Content),
             @ApiResponse(responseCode = "404", description = "not found", content = @Content)})
-    public MemberProfileResponse getMemberProfile(@Parameter(hidden = true) @AuthenticationPrincipal EffectiveMember member) {
+    public MemberProfileResponse getMemberProfile(@AuthenticationPrincipal EffectiveMember member) {
         return memberService.getMemberProfile(member.getMemberId());
     }
 }
