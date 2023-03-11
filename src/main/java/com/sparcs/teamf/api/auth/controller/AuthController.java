@@ -1,5 +1,6 @@
 package com.sparcs.teamf.api.auth.controller;
 
+import com.sparcs.teamf.api.auth.dto.FreeTokenDto;
 import com.sparcs.teamf.api.auth.dto.LoginRequest;
 import com.sparcs.teamf.api.auth.dto.OneTimeTokenResponse;
 import com.sparcs.teamf.api.auth.dto.TokenResponse;
@@ -108,5 +109,17 @@ public class AuthController {
             return token.substring(7);
         }
         return token;
+    }
+
+    @PostMapping("/free")
+    @Operation(summary = "토큰을 개발용으로 편하게 가져올 수 있는 api")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "successful operation", content = {
+                    @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = TokenResponse.class))}),
+            @ApiResponse(responseCode = "500", description = "internal server error", content = @Content),
+            @ApiResponse(responseCode = "400", description = "bad request", content = @Content),
+            @ApiResponse(responseCode = "404", description = "not found", content = @Content)})
+    public TokenResponse free(@RequestBody @Valid FreeTokenDto freeTokenDto) {
+        return authService.getFreeToken(freeTokenDto.memberId(), freeTokenDto.email());
     }
 }
