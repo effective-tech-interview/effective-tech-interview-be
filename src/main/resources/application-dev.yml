@@ -48,7 +48,7 @@ springdoc:
     operationsSorter: method
     disable-swagger-default-url: true
     display-request-duration: true
-  show-actuator: true
+  show-actuator: false
   default-produces-media-type: application/json
 
 gpt:
