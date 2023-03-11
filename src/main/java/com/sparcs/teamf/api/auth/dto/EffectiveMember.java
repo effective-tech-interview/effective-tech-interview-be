@@ -1,11 +1,13 @@
 package com.sparcs.teamf.api.auth.dto;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
+import java.util.List;
+
+
+@io.swagger.v3.oas.annotations.Hidden
 public class EffectiveMember implements UserDetails {
 
     private final Long memberId;
