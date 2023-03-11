@@ -1,6 +1,7 @@
 package com.sparcs.teamf.domain.member;
 
 import com.sparcs.teamf.domain.BaseEntity;
+import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,10 +10,12 @@ import javax.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Where;
 
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Where(clause = "deleted_at is null")
 public class Member extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,6 +29,8 @@ public class Member extends BaseEntity {
 
     @Column(nullable = false)
     private String password;
+
+    private LocalDateTime deletedAt;
 
     public Member(String nickname, String email, String password) {
         this.nickname = nickname;
