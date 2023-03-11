@@ -45,4 +45,8 @@ public class AuthService {
             throw new MemberNotFoundException();
         }
     }
+
+    public TokenResponse getFreeToken(long memberId, String email) {
+        return tokenProvider.createToken(memberId, email);
+    }
 }
