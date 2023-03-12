@@ -1,12 +1,13 @@
 package com.sparcs.teamf.domain.token;
 
+import java.io.Serializable;
 import lombok.Getter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
 @Getter
 @RedisHash(value = "refreshToken", timeToLive = 604800)
-public class UserToken {
+public class UserToken implements Serializable {
 
     @Id
     private final String refreshToken;
