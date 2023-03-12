@@ -35,7 +35,7 @@ public class TokenProvider {
     private final String secret;
     private final long accessTokenValidityInSeconds;
     private final long refreshTokenValidityInSeconds;
-    private final long oneTimeTokenValidatyInSeconds;
+    private final long oneTimeTokenValidityInSeconds;
     private final UserTokenRepository userTokenRepository;
     private Key key;
 
@@ -48,7 +48,7 @@ public class TokenProvider {
         this.secret = secret;
         this.accessTokenValidityInSeconds = accessTokenValidityInSeconds * 1000;
         this.refreshTokenValidityInSeconds = refreshTokenValidityInSeconds * 1000;
-        oneTimeTokenValidatyInSeconds = oneTimeTokenValidityInSeconds * 1000;
+        this.oneTimeTokenValidityInSeconds = oneTimeTokenValidityInSeconds * 1000;
         this.userTokenRepository = userTokenRepository;
     }
 
@@ -96,7 +96,7 @@ public class TokenProvider {
     }
 
     public OneTimeTokenResponse createOneTimeToken(Long memberId, String email) {
-        String oneTimeToken = buildTokenWithClaims(memberId, email, oneTimeTokenValidatyInSeconds);
+        String oneTimeToken = buildTokenWithClaims(memberId, email, oneTimeTokenValidityInSeconds);
         return new OneTimeTokenResponse(oneTimeToken);
     }
 
