@@ -4,6 +4,8 @@ import com.sparcs.teamf.api.auth.dto.EffectiveMember;
 import com.sparcs.teamf.api.auth.dto.OneTimeTokenResponse;
 import com.sparcs.teamf.api.auth.dto.TokenResponse;
 import com.sparcs.teamf.api.auth.exception.RefreshTokenValidationException;
+import com.sparcs.teamf.domain.token.UserToken;
+import com.sparcs.teamf.domain.token.UserTokenRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -27,33 +29,40 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class TokenProvider {
+
     private static final String MEMBER_ID = "memberId";
 
     private final String secret;
     private final long accessTokenValidityInSeconds;
     private final long refreshTokenValidityInSeconds;
-    private final long oneTimeTokenValidatyInSeconds;
+    private final long oneTimeTokenValidityInSeconds;
+    private final UserTokenRepository userTokenRepository;
     private Key key;
 
     public TokenProvider(@Value("${jwt.secret}") String secret,
-                         @Value("${jwt.access-token-validity-in-seconds}") long accessTokenValidityInSeconds,
-                         @Value("${jwt.refresh-token-validity-in-seconds}") long refreshTokenValidityInSeconds,
-                         @Value("${jwt.one-time-token-validity-in-seconds}") long oneTimeTokenValidityInSeconds) {
+            @Value("${jwt.access-token-validity-in-seconds}") long accessTokenValidityInSeconds,
+            @Value("${jwt.refresh-token-validity-in-seconds}") long refreshTokenValidityInSeconds,
+            @Value("${jwt.one-time-token-validity-in-seconds}") long oneTimeTokenValidityInSeconds,
+            UserTokenRepository userTokenRepository
+    ) {
         this.secret = secret;
         this.accessTokenValidityInSeconds = accessTokenValidityInSeconds * 1000;
         this.refreshTokenValidityInSeconds = refreshTokenValidityInSeconds * 1000;
-        this.oneTimeTokenValidatyInSeconds = oneTimeTokenValidityInSeconds * 1000;
+        this.oneTimeTokenValidityInSeconds = oneTimeTokenValidityInSeconds * 1000;
+        this.userTokenRepository = userTokenRepository;
     }
 
     @PostConstruct
     public void afterPropertiesSet() {
         byte[] keyBytes = Decoders.BASE64.decode(secret);
-        this.key = Keys.hmacShaKeyFor(keyBytes);
+        key = Keys.hmacShaKeyFor(keyBytes);
     }
 
     public TokenResponse createToken(Long memberId, String email) {
         String accessToken = buildTokenWithClaims(memberId, email, accessTokenValidityInSeconds);
         String refreshToken = buildTokenWithClaims(memberId, email, refreshTokenValidityInSeconds);
+        UserToken userToken = new UserToken(memberId, refreshToken);
+        userTokenRepository.save(userToken);
         return new TokenResponse(memberId, accessToken, refreshToken);
     }
 
@@ -82,18 +91,19 @@ public class TokenProvider {
                 .getBody();
         Long memberId = claims.get(MEMBER_ID, Long.class);
         String email = claims.getSubject();
+        userTokenRepository.deleteById(refreshToken);
         return createToken(memberId, email);
     }
 
     public OneTimeTokenResponse createOneTimeToken(Long memberId, String email) {
-        String oneTimeToken = buildTokenWithClaims(memberId, email, oneTimeTokenValidatyInSeconds);
+        String oneTimeToken = buildTokenWithClaims(memberId, email, oneTimeTokenValidityInSeconds);
         return new OneTimeTokenResponse(oneTimeToken);
     }
 
     boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            return true;
+            return userTokenRepository.existsById(token);
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             log.info("Invalid JWT Token", e);
         } catch (ExpiredJwtException e) {
@@ -114,5 +124,9 @@ public class TokenProvider {
                 .setExpiration(new Date(now + tokenValidityInSeconds))
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
+    }
+
+    public void deleteToken(String refreshToken) {
+        userTokenRepository.deleteById(refreshToken);
     }
 }

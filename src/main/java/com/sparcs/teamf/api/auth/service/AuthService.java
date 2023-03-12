@@ -49,4 +49,8 @@ public class AuthService {
     public TokenResponse getFreeToken(long memberId, String email) {
         return tokenProvider.createToken(memberId, email);
     }
+
+    public void logout(String tokenFromHeader) {
+        tokenProvider.deleteToken(tokenFromHeader);
+    }
 }
