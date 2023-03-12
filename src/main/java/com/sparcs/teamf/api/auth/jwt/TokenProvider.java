@@ -92,6 +92,7 @@ public class TokenProvider {
                 .getBody();
         Long memberId = claims.get(MEMBER_ID, Long.class);
         String email = claims.getSubject();
+        userTokenRepository.deleteById(refreshToken);
         return createToken(memberId, email);
     }
 
