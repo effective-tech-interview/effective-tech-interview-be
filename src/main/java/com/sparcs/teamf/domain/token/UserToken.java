@@ -9,8 +9,9 @@ import org.springframework.data.redis.core.RedisHash;
 public class UserToken {
 
     @Id
-    private Long memberId;
-    private String refreshToken;
+    private final String refreshToken;
+
+    private final Long memberId;
 
     public UserToken(Long memberId, String refreshToken) {
         this.memberId = memberId;
