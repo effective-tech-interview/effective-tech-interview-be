@@ -1,7 +1,7 @@
 package com.sparcs.teamf.domain.token;
 
-import javax.persistence.Id;
 import lombok.Getter;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
 @Getter
@@ -9,8 +9,8 @@ import org.springframework.data.redis.core.RedisHash;
 public class UserToken {
 
     @Id
-    private final Long memberId;
-    private final String refreshToken;
+    private Long memberId;
+    private String refreshToken;
 
     public UserToken(Long memberId, String refreshToken) {
         this.memberId = memberId;

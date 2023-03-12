@@ -1,8 +1,8 @@
 package com.sparcs.teamf.sampleredis;
 
 import java.time.LocalDateTime;
-import javax.persistence.Id;
 import lombok.Getter;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
 @Getter
