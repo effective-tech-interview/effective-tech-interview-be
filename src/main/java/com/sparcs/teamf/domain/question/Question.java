@@ -22,11 +22,11 @@ public class Question extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mid_category_id")
     private MidCategory midCategory;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 2000)
     private String question;
 
     @Column(length = 2000)
@@ -39,7 +39,9 @@ public class Question extends BaseEntity {
         this.midCategory = midCategory;
     }
 
-    public void updateParentQuestionId(Long parentQuestionId) {
+    public Question(String question, MidCategory midCategory, long parentQuestionId) {
+        this.question = question;
+        this.midCategory = midCategory;
         this.parentQuestionId = parentQuestionId;
     }
 
