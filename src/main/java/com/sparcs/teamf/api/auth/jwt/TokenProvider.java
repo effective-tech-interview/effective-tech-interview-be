@@ -4,6 +4,8 @@ import com.sparcs.teamf.api.auth.dto.EffectiveMember;
 import com.sparcs.teamf.api.auth.dto.OneTimeTokenResponse;
 import com.sparcs.teamf.api.auth.dto.TokenResponse;
 import com.sparcs.teamf.api.auth.exception.RefreshTokenValidationException;
+import com.sparcs.teamf.domain.token.AccessToken;
+import com.sparcs.teamf.domain.token.AccessTokenRepository;
 import com.sparcs.teamf.domain.token.UserToken;
 import com.sparcs.teamf.domain.token.UserTokenRepository;
 import io.jsonwebtoken.Claims;
@@ -14,10 +16,12 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+
 import java.security.Key;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -36,19 +40,22 @@ public class TokenProvider {
     private final long accessTokenValidityInSeconds;
     private final long refreshTokenValidityInSeconds;
     private final long oneTimeTokenValidityInSeconds;
+    private final AccessTokenRepository accessTokenRepository;
     private final UserTokenRepository userTokenRepository;
     private Key key;
 
     public TokenProvider(@Value("${jwt.secret}") String secret,
-            @Value("${jwt.access-token-validity-in-seconds}") long accessTokenValidityInSeconds,
-            @Value("${jwt.refresh-token-validity-in-seconds}") long refreshTokenValidityInSeconds,
-            @Value("${jwt.one-time-token-validity-in-seconds}") long oneTimeTokenValidityInSeconds,
-            UserTokenRepository userTokenRepository
+                         @Value("${jwt.access-token-validity-in-seconds}") long accessTokenValidityInSeconds,
+                         @Value("${jwt.refresh-token-validity-in-seconds}") long refreshTokenValidityInSeconds,
+                         @Value("${jwt.one-time-token-validity-in-seconds}") long oneTimeTokenValidityInSeconds,
+                         AccessTokenRepository accessTokenRepository,
+                         UserTokenRepository userTokenRepository
     ) {
         this.secret = secret;
         this.accessTokenValidityInSeconds = accessTokenValidityInSeconds * 1000;
         this.refreshTokenValidityInSeconds = refreshTokenValidityInSeconds * 1000;
         this.oneTimeTokenValidityInSeconds = oneTimeTokenValidityInSeconds * 1000;
+        this.accessTokenRepository = accessTokenRepository;
         this.userTokenRepository = userTokenRepository;
     }
 
@@ -62,7 +69,9 @@ public class TokenProvider {
         String accessToken = buildTokenWithClaims(memberId, email, accessTokenValidityInSeconds);
         String refreshToken = buildTokenWithClaims(memberId, email, refreshTokenValidityInSeconds);
         UserToken userToken = new UserToken(memberId, refreshToken);
+        AccessToken accessTokenEntity = new AccessToken(memberId, accessToken);
         userTokenRepository.save(userToken);
+        accessTokenRepository.save(accessTokenEntity);
         return new TokenResponse(memberId, accessToken, refreshToken);
     }
 
@@ -103,7 +112,7 @@ public class TokenProvider {
     boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            return userTokenRepository.existsById(token);
+            return accessTokenRepository.existsById(token);
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             log.info("Invalid JWT Token", e);
         } catch (ExpiredJwtException e) {
