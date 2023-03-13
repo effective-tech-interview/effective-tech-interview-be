@@ -124,7 +124,8 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public void logout(@RequestHeader(value = "Authorization") String refreshToken) {
-        authService.logout(getTokenFromHeader(refreshToken));
+    public void logout(@RequestHeader(value = "Authorization") String accessToken,
+            @RequestHeader(value = "refreshToken") String refreshToken) {
+        authService.logout(getTokenFromHeader(accessToken), getTokenFromHeader(refreshToken));
     }
 }
