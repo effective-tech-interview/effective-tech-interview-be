@@ -22,6 +22,7 @@ public class AddQuestionController {
     @PostMapping
     @Operation(summary = "기본 질문, 꼬리 질문 생성 및 저장")
     public AddQuestionResponse addQuestion(@RequestBody AddQuestionRequest addQuestionRequest) {
-        return addQuestionService.addQuestion(addQuestionRequest);
+//        return addQuestionService.addQuestion(addQuestionRequest);
+        return null;
     }
 }

@@ -30,7 +30,7 @@ public class BasicQuestionService {
         List<Question> nextQuestions = questionRepository.findQuestionByParentQuestionId(questionIndex);
         Question nextQuestion = nextQuestions.get(0);
         if (nextQuestion.getAnswer() == null) {
-            questionService.generateNextQuestion(nextQuestion.getId());
+//            questionService.generateNextQuestion(nextQuestion.getId());
         }
     }
 }

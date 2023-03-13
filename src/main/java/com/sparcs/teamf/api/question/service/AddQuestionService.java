@@ -26,7 +26,7 @@ public class AddQuestionService {
         String question = addQuestionRequest.question();
         Question newQuestion = questionRepository.save(new Question(question, midCategory));
 
-        questionService.generateNextQuestion(newQuestion.getId());
+//        questionService.generateNextQuestion(newQuestion.getId());
         return new AddQuestionResponse(question);
     }
 

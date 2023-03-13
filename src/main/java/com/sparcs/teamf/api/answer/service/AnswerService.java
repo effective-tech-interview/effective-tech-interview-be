@@ -26,7 +26,7 @@ public class AnswerService {
 
     private void validateQuestion(Optional<Optional<Question>> question, long questionId) {
         if (question.isEmpty() || question.get().isEmpty() || question.get().get().getAnswer() == null) {
-            questionService.generateNextQuestion(questionId);
+//            questionService.generateNextQuestion(questionId);
             throw new AnswerNotFoundException();
         }
     }
