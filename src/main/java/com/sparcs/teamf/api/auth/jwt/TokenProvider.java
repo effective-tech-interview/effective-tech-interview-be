@@ -90,7 +90,7 @@ public class TokenProvider {
     }
 
     public TokenResponse reissueToken(String refreshToken) {
-        if (!validateToken(refreshToken)) {
+        if (!validateRefreshToken(refreshToken)) {
             throw new RefreshTokenValidationException();
         }
         Claims claims = Jwts.parserBuilder()
@@ -109,10 +109,25 @@ public class TokenProvider {
         return new OneTimeTokenResponse(oneTimeToken);
     }
 
-    boolean validateToken(String token) {
+    boolean validateAccessToken(String accessToken) {
+        if (!validateToken(accessToken)) {
+            return false;
+        }
+        return accessTokenRepository.existsById(accessToken);
+    }
+
+    boolean validateRefreshToken(String refreshToken) {
+        if (!validateToken(refreshToken)) {
+            return false;
+        }
+        return accessTokenRepository.existsById(refreshToken);
+    }
+
+
+    private boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            return accessTokenRepository.existsById(token);
+            return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             log.info("Invalid JWT Token", e);
         } catch (ExpiredJwtException e) {

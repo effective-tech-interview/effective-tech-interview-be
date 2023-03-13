@@ -50,7 +50,8 @@ public class AuthService {
         return tokenProvider.createToken(memberId, email);
     }
 
-    public void logout(String tokenFromHeader) {
-        tokenProvider.deleteToken(tokenFromHeader);
+    public void logout(String accessToken, String refreshToken) {
+        tokenProvider.deleteToken(accessToken);
+        tokenProvider.deleteToken(refreshToken);
     }
 }
