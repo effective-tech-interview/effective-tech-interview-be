@@ -2,6 +2,9 @@ package com.sparcs.teamf.domain.question;
 
 import com.sparcs.teamf.domain.BaseEntity;
 import com.sparcs.teamf.domain.midcategory.MidCategory;
+import com.sparcs.teamf.domain.page.PageQuestion;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,6 +29,9 @@ public class Question extends BaseEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "mid_category_id")
     private MidCategory midCategory;
+
+    @OneToMany(mappedBy = "question")
+    private List<PageQuestion> pageQuestions = new ArrayList<>();
 
     @Column(nullable = false)
     private String question;
