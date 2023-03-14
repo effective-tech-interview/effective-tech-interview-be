@@ -51,7 +51,7 @@ public class AuthService {
     }
 
     public void logout(String accessToken, String refreshToken) {
-        tokenProvider.deleteToken(accessToken);
-        tokenProvider.deleteToken(refreshToken);
+        tokenProvider.deleteAccessToken(accessToken);
+        tokenProvider.deleteRefreshToken(refreshToken);
     }
 }

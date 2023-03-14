@@ -150,7 +150,11 @@ public class TokenProvider {
                 .compact();
     }
 
-    public void deleteToken(String refreshToken) {
+    public void deleteRefreshToken(String refreshToken) {
         userTokenRepository.deleteById(refreshToken);
+    }
+
+    public void deleteAccessToken(String accessToken) {
+        accessTokenRepository.deleteById(accessToken);
     }
 }
