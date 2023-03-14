@@ -1,7 +1,13 @@
+buildscript {
+    ext {
+        queryDslVersion = "5.0.0"
+    }
+}
 plugins {
     id 'java'
     id 'org.springframework.boot' version '2.7.8'
     id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+    id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
 }
 
 group = 'com.sparcs'
@@ -26,6 +32,12 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-mail'
     implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
+
+    //queryDsl
+    implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+    implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
     implementation 'com.theokanning.openai-gpt3-java:client:0.9.0'
     implementation 'org.springdoc:springdoc-openapi-ui:1.6.14'
     implementation 'org.springdoc:springdoc-openapi-security:1.6.14'
@@ -40,6 +52,28 @@ dependencies {
     testRuntimeOnly 'com.h2database:h2'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
+}
+
+def querydslDir = "$buildDir/generated/querydsl"
+
+querydsl {
+    jpa = true
+    querydslSourcesDir = querydslDir
+}
+
+sourceSets { //이놈
+    main.java.srcDir querydslDir
+}
+
+configurations { // 이놈
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+    querydsl.extendsFrom compileClasspath
+}
+
+compileQuerydsl { // 이놈
+    options.annotationProcessorPath = configurations.querydsl
 }
 
 tasks.named('test') {
