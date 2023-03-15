@@ -61,18 +61,18 @@ querydsl {
     querydslSourcesDir = querydslDir
 }
 
-sourceSets { //이놈
+sourceSets {
     main.java.srcDir querydslDir
 }
 
-configurations { // 이놈
+configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
     querydsl.extendsFrom compileClasspath
 }
 
-compileQuerydsl { // 이놈
+compileQuerydsl {
     options.annotationProcessorPath = configurations.querydsl
 }
 
