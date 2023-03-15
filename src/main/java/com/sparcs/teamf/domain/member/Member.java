@@ -2,6 +2,8 @@ package com.sparcs.teamf.domain.member;
 
 import com.sparcs.teamf.domain.BaseEntity;
 import com.sparcs.teamf.domain.page.Page;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
