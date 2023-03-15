@@ -1,5 +1,6 @@
 package com.sparcs.teamf.domain.page;
 
+import com.sparcs.teamf.domain.BaseEntity;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Entity;
@@ -15,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Page {
+public class Page extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
