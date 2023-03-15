@@ -122,4 +122,10 @@ public class AuthController {
     public TokenResponse free(@RequestBody @Valid FreeTokenDto freeTokenDto) {
         return authService.getFreeToken(freeTokenDto.memberId(), freeTokenDto.email());
     }
+
+    @PostMapping("/logout")
+    public void logout(@RequestHeader(value = "Authorization") String accessToken,
+            @RequestHeader(value = "refreshToken") String refreshToken) {
+        authService.logout(getTokenFromHeader(accessToken), getTokenFromHeader(refreshToken));
+    }
 }
