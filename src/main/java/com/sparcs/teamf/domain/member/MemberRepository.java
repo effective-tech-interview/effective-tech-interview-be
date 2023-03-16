@@ -13,7 +13,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Optional<Member> findByEmail(String email);
 
-    @Transactional
     @Modifying
     @Query("UPDATE Member m SET m.deletedAt = CURRENT_TIMESTAMP WHERE m.id = :id")
     void deleteById(@Param("id") Long id);
