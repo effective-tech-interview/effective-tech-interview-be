@@ -21,5 +21,7 @@ public class MemberAnswer extends BaseEntity {
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    private PageMemberAnswer pageMemberAnswer;
+    private PageQuestion pageQuestion;
+
+    private String memberAnswer;
 }
