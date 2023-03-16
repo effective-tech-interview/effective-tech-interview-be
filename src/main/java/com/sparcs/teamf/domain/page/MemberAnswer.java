@@ -20,8 +20,5 @@ public class MemberAnswer extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    private PageQuestion pageQuestion;
-
     private String memberAnswer;
 }
