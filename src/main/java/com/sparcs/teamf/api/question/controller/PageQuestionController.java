@@ -23,8 +23,7 @@ public class PageQuestionController {
     @GetMapping
     @Operation(summary = "질문 리스트 조회")
     public QuestionsResponse getQuestions(@RequestParam(value = "midCategoryId") long midCategoryId,
-                                          @AuthenticationPrincipal EffectiveMember member)
-        throws InterruptedException {
+                                          @AuthenticationPrincipal EffectiveMember member){
         return questionService.getQuestions(midCategoryId, member.getMemberId());
     }
 }
