@@ -1,5 +1,6 @@
 package com.sparcs.teamf.gpt;
 
+import com.sparcs.teamf.api.answer.exception.AnswerNotFoundException;
 import com.sparcs.teamf.domain.gpt.Gpt;
 import com.sparcs.teamf.domain.question.Question;
 import com.sparcs.teamf.domain.question.QuestionRepository;
@@ -27,24 +28,14 @@ public class GptWrapper implements Gpt {
     }
 
     @Override
-    @Async
     @Transactional
-    public void loadNextQuestion(Question question) {
-        List<Question> nextQuestionList = questionRepository.findQuestionByParentQuestionId(question.getId());
-        if (nextQuestionList.isEmpty()) {
-            throw new IllegalStateException("존재하면 안되는 상태");
-        }
-        Question nextQuestion = nextQuestionList.get(0);
-
-        if (nextQuestion.getAnswer() != null) {
-            return;
-        }
-        String answer = generateAnswer(nextQuestion);
-        String nextOfNextQuestion = generateNextQuestion(question, answer);
-        Question generated = new Question(nextOfNextQuestion, question.getMidCategory());
-        nextQuestion.updateAnswer(answer);
-        generated.updateParentQuestionId(nextQuestion.getId());
-        questionRepository.save(generated);
+    public Question loadNextQuestion(Question parentQuestion) {
+        String question = generateNextQuestion(parentQuestion, parentQuestion.getAnswer());
+        Question generatedQuestion = new Question(question, parentQuestion.getMidCategory());
+        String answer = generateAnswer(generatedQuestion);
+        generatedQuestion.updateAnswer(answer);
+        generatedQuestion.updateParentQuestionId(parentQuestion.getId());
+        return questionRepository.save(generatedQuestion);
     }
 
     @Override

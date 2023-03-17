@@ -58,7 +58,9 @@ public class QuestionService {
             Question parentQuestion = questionGroup[i];
             List<Question> questionByParentQuestionId = questionRepository.findQuestionByParentQuestionId(parentQuestion.getId());
             if (questionByParentQuestionId.isEmpty()) {
-                // gpt 호출
+                Question question = gpt.loadNextQuestion(parentQuestion);
+                questionGroup[i + 1] = question;
+                return questionGroup;
             }
             questionGroup[i + 1] = questionByParentQuestionId.get(0);
         }
