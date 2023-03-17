@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class QuestionService {
+public class PageQuestionService {
 
     private final MemberRepository memberRepository;
     private final QuestionRepository questionRepository;
