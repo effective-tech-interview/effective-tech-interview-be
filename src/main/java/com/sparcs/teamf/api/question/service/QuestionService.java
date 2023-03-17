@@ -42,8 +42,8 @@ public class QuestionService {
 
         Page page = new Page();
         PageQuestion pageQuestion = new PageQuestion(basicQuestion);
-        page.addPageQuestion(pageQuestion);
-        member.addPage(page);
+        pageQuestion.updatePage(page);
+        page.updateMember(member);
         Page savedPage = pageRepository.save(page);
         return new QuestionsResponse(savedPage.getId(), questionResponses);
     }

@@ -37,4 +37,9 @@ public class PageQuestion extends BaseEntity {
     public PageQuestion(Question question) {
         this.question = question;
     }
+
+    public void updatePage(Page page) {
+        this.page = page;
+        page.getPageQuestions().add(this);
+    }
 }
