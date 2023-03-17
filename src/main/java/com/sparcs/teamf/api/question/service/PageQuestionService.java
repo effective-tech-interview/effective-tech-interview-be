@@ -50,16 +50,12 @@ public class PageQuestionService {
 
     private Question[] getQuestionGroup(Question basicQuestion) {
         Question[] questionGroup = new Question[QUESTION_TOTAL_NUM];
-        List<Question> tailQuestion = questionRepository.findQuestionByParentQuestionId(
-            basicQuestion.getId()); // Optional<Question> 반환하도록 리팩토링 필요
         questionGroup[0] = basicQuestion;
-        questionGroup[1] = tailQuestion.get(0);
-        for (int i = 1; i < 3; i++) {
+        for (int i = 0; i < QUESTION_TOTAL_NUM - 1; i++) {
             Question parentQuestion = questionGroup[i];
             List<Question> questionByParentQuestionId = questionRepository.findQuestionByParentQuestionId(parentQuestion.getId());
             if (questionByParentQuestionId.isEmpty()) {
-                Question question = gpt.loadNextQuestion(parentQuestion);
-                questionGroup[i + 1] = question;
+                questionGroup[i + 1] = gpt.loadNextQuestion(parentQuestion);
                 return questionGroup;
             }
             questionGroup[i + 1] = questionByParentQuestionId.get(0);
