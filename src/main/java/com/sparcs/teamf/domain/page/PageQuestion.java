@@ -33,4 +33,8 @@ public class PageQuestion extends BaseEntity {
 
     @OneToOne(fetch = FetchType.LAZY)
     private MemberAnswer memberAnswer;
+
+    public PageQuestion(Question question) {
+        this.question = question;
+    }
 }

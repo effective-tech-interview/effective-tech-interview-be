@@ -56,4 +56,8 @@ public class Member extends BaseEntity {
     public void updatePassword(String password) {
         this.password = password;
     }
+
+    public void addPage(Page page) {
+        this.pages.add(page);
+    }
 }
