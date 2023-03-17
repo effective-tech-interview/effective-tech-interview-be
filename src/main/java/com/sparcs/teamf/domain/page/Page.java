@@ -24,7 +24,8 @@ public class Page extends BaseEntity {
     @OneToMany(mappedBy = "page", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PageQuestion> pageQuestions = new ArrayList<>();
 
-    public void addPageQuestion(PageQuestion pageQuestion) {
-        this.pageQuestions.add(pageQuestion);
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
     }
 }

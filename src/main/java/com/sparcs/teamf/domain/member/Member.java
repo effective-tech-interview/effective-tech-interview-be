@@ -11,7 +11,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -28,8 +27,7 @@ public class Member extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany
-    @JoinColumn(name = "member_id")
+    @OneToMany(mappedBy = "member")
     private List<Page> pages = new ArrayList<>();
 
     @Column(nullable = false)
@@ -55,9 +53,5 @@ public class Member extends BaseEntity {
 
     public void updatePassword(String password) {
         this.password = password;
-    }
-
-    public void addPage(Page page) {
-        this.pages.add(page);
     }
 }
