@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Tag(name = "Question-v2")
 @RequestMapping("/v2/questions")
-public class QuestionController {
+public class PageQuestionController {
 
     private final QuestionService questionService;
 
