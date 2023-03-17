@@ -8,6 +8,7 @@ import com.sparcs.teamf.domain.member.Member;
 import com.sparcs.teamf.domain.member.MemberRepository;
 import com.sparcs.teamf.domain.page.Page;
 import com.sparcs.teamf.domain.page.PageQuestion;
+import com.sparcs.teamf.domain.page.PageQuestionRepository;
 import com.sparcs.teamf.domain.page.PageRepository;
 import com.sparcs.teamf.domain.question.Question;
 import com.sparcs.teamf.domain.question.QuestionRepository;
@@ -22,10 +23,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PageQuestionService {
 
+    private final Gpt gpt;
     private final MemberRepository memberRepository;
     private final QuestionRepository questionRepository;
     private final PageRepository pageRepository;
-    private final Gpt gpt;
+    private final PageQuestionRepository pageQuestionRepository;
     private final ThreadLocalRandom random = ThreadLocalRandom.current();
     private static final int QUESTION_TOTAL_NUM = 4;
 
@@ -40,11 +42,9 @@ public class PageQuestionService {
             .map(QuestionResponse::from)
             .toList();
 
-        Page page = new Page();
-        PageQuestion pageQuestion = new PageQuestion(basicQuestion);
-        pageQuestion.updatePage(page);
-        page.updateMember(member);
+        Page page = new Page(member);
         Page savedPage = pageRepository.save(page);
+        pageQuestionRepository.save(new PageQuestion(basicQuestion, savedPage));
         return new QuestionsResponse(savedPage.getId(), questionResponses);
     }
 

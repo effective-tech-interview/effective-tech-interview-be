@@ -13,12 +13,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Page extends BaseEntity {
 
     @Id
@@ -32,8 +33,7 @@ public class Page extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    public void updateMember(Member member) {
+    public Page(Member member) {
         this.member = member;
-        member.getPages().add(this);
     }
 }
