@@ -12,7 +12,6 @@ import com.sparcs.teamf.domain.page.PageQuestionRepository;
 import com.sparcs.teamf.domain.page.PageRepository;
 import com.sparcs.teamf.domain.question.Question;
 import com.sparcs.teamf.domain.question.QuestionRepository;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import javax.transaction.Transactional;
@@ -32,20 +31,14 @@ public class PageQuestionService {
     private static final int QUESTION_TOTAL_NUM = 4;
 
     @Transactional
-    public QuestionsResponse getQuestions(long midCategoryId, Long memberId) {
-        Member member = memberRepository.findById(memberId)
-            .orElseThrow(MemberNotFoundException::new);
+    public QuestionsResponse getPageBasicQuestion(long midCategoryId, Long memberId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
         List<Question> questions = questionRepository.findQuestionByParentQuestionIdIsNullAndMidCategory_Id(midCategoryId);
         Question basicQuestion = questions.get(random.nextInt(questions.size()));
-        Question[] questionGroup = getQuestionGroup(basicQuestion);
-        List<QuestionResponse> questionResponses = Arrays.stream(questionGroup)
-            .map(QuestionResponse::from)
-            .toList();
-
-        Page page = new Page(member);
-        Page savedPage = pageRepository.save(page);
-        pageQuestionRepository.save(new PageQuestion(basicQuestion, savedPage));
-        return new QuestionsResponse(savedPage.getId(), questionResponses);
+        Page savedPage = pageRepository.save(new Page(member));
+        PageQuestion savedPageQuestion = pageQuestionRepository.save(new PageQuestion(basicQuestion, savedPage));
+        QuestionResponse response = QuestionResponse.from(savedPageQuestion);
+        return new QuestionsResponse(savedPage.getId(), List.of(response));
     }
 
     private Question[] getQuestionGroup(Question basicQuestion) {

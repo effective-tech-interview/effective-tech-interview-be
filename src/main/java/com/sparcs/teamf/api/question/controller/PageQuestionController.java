@@ -24,6 +24,6 @@ public class PageQuestionController {
     @Operation(summary = "질문 리스트 조회")
     public QuestionsResponse getQuestions(@RequestParam(value = "midCategoryId") long midCategoryId,
                                           @AuthenticationPrincipal EffectiveMember member) {
-        return pageQuestionService.getQuestions(midCategoryId, member.getMemberId());
+        return pageQuestionService.getPageBasicQuestion(midCategoryId, member.getMemberId());
     }
 }
