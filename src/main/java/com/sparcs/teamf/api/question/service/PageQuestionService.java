@@ -3,6 +3,8 @@ package com.sparcs.teamf.api.question.service;
 import com.sparcs.teamf.api.member.exception.MemberNotFoundException;
 import com.sparcs.teamf.api.question.dto.QuestionResponse;
 import com.sparcs.teamf.api.question.dto.QuestionsResponse;
+import com.sparcs.teamf.api.question.exception.MaximumTailQuestionExceededException;
+import com.sparcs.teamf.api.question.exception.PageNotFountException;
 import com.sparcs.teamf.domain.gpt.Gpt;
 import com.sparcs.teamf.domain.member.Member;
 import com.sparcs.teamf.domain.member.MemberRepository;
@@ -41,10 +43,34 @@ public class PageQuestionService {
         return new QuestionsResponse(savedPage.getId(), List.of(response));
     }
 
-    private Question[] getQuestionGroup(Question basicQuestion) {
-        Question[] questionGroup = new Question[QUESTION_TOTAL_NUM];
+    @Transactional
+    public QuestionsResponse getPageTailQuestion(Long memberId, long pageId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
+        Page page = pageRepository.findById(pageId).orElseThrow(PageNotFountException::new);
+        List<PageQuestion> pageQuestions = page.getPageQuestions();
+        int lastQuestionIndex = pageQuestions.size() - 1;
+        if (lastQuestionIndex >= 3) {
+            throw new MaximumTailQuestionExceededException();
+        }
+        PageQuestion lastPageQuestion = pageQuestions.get(lastQuestionIndex);
+        Question parentQuestion = lastPageQuestion.getQuestion();
+        List<Question> questionPage = questionRepository.findQuestionByParentQuestionId(parentQuestion.getId());
+        Question question;
+        if (questionPage.isEmpty()) {
+            question = gpt.loadNextQuestion(parentQuestion);
+        } else {
+            question = questionPage.get(0);
+        }
+        pageQuestionRepository.save(new PageQuestion(question, page));
+        List<PageQuestion> pageQuestions2 = pageQuestionRepository.findAllByPage(page);
+        List<QuestionResponse> questionResponses = pageQuestions2.stream().map(QuestionResponse::from).toList();
+        return new QuestionsResponse(page.getId(), questionResponses);
+    }
+
+    private Question[] getQuestionGroup(Question basicQuestion, int savedQuestionCount) {
+        Question[] questionGroup = new Question[savedQuestionCount + 1];
         questionGroup[0] = basicQuestion;
-        for (int i = 0; i < QUESTION_TOTAL_NUM - 1; i++) {
+        for (int i = 0; i < savedQuestionCount; i++) {
             Question parentQuestion = questionGroup[i];
             List<Question> questionByParentQuestionId = questionRepository.findQuestionByParentQuestionId(parentQuestion.getId());
             if (questionByParentQuestionId.isEmpty()) {
