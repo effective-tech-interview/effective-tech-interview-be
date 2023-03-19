@@ -29,10 +29,10 @@ public class PageAnswerService {
     public void saveMemberAnswer(long memberId, long pageId, long pageQuestionId, String memberAnswer) {
         Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
         Page page = pageRepository.findById(pageId).orElseThrow(PageNotFountException::new);
-        validateMember(member, page);
-
         PageQuestion pageQuestion = pageQuestionRepository.findById(pageQuestionId)
                 .orElseThrow(PageQuestionNotFoundException::new);
+        validatePageQuestion(member, page, pageQuestion);
+
         if (pageQuestion.getMemberAnswer() != null) {
             pageQuestion.getMemberAnswer().updateMemberAnswer(memberAnswer);
             return;
@@ -41,9 +41,12 @@ public class PageAnswerService {
         memberAnswerRepository.save(answer);
     }
 
-    private void validateMember(Member member, Page page) {
+    private void validatePageQuestion(Member member, Page page, PageQuestion pageQuestion) {
         if (page.getMember() != member) {
             throw new PageOwnerMismatchException();
+        }
+        if (pageQuestion.getPage() != page) {
+            throw new PageQuestionNotFoundException();
         }
     }
 }
