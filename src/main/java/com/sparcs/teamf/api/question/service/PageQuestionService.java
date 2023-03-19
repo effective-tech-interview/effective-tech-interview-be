@@ -31,7 +31,6 @@ public class PageQuestionService {
     private final PageRepository pageRepository;
     private final PageQuestionRepository pageQuestionRepository;
     private final ThreadLocalRandom random = ThreadLocalRandom.current();
-    private static final int QUESTION_TOTAL_NUM = 4;
 
     @Transactional
     public QuestionsResponse getPageBasicQuestion(long midCategoryId, Long memberId) {
