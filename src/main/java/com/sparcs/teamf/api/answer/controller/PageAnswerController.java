@@ -3,6 +3,9 @@ package com.sparcs.teamf.api.answer.controller;
 import com.sparcs.teamf.api.answer.dto.SaveMemberAnswerRequest;
 import com.sparcs.teamf.api.answer.service.PageAnswerService;
 import com.sparcs.teamf.api.auth.dto.EffectiveMember;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,6 +24,13 @@ public class PageAnswerController {
     private final PageAnswerService pageAnswerService;
 
     @PostMapping("/{pageId}/questions/{pageQuestionId}")
+    @Operation(summary = "멤버 답변 저장 및 업데이트")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "successful operation"),
+            @ApiResponse(responseCode = "500", description = "internal server error"),
+            @ApiResponse(responseCode = "401", description = "unauthorized"),
+            @ApiResponse(responseCode = "403", description = "forbidden"),
+            @ApiResponse(responseCode = "404", description = "not found")})
     public void saveMemberAnswer(@PathVariable("pageId") long pageId,
                                  @PathVariable("pageQuestionId") long pageQuestionId,
                                  @RequestBody SaveMemberAnswerRequest request,
