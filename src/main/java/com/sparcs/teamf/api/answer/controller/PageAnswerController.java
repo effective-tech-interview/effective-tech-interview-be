@@ -23,7 +23,7 @@ public class PageAnswerController {
 
     private final PageAnswerService pageAnswerService;
 
-    @PostMapping("/{pageId}/questions/{pageQuestionId}")
+    @PostMapping("/{pageId}/questions/{questionId}")
     @Operation(summary = "멤버 답변 저장 및 업데이트")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "successful operation"),
@@ -32,7 +32,7 @@ public class PageAnswerController {
             @ApiResponse(responseCode = "403", description = "forbidden"),
             @ApiResponse(responseCode = "404", description = "not found")})
     public void saveMemberAnswer(@PathVariable("pageId") long pageId,
-                                 @PathVariable("pageQuestionId") long pageQuestionId,
+                                 @PathVariable("questionId") long pageQuestionId,
                                  @RequestBody SaveMemberAnswerRequest request,
                                  @AuthenticationPrincipal EffectiveMember member) {
         pageAnswerService.saveMemberAnswer(member.getMemberId(), pageId, pageQuestionId, request.memberAnswer());
