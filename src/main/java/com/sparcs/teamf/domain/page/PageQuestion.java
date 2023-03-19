@@ -2,6 +2,7 @@ package com.sparcs.teamf.domain.page;
 
 import com.sparcs.teamf.domain.BaseEntity;
 import com.sparcs.teamf.domain.question.Question;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -31,7 +32,7 @@ public class PageQuestion extends BaseEntity {
     @JoinColumn(name = "page_id")
     private Page page;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "pageQuestion", cascade = CascadeType.ALL, orphanRemoval = true)
     private MemberAnswer memberAnswer;
 
     public PageQuestion(Question question, Page page) {
