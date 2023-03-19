@@ -6,7 +6,7 @@ public interface Gpt {
 
     String ask(String question);
 
-    void loadNextQuestion(Question question);
+    Question loadNextQuestion(Question question);
 
     Question loadBaseQuestions(Question question);
 }
