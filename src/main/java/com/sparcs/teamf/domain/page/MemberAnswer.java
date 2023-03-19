@@ -1,7 +1,6 @@
 package com.sparcs.teamf.domain.page;
 
 import com.sparcs.teamf.domain.BaseEntity;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -27,4 +26,13 @@ public class MemberAnswer extends BaseEntity {
     private PageQuestion pageQuestion;
 
     private String memberAnswer;
+
+    public MemberAnswer(String memberAnswer, PageQuestion pageQuestion) {
+        this.memberAnswer = memberAnswer;
+        this.pageQuestion = pageQuestion;
+    }
+
+    public void updateMemberAnswer(String memberAnswer) {
+        this.memberAnswer = memberAnswer;
+    }
 }
