@@ -28,7 +28,12 @@ public class PageAnswerService {
 
     @Transactional
     public void saveMemberAnswer(long memberId, long pageId, long pageQuestionId, String memberAnswer) {
-        PageQuestion pageQuestion = validateAnsReturnPageQuestion(memberId, pageId, pageQuestionId);
+        Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
+        Page page = pageRepository.findById(pageId).orElseThrow(PageNotFountException::new);
+        PageQuestion pageQuestion = pageQuestionRepository.findById(pageQuestionId)
+                .orElseThrow(PageQuestionNotFoundException::new);
+        validatePageQuestion(member, page, pageQuestion);
+
         if (pageQuestion.getMemberAnswer() != null) {
             pageQuestion.getMemberAnswer().updateMemberAnswer(memberAnswer);
             return;
@@ -37,17 +42,12 @@ public class PageAnswerService {
         memberAnswerRepository.save(answer);
     }
 
-    private PageQuestion validateAnsReturnPageQuestion(long memberId, long pageId, long pageQuestionId) {
-        Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
-        Page page = pageRepository.findById(pageId).orElseThrow(PageNotFountException::new);
-        PageQuestion pageQuestion = pageQuestionRepository.findById(pageQuestionId)
-                .orElseThrow(PageQuestionNotFoundException::new);
+    private void validatePageQuestion(Member member, Page page, PageQuestion pageQuestion) {
         if (page.getMember() != member) {
             throw new PageOwnerMismatchException();
         }
         if (pageQuestion.getPage() != page) {
             throw new PageQuestionMismatchException();
         }
-        return pageQuestion;
     }
 }
