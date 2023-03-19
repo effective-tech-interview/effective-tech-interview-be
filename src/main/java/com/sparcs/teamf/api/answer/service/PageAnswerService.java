@@ -4,6 +4,7 @@ import com.sparcs.teamf.api.answer.exception.PageQuestionNotFoundException;
 import com.sparcs.teamf.api.member.exception.MemberNotFoundException;
 import com.sparcs.teamf.api.question.exception.PageNotFountException;
 import com.sparcs.teamf.api.question.exception.PageOwnerMismatchException;
+import com.sparcs.teamf.api.question.exception.PageQuestionMismatchException;
 import com.sparcs.teamf.domain.member.Member;
 import com.sparcs.teamf.domain.member.MemberRepository;
 import com.sparcs.teamf.domain.page.MemberAnswer;
@@ -46,7 +47,7 @@ public class PageAnswerService {
             throw new PageOwnerMismatchException();
         }
         if (pageQuestion.getPage() != page) {
-            throw new PageQuestionNotFoundException();
+            throw new PageQuestionMismatchException();
         }
     }
 }
