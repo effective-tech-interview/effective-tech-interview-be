@@ -3,8 +3,8 @@ package com.sparcs.teamf.api.question.service;
 import com.sparcs.teamf.api.member.exception.MemberNotFoundException;
 import com.sparcs.teamf.api.question.dto.QuestionResponse;
 import com.sparcs.teamf.api.question.dto.QuestionsResponse;
-import com.sparcs.teamf.api.question.exception.MaximumTailQuestionExceededException;
 import com.sparcs.teamf.api.question.exception.PageNotFountException;
+import com.sparcs.teamf.api.question.exception.PageOwnerMismatchException;
 import com.sparcs.teamf.domain.gpt.Gpt;
 import com.sparcs.teamf.domain.member.Member;
 import com.sparcs.teamf.domain.member.MemberRepository;
@@ -16,6 +16,7 @@ import com.sparcs.teamf.domain.question.Question;
 import com.sparcs.teamf.domain.question.QuestionRepository;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -47,38 +48,26 @@ public class PageQuestionService {
     public QuestionsResponse getPageTailQuestion(Long memberId, long pageId) {
         Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
         Page page = pageRepository.findById(pageId).orElseThrow(PageNotFountException::new);
-        List<PageQuestion> pageQuestions = page.getPageQuestions();
-        int lastQuestionIndex = pageQuestions.size() - 1;
-        if (lastQuestionIndex >= 3) {
-            throw new MaximumTailQuestionExceededException();
+        validateMember(member, page);
+
+        List<PageQuestion> existedPageQuestions = page.getPageQuestions();
+        int lastPageQuestionIndex = existedPageQuestions.size() - 1;
+        List<QuestionResponse> questionResponses = existedPageQuestions.stream().map(QuestionResponse::from).collect(Collectors.toList());
+        if (lastPageQuestionIndex >= 3) {
+            return new QuestionsResponse(page.getId(), questionResponses);
         }
-        PageQuestion lastPageQuestion = pageQuestions.get(lastQuestionIndex);
-        Question parentQuestion = lastPageQuestion.getQuestion();
+        Question parentQuestion = existedPageQuestions.get(lastPageQuestionIndex).getQuestion();
         List<Question> questionPage = questionRepository.findQuestionByParentQuestionId(parentQuestion.getId());
-        Question question;
-        if (questionPage.isEmpty()) {
-            question = gpt.loadNextQuestion(parentQuestion);
-        } else {
-            question = questionPage.get(0);
-        }
-        pageQuestionRepository.save(new PageQuestion(question, page));
-        List<PageQuestion> pageQuestions2 = pageQuestionRepository.findAllByPage(page);
-        List<QuestionResponse> questionResponses = pageQuestions2.stream().map(QuestionResponse::from).toList();
+        Question question = questionPage.isEmpty() ? gpt.loadNextQuestion(parentQuestion) : questionPage.get(0);
+
+        PageQuestion savedPageQuestion = pageQuestionRepository.save(new PageQuestion(question, page));
+        questionResponses.add(QuestionResponse.from(savedPageQuestion));
         return new QuestionsResponse(page.getId(), questionResponses);
     }
 
-    private Question[] getQuestionGroup(Question basicQuestion, int savedQuestionCount) {
-        Question[] questionGroup = new Question[savedQuestionCount + 1];
-        questionGroup[0] = basicQuestion;
-        for (int i = 0; i < savedQuestionCount; i++) {
-            Question parentQuestion = questionGroup[i];
-            List<Question> questionByParentQuestionId = questionRepository.findQuestionByParentQuestionId(parentQuestion.getId());
-            if (questionByParentQuestionId.isEmpty()) {
-                questionGroup[i + 1] = gpt.loadNextQuestion(parentQuestion);
-                return questionGroup;
-            }
-            questionGroup[i + 1] = questionByParentQuestionId.get(0);
+    private void validateMember(Member member, Page page) {
+        if (page.getMember() != member) {
+            throw new PageOwnerMismatchException();
         }
-        return questionGroup;
     }
 }
