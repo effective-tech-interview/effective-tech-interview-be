@@ -39,6 +39,13 @@ public class MemberService {
         return new MemberProfileResponse(member.getNickname(), member.getEmail());
     }
 
+    @Transactional
+    public void delete(Long memberId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
+        emailAuthRepository.deleteAllByEmail(member.getEmail());
+        memberRepository.deleteById(memberId);
+    }
+
     private void handleUnverifiedEmail(String email) {
         EmailAuth emailAuth = emailAuthRepository.findFirstByEmailAndEventOrderByCreatedDateDesc(email, RESET_PASSWORD)
                 .orElseThrow(EmailRequestRequiredException::new);

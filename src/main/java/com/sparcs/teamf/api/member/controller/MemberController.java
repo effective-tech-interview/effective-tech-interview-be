@@ -15,6 +15,7 @@ import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -54,5 +55,16 @@ public class MemberController {
             @ApiResponse(responseCode = "404", description = "not found", content = @Content)})
     public MemberProfileResponse getMemberProfile(@AuthenticationPrincipal EffectiveMember member) {
         return memberService.getMemberProfile(member.getMemberId());
+    }
+
+    @DeleteMapping
+    @Operation(summary = "멤버 탈퇴")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "successful operation"),
+            @ApiResponse(responseCode = "500", description = "internal server error"),
+            @ApiResponse(responseCode = "401", description = "unauthorized"),
+            @ApiResponse(responseCode = "404", description = "not found")})
+    public void delete(@AuthenticationPrincipal EffectiveMember member) {
+        memberService.delete(member.getMemberId());
     }
 }
