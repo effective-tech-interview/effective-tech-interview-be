@@ -28,7 +28,7 @@ public class PageQuestionController {
     private final PageQuestionService pageQuestionService;
 
     @GetMapping
-    @Operation(summary = "페이지 조회")
+    @Operation(summary = "페이지 생성 및 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "successful operation", content = {
                     @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = QuestionsResponse.class))}),
