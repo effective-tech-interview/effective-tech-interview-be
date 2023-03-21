@@ -1,7 +1,7 @@
 package com.sparcs.teamf.api.question.service;
 
 import com.sparcs.teamf.api.member.exception.MemberNotFoundException;
-import com.sparcs.teamf.api.question.dto.PageBasicQuestionResponse;
+import com.sparcs.teamf.api.question.dto.PageResponse;
 import com.sparcs.teamf.api.question.dto.QuestionResponse;
 import com.sparcs.teamf.api.question.dto.QuestionsResponse;
 import com.sparcs.teamf.api.question.exception.PageNotFountException;
@@ -35,14 +35,14 @@ public class PageQuestionService {
     private final ThreadLocalRandom random = ThreadLocalRandom.current();
 
     @Transactional
-    public PageBasicQuestionResponse getPageBasicQuestion(Long memberId) {
+    public PageResponse getPage(Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
         Page savedPage = pageRepository.save(new Page(member));
-        return new PageBasicQuestionResponse(savedPage.getId());
+        return new PageResponse(savedPage.getId());
     }
 
     @Transactional
-    public QuestionsResponse getPageTailQuestion(Long memberId, long midCategoryId, long pageId) {
+    public QuestionsResponse getPageQuestions(Long memberId, long midCategoryId, long pageId) {
         Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
         Page page = pageRepository.findById(pageId).orElseThrow(PageNotFountException::new);
         validateMember(member, page);
