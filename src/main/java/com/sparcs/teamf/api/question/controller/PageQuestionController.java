@@ -1,6 +1,7 @@
 package com.sparcs.teamf.api.question.controller;
 
 import com.sparcs.teamf.api.auth.dto.EffectiveMember;
+import com.sparcs.teamf.api.question.dto.PageBasicQuestionResponse;
 import com.sparcs.teamf.api.question.dto.QuestionsResponse;
 import com.sparcs.teamf.api.question.service.PageQuestionService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,9 +35,8 @@ public class PageQuestionController {
             @ApiResponse(responseCode = "500", description = "internal server error", content = @Content),
             @ApiResponse(responseCode = "401", description = "unauthorized", content = @Content),
             @ApiResponse(responseCode = "404", description = "not found", content = @Content)})
-    public QuestionsResponse getPageBasicQuestions(@RequestParam(value = "midCategoryId") long midCategoryId,
-                                                   @AuthenticationPrincipal EffectiveMember member) {
-        return pageQuestionService.getPageBasicQuestion(midCategoryId, member.getMemberId());
+    public PageBasicQuestionResponse getPageBasicQuestions(@AuthenticationPrincipal EffectiveMember member) {
+        return pageQuestionService.getPageBasicQuestion(member.getMemberId());
     }
 
     @GetMapping("/{pageId}/questions")
@@ -49,7 +49,8 @@ public class PageQuestionController {
             @ApiResponse(responseCode = "403", description = "forbidden", content = @Content),
             @ApiResponse(responseCode = "404", description = "not found", content = @Content)})
     public QuestionsResponse getPageTailQuestion(@PathVariable("pageId") long pageId,
+                                                 @RequestParam(value = "midCategoryId") long midCategoryId,
                                                  @AuthenticationPrincipal EffectiveMember member) {
-        return pageQuestionService.getPageTailQuestion(member.getMemberId(), pageId);
+        return pageQuestionService.getPageTailQuestion(member.getMemberId(), midCategoryId, pageId);
     }
 }

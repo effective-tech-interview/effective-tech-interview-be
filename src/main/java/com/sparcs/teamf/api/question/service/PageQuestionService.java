@@ -1,6 +1,7 @@
 package com.sparcs.teamf.api.question.service;
 
 import com.sparcs.teamf.api.member.exception.MemberNotFoundException;
+import com.sparcs.teamf.api.question.dto.PageBasicQuestionResponse;
 import com.sparcs.teamf.api.question.dto.QuestionResponse;
 import com.sparcs.teamf.api.question.dto.QuestionsResponse;
 import com.sparcs.teamf.api.question.exception.PageNotFountException;
@@ -14,6 +15,7 @@ import com.sparcs.teamf.domain.page.PageQuestionRepository;
 import com.sparcs.teamf.domain.page.PageRepository;
 import com.sparcs.teamf.domain.question.Question;
 import com.sparcs.teamf.domain.question.QuestionRepository;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
@@ -33,34 +35,29 @@ public class PageQuestionService {
     private final ThreadLocalRandom random = ThreadLocalRandom.current();
 
     @Transactional
-    public QuestionsResponse getPageBasicQuestion(long midCategoryId, Long memberId) {
+    public PageBasicQuestionResponse getPageBasicQuestion(Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
-        List<Question> questions = questionRepository.findQuestionByParentQuestionIdIsNullAndMidCategory_Id(midCategoryId);
-        Question basicQuestion = questions.get(random.nextInt(questions.size()));
         Page savedPage = pageRepository.save(new Page(member));
-        PageQuestion savedPageQuestion = pageQuestionRepository.save(new PageQuestion(basicQuestion, savedPage));
-        QuestionResponse response = QuestionResponse.from(savedPageQuestion);
-        return new QuestionsResponse(savedPage.getId(), List.of(response));
+        return new PageBasicQuestionResponse(savedPage.getId());
     }
 
     @Transactional
-    public QuestionsResponse getPageTailQuestion(Long memberId, long pageId) {
+    public QuestionsResponse getPageTailQuestion(Long memberId, long midCategoryId, long pageId) {
         Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
         Page page = pageRepository.findById(pageId).orElseThrow(PageNotFountException::new);
         validateMember(member, page);
 
         List<PageQuestion> existedPageQuestions = page.getPageQuestions();
-        int lastPageQuestionIndex = existedPageQuestions.size() - 1;
-        List<QuestionResponse> questionResponses = existedPageQuestions.stream().map(QuestionResponse::from).collect(Collectors.toList());
-        if (lastPageQuestionIndex >= 3) {
-            return new QuestionsResponse(page.getId(), questionResponses);
+        List<QuestionResponse> questionResponses;
+        if (existedPageQuestions.isEmpty()) {
+            PageQuestion savedPageQuestion = savedPageBasicQuestionByMidCategory(midCategoryId, page);
+            return new QuestionsResponse(page.getId(), Collections.singletonList(QuestionResponse.from(savedPageQuestion)));
         }
-        Question parentQuestion = existedPageQuestions.get(lastPageQuestionIndex).getQuestion();
-        List<Question> questionPage = questionRepository.findQuestionByParentQuestionId(parentQuestion.getId());
-        Question question = questionPage.isEmpty() ? gpt.loadNextQuestion(parentQuestion) : questionPage.get(0);
-
-        PageQuestion savedPageQuestion = pageQuestionRepository.save(new PageQuestion(question, page));
-        questionResponses.add(QuestionResponse.from(savedPageQuestion));
+        questionResponses = existedPageQuestions.stream().map(QuestionResponse::from).collect(Collectors.toList());
+        if (!existedPageQuestions.isEmpty() && existedPageQuestions.size() < 4) {
+            Question parentQuestion = existedPageQuestions.get(existedPageQuestions.size() - 1).getQuestion();
+            questionResponses.add(QuestionResponse.from(savedPageTailQuestionByParentQuestion(page, parentQuestion)));
+        }
         return new QuestionsResponse(page.getId(), questionResponses);
     }
 
@@ -68,5 +65,17 @@ public class PageQuestionService {
         if (page.getMember() != member) {
             throw new PageOwnerMismatchException();
         }
+    }
+
+    private PageQuestion savedPageBasicQuestionByMidCategory(long midCategoryId, Page page) {
+        List<Question> questions = questionRepository.findQuestionByParentQuestionIdIsNullAndMidCategory_Id(midCategoryId);
+        Question basicQuestion = questions.get(random.nextInt(questions.size()));
+        return pageQuestionRepository.save(new PageQuestion(basicQuestion, page));
+    }
+
+    private PageQuestion savedPageTailQuestionByParentQuestion(Page page, Question parentQuestion) {
+        List<Question> questionPage = questionRepository.findQuestionByParentQuestionId(parentQuestion.getId());
+        Question question = questionPage.isEmpty() ? gpt.loadNextQuestion(parentQuestion) : questionPage.get(0);
+        return pageQuestionRepository.save(new PageQuestion(question, page));
     }
 }
