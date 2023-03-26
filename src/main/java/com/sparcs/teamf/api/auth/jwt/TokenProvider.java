@@ -120,7 +120,7 @@ public class TokenProvider {
         if (!validateToken(refreshToken)) {
             return false;
         }
-        return accessTokenRepository.existsById(refreshToken);
+        return userTokenRepository.existsById(refreshToken);
     }
 
 
