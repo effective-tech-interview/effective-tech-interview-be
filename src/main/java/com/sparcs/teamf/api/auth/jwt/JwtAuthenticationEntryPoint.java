@@ -28,6 +28,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         response.setContentType("application/json;charset=UTF-8");
         String result = objectMapper.writeValueAsString(
                 new ErrorResponseDto(HttpStatus.UNAUTHORIZED.value(), "인증 정보가 유효하지 않습니다."));
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.getWriter().write(result);
     }
 }
