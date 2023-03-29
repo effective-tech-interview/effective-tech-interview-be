@@ -75,7 +75,7 @@ public class SignupEmailService implements EmailService {
                 + "                <table align=\"center\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"380\" style=\"border-collapse: collapse;\n"
                 + "\tborder-radius: 50px;\">\n"
                 + "                    <tr>\n"
-                + "                        <td style=\"padding: 10px; font-size: 34px; background-color: #ffffff; text-align: center;\">\n"
+                + "                        <td style=\"padding: 10px; font-size: 34px; background-color: #ffffff; text-align: center; padding-left: 34px;\">\n"
                 + "                            <h1 style=\"font-size: 34px; line-height: 40px; letter-spacing: 24px; color: #000000; \">\n"
                 +                                   emailVerificationCode
                 + "                            </h1>\n"
