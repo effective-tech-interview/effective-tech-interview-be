@@ -113,6 +113,6 @@ public class ResetPasswordEmailService implements EmailService {
                 + "    </table>\n"
                 + "</body>\n"
                 + "\n"
-                + "</html>";
+                + "</html>").toString();
     }
 }
