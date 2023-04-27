@@ -1,0 +1,10 @@
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    implementation project(":domain")
+}
+
+bootJar {
+    enabled = false
+}
+jar { enabled = true }

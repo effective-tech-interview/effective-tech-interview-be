@@ -1,0 +1,14 @@
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springdoc:springdoc-openapi-ui:1.6.14'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    implementation project(":gpt")
+    implementation project(":domain")
+    implementation project(":email")
+    implementation project(":auth")
+}

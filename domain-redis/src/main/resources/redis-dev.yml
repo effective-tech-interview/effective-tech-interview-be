@@ -1,0 +1,4 @@
+spring:
+  redis:
+    host: ENC(FxiXKpngr9/wRO5ceTY867dmpCFgQqf0T8WU0WEu5yrFOl1eV8eHIdayqpjSgDRc+NA0a/1MWBvL0vakSsnF0ZpAQxjqsvlk)
+    port: 6379

@@ -1,0 +1,9 @@
+dependencies {
+    implementation 'org.springframework:spring-tx'
+
+    implementation project(':domain-rds')
+    implementation project(':domain-redis')
+}
+
+bootJar { enabled = false }
+jar { enabled = true }

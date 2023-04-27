@@ -13,3 +13,15 @@ gradleEnterprise {
 }
 
 rootProject.name = 'teamf'
+
+include 'gpt'
+include 'web'
+include 'config'
+include 'domain'
+include 'domain-rds'
+include 'domain-redis'
+include 'email'
+include 'auth'
+include 'nickname'
+include 'willBeRemoved'
+

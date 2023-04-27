@@ -1,0 +1,11 @@
+dependencies {
+    implementation 'com.theokanning.openai-gpt3-java:client:0.9.0'
+
+    implementation project(":domain")
+}
+
+
+bootJar {
+    enabled = false
+}
+jar { enabled = true }
