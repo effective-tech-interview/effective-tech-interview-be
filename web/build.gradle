@@ -5,10 +5,14 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    testRuntimeOnly 'com.h2database:h2'
 
     implementation project(":gpt")
     implementation project(":domain")
     implementation project(":email")
     implementation project(":auth")
+    implementation project(":domain-rds")
 }

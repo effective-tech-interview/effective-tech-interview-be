@@ -1,9 +1,31 @@
+# todo 각각의 module 에 application.yml 파일을 생성하여 관리하도록 수정
 server:
   port: 8080
   servlet:
     context-path: /api
 
+springdoc:
+  version: '1.0'
+
 spring:
+  config:
+    name: auth,config,domain,rds,redis,email,gpt,nickname,web,application
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: springMailUsername
+    password: springMailPassword
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  redis:
+    host: localhost
+    port: 6379
+
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     open-in-view: false
@@ -19,33 +41,9 @@ spring:
     url: jdbc:h2:mem:test
     username: sa
     password:
-  redis:
-    host: localhost
-    port: 6379
-
   h2:
     console:
       enabled: true
-
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: springMailUsername
-    password: springMailPassword
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-
-jasypt:
-  encryptor:
-    password: jasyptEncryptorPassword
-
-springdoc:
-  version: '1.0'
-
 gpt:
   key1: ${gpt_key1:sk-nothing}
   key2: ${gpt_key2:sk-nothing}
@@ -59,3 +57,6 @@ jwt:
   access-token-validity-in-seconds: 86400
   refresh-token-validity-in-seconds: 604800
   one-time-token-validity-in-seconds: 300
+jasypt:
+  encryptor:
+    password: jasyptEncryptorPassword
