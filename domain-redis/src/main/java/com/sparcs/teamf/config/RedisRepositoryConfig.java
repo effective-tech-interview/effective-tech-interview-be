@@ -1,7 +1,5 @@
 package com.sparcs.teamf.config;
 
-import static org.springframework.data.redis.core.RedisKeyValueAdapter.EnableKeyspaceEvents.ON_STARTUP;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,7 +9,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 
 @Configuration
-@EnableRedisRepositories(enableKeyspaceEvents = ON_STARTUP)
+@EnableRedisRepositories
 public class RedisRepositoryConfig {
 
     @Value("${spring.redis.host}")
