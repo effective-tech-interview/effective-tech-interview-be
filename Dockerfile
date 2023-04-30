@@ -2,7 +2,7 @@ FROM amazoncorretto:17-alpine-jdk
 
 WORKDIR /app
 
-COPY /build/libs/teamf-0.0.1-SNAPSHOT.jar /app/teamf-0.0.1-SNAPSHOT.jar
+COPY /web/build/libs/web-0.0.1-SNAPSHOT.jar /app/teamf-0.0.1-SNAPSHOT.jar
 
 ENV encrypt_key=encrypt_key
 

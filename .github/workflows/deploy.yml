@@ -2,7 +2,7 @@ name: prod-deploy
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main","feat/multimodule" ]
 
 jobs:
   deploy:

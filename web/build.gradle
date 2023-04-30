@@ -16,3 +16,9 @@ dependencies {
     implementation project(":auth")
     implementation project(":domain-rds")
 }
+jar {
+    enabled = false
+}
+bootJar {
+    enabled = true
+}
