@@ -1,0 +1,82 @@
+name: prod-deploy
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "develop" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    services:
+      localhost: # 이 부분은 로컬에서 redis를 사용할 때 localhost 를 사용할 수 있도록 하는 명칭
+        image: redis
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew build
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
+          aws-region: ap-northeast-2
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: effective-tech-interview
+          IMAGE_TAG: latest
+        run: |
+          docker buildx build --platform=linux/amd64 -f ./DockerFile-dev -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+      - name: Get current time
+        uses: 1466587594/get-current-time@v2
+        id: current-time
+        with:
+          format: YYYYMMDD_HH-mm-ss
+          utcOffset: "+09:00"
+
+      - name: Generate deployment package
+        run: |
+          mkdir -p deploy
+          cp ./Dockerrun.aws.dev.json deploy/Dockerrun.aws.json
+          cd deploy && zip -r deploy.zip .
+
+      - name: Beanstalk Deploy
+        uses: einaregilsson/beanstalk-deploy@v14
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
+          application_name: effective-tech-interview
+          environment_name: Effective-tech-interview-env
+          version_label: earth-docker-${{steps.current-time.outputs.formattedTime}}
+          region: ap-northeast-2
+          deployment_package: deploy/deploy.zip
+          wait_for_environment_recovery: 200
