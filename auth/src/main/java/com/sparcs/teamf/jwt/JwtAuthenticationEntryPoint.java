@@ -1,6 +1,7 @@
 package com.sparcs.teamf.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sparcs.teamf.dto.ErrorResponseDto;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -29,11 +30,5 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
                 new ErrorResponseDto(HttpStatus.UNAUTHORIZED.value(), "인증 정보가 유효하지 않습니다."));
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.getWriter().write(result);
-    }
-
-    //todo 여기 위치에 임시로 제작
-    //의존성 방향 고려해서 옮기는 방향 고려
-    private record ErrorResponseDto(int status, String message) {
-
     }
 }

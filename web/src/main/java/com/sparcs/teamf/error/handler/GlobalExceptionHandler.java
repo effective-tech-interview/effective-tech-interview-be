@@ -1,7 +1,7 @@
 package com.sparcs.teamf.error.handler;
 
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
-import com.sparcs.teamf.error.dto.ErrorResponseDto;
+import com.sparcs.teamf.dto.ErrorResponseDto;
 import com.sparcs.teamf.exception.HttpException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

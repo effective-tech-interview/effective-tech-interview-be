@@ -32,7 +32,7 @@ public class AddQuestionService {
         Question newQuestion = questionRepository.save(new Question(question, midCategory));
         //todo gpt 관련 로직 추가
 //        gpt.loadBaseQuestions(newQuestion);
-//        return new AddQuestionResponse(question);
+//        return new AddQuestionResponse(question); 
         return new AddQuestionResponse("question");
     }
 }
