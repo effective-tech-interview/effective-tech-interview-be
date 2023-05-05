@@ -78,8 +78,10 @@ public class PageQuestionService {
     private PageQuestion savedPageTailQuestionByParentQuestion(Page page, Question parentQuestion) {
         List<Question> questionPage = questionRepository.findQuestionByParentQuestionId(parentQuestion.getId());
         //todo gpt 로 질문 생성 로직 추가
-//        Question question = questionPage.isEmpty() ? gpt.loadNextQuestion(parentQuestion) : questionPage.get(0);
-        return null;
-//        return pageQuestionRepository.save(new PageQuestion(question, page));
+        if (questionPage.isEmpty()) {
+            throw new IllegalStateException("현재 페이지는 " + page.getId());
+        }
+        Question question = questionPage.get(0);
+        return pageQuestionRepository.save(new PageQuestion(question, page));
     }
 }

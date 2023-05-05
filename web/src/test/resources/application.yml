@@ -22,10 +22,6 @@ spring:
           starttls:
             enable: true
 
-  redis:
-    host: localhost
-    port: 6379
-
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     open-in-view: false
@@ -41,6 +37,11 @@ spring:
     url: jdbc:h2:mem:test
     username: sa
     password:
+  redis:
+    host: localhost
+    port: 6379
+    password: password
+
   h2:
     console:
       enabled: true
