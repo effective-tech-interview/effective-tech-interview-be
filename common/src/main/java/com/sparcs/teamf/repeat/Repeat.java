@@ -1,6 +1,5 @@
 package com.sparcs.teamf.repeat;
 
-import com.sparcs.teamf.exception.HttpException;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -13,7 +12,7 @@ public class Repeat {
 
     public static <T> T repeat(Supplier<T> supplier,
             Predicate<T> needToRepeat,
-            Supplier<HttpException> exceptionSupplier) throws InterruptedException {
+            Supplier<RuntimeException> exceptionSupplier) throws InterruptedException {
 
         for (int attempt = 0; attempt < DEFAULT_MAX_ATTEMPTS; attempt++) {
             try {

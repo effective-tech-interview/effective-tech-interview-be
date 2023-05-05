@@ -27,7 +27,6 @@ public class PageAnswerService {
 
     @Transactional
     public void saveMemberAnswer(long memberId, long pageId, long pageQuestionId, String memberAnswer) {
-        //todo MemberNotFoundException 위치 결정
         Member member = memberRepository.findById(memberId).orElseThrow();
         Page page = pageRepository.findById(pageId).orElseThrow(PageNotFountException::new);
         PageQuestion pageQuestion = pageQuestionRepository.findById(pageQuestionId)

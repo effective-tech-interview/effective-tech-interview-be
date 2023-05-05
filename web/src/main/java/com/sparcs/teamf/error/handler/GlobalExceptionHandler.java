@@ -2,7 +2,6 @@ package com.sparcs.teamf.error.handler;
 
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.sparcs.teamf.dto.ErrorResponseDto;
-import com.sparcs.teamf.exception.HttpException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,14 +38,6 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponseDto> onHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException e) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
                 .body(new ErrorResponseDto(HttpStatus.METHOD_NOT_ALLOWED.value(), "지원하지 않는 HTTP 메서드입니다."));
-    }
-
-    @ExceptionHandler(HttpException.class)
-    public ResponseEntity<ErrorResponseDto> httpExceptionHandle(HttpException e) {
-
-        log.error("httpException : {} {}", e, e.getMessage());
-        return ResponseEntity.status(e.getCode())
-                .body(new ErrorResponseDto(e.getCode(), e.getMessage()));
     }
 
     @ExceptionHandler(Exception.class)
