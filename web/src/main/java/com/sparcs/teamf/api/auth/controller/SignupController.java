@@ -1,6 +1,6 @@
 package com.sparcs.teamf.api.auth.controller;
 
-import com.sparcs.teamf.dto.SignupRequest;
+import com.sparcs.teamf.api.auth.dto.SignupRequest;
 import com.sparcs.teamf.service.SignupService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

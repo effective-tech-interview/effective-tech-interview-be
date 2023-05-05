@@ -1,8 +1,8 @@
 package com.sparcs.teamf.api.member.controller;
 
+import com.sparcs.teamf.api.auth.dto.ResetPasswordEmailRequest;
 import com.sparcs.teamf.dto.EffectiveMember;
 import com.sparcs.teamf.dto.MemberProfileResponse;
-import com.sparcs.teamf.dto.ResetPasswordEmailRequest;
 import com.sparcs.teamf.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

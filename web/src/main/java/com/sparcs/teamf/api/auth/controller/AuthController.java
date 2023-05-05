@@ -1,10 +1,10 @@
 package com.sparcs.teamf.api.auth.controller;
 
-import com.sparcs.teamf.dto.AuthenticateEmailRequest;
+import com.sparcs.teamf.api.auth.dto.AuthenticateEmailRequest;
+import com.sparcs.teamf.api.auth.dto.LoginRequest;
+import com.sparcs.teamf.api.auth.dto.SendEmailRequest;
 import com.sparcs.teamf.dto.FreeTokenDto;
-import com.sparcs.teamf.dto.LoginRequest;
 import com.sparcs.teamf.dto.OneTimeTokenResponse;
-import com.sparcs.teamf.dto.SendEmailRequest;
 import com.sparcs.teamf.dto.TokenResponse;
 import com.sparcs.teamf.service.AuthService;
 import com.sparcs.teamf.service.EmailAuthService;

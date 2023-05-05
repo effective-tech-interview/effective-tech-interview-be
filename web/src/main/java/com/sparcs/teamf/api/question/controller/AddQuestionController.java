@@ -1,6 +1,6 @@
 package com.sparcs.teamf.api.question.controller;
 
-import com.sparcs.teamf.question.dto.AddQuestionRequest;
+import com.sparcs.teamf.api.question.dto.AddQuestionRequest;
 import com.sparcs.teamf.question.dto.AddQuestionResponse;
 import com.sparcs.teamf.question.service.AddQuestionService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,6 +22,6 @@ public class AddQuestionController {
     @PostMapping
     @Operation(summary = "기본 질문, 꼬리 질문 생성 및 저장")
     public AddQuestionResponse addQuestion(@RequestBody AddQuestionRequest addQuestionRequest) {
-        return addQuestionService.addQuestion(addQuestionRequest);
+        return addQuestionService.addQuestion(addQuestionRequest.midCategoryId(), addQuestionRequest.question());
     }
 }

@@ -5,7 +5,6 @@ import com.sparcs.teamf.midcategory.MidCategory;
 import com.sparcs.teamf.midcategory.MidCategoryRepository;
 import com.sparcs.teamf.question.Question;
 import com.sparcs.teamf.question.QuestionRepository;
-import com.sparcs.teamf.question.dto.AddQuestionRequest;
 import com.sparcs.teamf.question.dto.AddQuestionResponse;
 import com.sparcs.teamf.question.exception.IllegalMidCategoryException;
 import javax.transaction.Transactional;
@@ -21,9 +20,7 @@ public class AddQuestionService {
     private final Gpt gpt;
 
     @Transactional
-    public AddQuestionResponse addQuestion(AddQuestionRequest addQuestionRequest) {
-        String question = addQuestionRequest.question();
-        Long midCategoryId = addQuestionRequest.midCategoryId();
+    public AddQuestionResponse addQuestion(Long midCategoryId, String question) {
         if (midCategoryId == null) {
             throw new IllegalMidCategoryException();
         }
