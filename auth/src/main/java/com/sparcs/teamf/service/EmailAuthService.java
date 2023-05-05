@@ -1,6 +1,7 @@
 package com.sparcs.teamf.service;
 
 import com.sparcs.teamf.dto.OneTimeTokenResponse;
+import com.sparcs.teamf.email.AuthEmailSender;
 import com.sparcs.teamf.emailauth.EmailAuth;
 import com.sparcs.teamf.emailauth.EmailAuthRepository;
 import com.sparcs.teamf.emailauth.Event;
@@ -12,7 +13,6 @@ import com.sparcs.teamf.jwt.TokenProvider;
 import com.sparcs.teamf.member.Member;
 import com.sparcs.teamf.member.MemberRepository;
 import java.util.concurrent.ThreadLocalRandom;
-import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,12 +22,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class EmailAuthService {
 
-    @Resource(name = "signupEmailService")
-    private final EmailService signupEmailService;
-
-    @Resource(name = "resetPasswordEmailService")
-    private final EmailService resetPasswordEmailService;
-
+    private final AuthEmailSender authEmailSender;
     private final EmailAuthRepository emailAuthRepository;
     private final MemberRepository memberRepository;
     private final TokenProvider tokenProvider;
@@ -38,7 +33,7 @@ public class EmailAuthService {
             throw new DuplicateEmailException();
         }
         int verificationCode = generateVerificationCode();
-        signupEmailService.send(email, verificationCode);
+        authEmailSender.sendSignupEmail(email, verificationCode);
         emailAuthRepository.save(EmailAuth.of(email, Event.REGISTRATION, verificationCode));
     }
 
@@ -56,7 +51,7 @@ public class EmailAuthService {
             throw new MemberNotFoundException();
         }
         int verificationCode = generateVerificationCode();
-        resetPasswordEmailService.send(email, verificationCode);
+        authEmailSender.sendRegisterEmail(email, verificationCode);
         emailAuthRepository.save(EmailAuth.of(email, Event.RESET_PASSWORD, verificationCode));
     }
 
