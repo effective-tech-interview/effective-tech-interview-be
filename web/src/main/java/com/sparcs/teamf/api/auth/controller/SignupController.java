@@ -1,4 +1,4 @@
-package com.sparcs.teamf.controller;
+package com.sparcs.teamf.api.auth.controller;
 
 import com.sparcs.teamf.dto.SignupRequest;
 import com.sparcs.teamf.service.SignupService;
