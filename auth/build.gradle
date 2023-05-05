@@ -10,8 +10,6 @@ dependencies {
 
     implementation project(":domain-redis")
     implementation project(":domain-rds")
-    //todo nickname 의존성 반대로 변경
-    implementation project(":nickname")
     //todo email 의존성 반대로 변경
     implementation project(":email")
 }

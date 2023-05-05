@@ -14,6 +14,7 @@ dependencies {
     implementation project(":domain")
     implementation project(":email")
     implementation project(":auth")
+    implementation project(":nickname")
     implementation project(":domain-rds")
 }
 jar {
