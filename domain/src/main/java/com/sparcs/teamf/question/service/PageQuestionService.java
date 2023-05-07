@@ -1,6 +1,5 @@
 package com.sparcs.teamf.question.service;
 
-import com.sparcs.teamf.gpt.Gpt;
 import com.sparcs.teamf.member.Member;
 import com.sparcs.teamf.member.MemberRepository;
 import com.sparcs.teamf.page.Page;
@@ -27,7 +26,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PageQuestionService {
 
-    private final Gpt gpt;
+    private final GptQuestionService gptQuestionService;
     private final MemberRepository memberRepository;
     private final QuestionRepository questionRepository;
     private final PageRepository pageRepository;
@@ -77,9 +76,15 @@ public class PageQuestionService {
 
     private PageQuestion savedPageTailQuestionByParentQuestion(Page page, Question parentQuestion) {
         List<Question> questionPage = questionRepository.findQuestionByParentQuestionId(parentQuestion.getId());
-        //todo gpt 로 질문 생성 로직 추가
         if (questionPage.isEmpty()) {
-            throw new IllegalStateException("현재 페이지는 " + page.getId());
+            String nextQuestion = gptQuestionService.generateQuestion(
+                    parentQuestion.getMidCategory().getMainCategory().getName(),
+                    parentQuestion.getMidCategory().getName(),
+                    parentQuestion.getQuestion(),
+                    parentQuestion.getAnswer());
+            Question savedQuestion = questionRepository.save(
+                    new Question(nextQuestion, parentQuestion.getMidCategory()));
+            return pageQuestionRepository.save(new PageQuestion(savedQuestion, page));
         }
         Question question = questionPage.get(0);
         return pageQuestionRepository.save(new PageQuestion(question, page));

@@ -46,6 +46,12 @@ public class Question extends BaseEntity {
         this.midCategory = midCategory;
     }
 
+    public Question(String question, MidCategory midCategory, String answer) {
+        this.question = question;
+        this.midCategory = midCategory;
+        this.answer = answer;
+    }
+
     public void updateParentQuestionId(Long parentQuestionId) {
         this.parentQuestionId = parentQuestionId;
     }
