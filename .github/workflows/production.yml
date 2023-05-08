@@ -1,13 +1,14 @@
 name: prod-deploy
 
 on:
+  workflow_dispatch:
   push:
     branches: [ "main" ]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
+
     services:
       localhost: # 이 부분은 로컬에서 redis를 사용할 때 localhost 를 사용할 수 있도록 하는 명칭
         image: redis
@@ -37,8 +38,8 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
           aws-region: ap-northeast-2
 
       - name: Login to Amazon ECR
@@ -49,10 +50,10 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: teamf-repository
+          ECR_REPOSITORY: effective-tech-interview
           IMAGE_TAG: latest
         run: |
-          docker buildx build --platform=linux/amd64 -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG . -f ./Dockerfile
+          docker buildx build --platform=linux/amd64 -f ./DockerFile-dev -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
       - name: Get current time
@@ -65,16 +66,16 @@ jobs:
       - name: Generate deployment package
         run: |
           mkdir -p deploy
-          cp ./Dockerrun.aws.json deploy/Dockerrun.aws.json
+          cp ./Dockerrun.aws.dev.json deploy/Dockerrun.aws.json
           cd deploy && zip -r deploy.zip .
 
       - name: Beanstalk Deploy
         uses: einaregilsson/beanstalk-deploy@v14
         with:
-          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID_DEV }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
           application_name: effective-tech-interview
-          environment_name: Effectivetechinterview-env
+          environment_name: Effective-tech-interview-env
           version_label: earth-docker-${{steps.current-time.outputs.formattedTime}}
           region: ap-northeast-2
           deployment_package: deploy/deploy.zip
