@@ -1,4 +1,4 @@
-package com.sparcs.teamf.emailauth;
+package com.sparcs.teamf.email;
 
 import lombok.Getter;
 

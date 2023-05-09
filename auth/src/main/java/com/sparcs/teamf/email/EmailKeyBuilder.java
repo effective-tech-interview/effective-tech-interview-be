@@ -1,6 +1,5 @@
 package com.sparcs.teamf.email;
 
-import com.sparcs.teamf.emailauth.Event;
 import org.springframework.stereotype.Component;
 
 @Component

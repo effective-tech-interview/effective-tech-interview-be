@@ -5,7 +5,7 @@ import com.sparcs.teamf.email.AuthEmailSender;
 import com.sparcs.teamf.email.EmailAuthentication;
 import com.sparcs.teamf.email.EmailAuthenticationRepository;
 import com.sparcs.teamf.email.EmailKeyBuilder;
-import com.sparcs.teamf.emailauth.Event;
+import com.sparcs.teamf.email.Event;
 import com.sparcs.teamf.exception.DuplicateEmailException;
 import com.sparcs.teamf.exception.EmailSendLimitExceededException;
 import com.sparcs.teamf.exception.EmailVerificationNotFoundException;
