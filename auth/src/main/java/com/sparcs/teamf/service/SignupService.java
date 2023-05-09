@@ -1,8 +1,9 @@
 package com.sparcs.teamf.service;
 
-import com.sparcs.teamf.emailauth.EmailAuth;
-import com.sparcs.teamf.emailauth.EmailAuthRepository;
-import com.sparcs.teamf.emailauth.Event;
+import com.sparcs.teamf.email.EmailAuthentication;
+import com.sparcs.teamf.email.EmailAuthenticationRepository;
+import com.sparcs.teamf.email.EmailKeyBuilder;
+import com.sparcs.teamf.email.Event;
 import com.sparcs.teamf.exception.DuplicateEmailException;
 import com.sparcs.teamf.exception.EmailRequestRequiredException;
 import com.sparcs.teamf.exception.PasswordMismatchException;
@@ -21,10 +22,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class SignupService {
 
     private final NicknameGenerator nicknameGenerator;
-
-    private final EmailAuthRepository emailAuthRepository;
-    private final MemberRepository memberRepository;
+    private final EmailKeyBuilder emailKeyBuilder;
     private final PasswordEncoder passwordEncoder;
+    private final MemberRepository memberRepository;
+    private final EmailAuthenticationRepository emailAuthenticationRepository;
 
     public void signup(String email, String password, String confirmPassword) {
         if (!password.equals(confirmPassword)) {
@@ -44,9 +45,8 @@ public class SignupService {
     }
 
     private void handleUnverifiedEmail(String email) {
-        EmailAuth emailAuth = emailAuthRepository.findFirstByEmailAndEventOrderByCreatedDateDesc(email,
-                        Event.REGISTRATION)
-                .orElseThrow(EmailRequestRequiredException::new);
+        EmailAuthentication emailAuth = emailAuthenticationRepository.findById(
+            emailKeyBuilder.generate(email, Event.REGISTRATION)).orElseThrow(EmailRequestRequiredException::new);
         if (!emailAuth.getIsAuthenticated()) {
             throw new UnverifiedEmailException();
         }
