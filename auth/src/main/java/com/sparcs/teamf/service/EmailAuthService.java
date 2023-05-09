@@ -4,6 +4,7 @@ import com.sparcs.teamf.dto.OneTimeTokenResponse;
 import com.sparcs.teamf.email.AuthEmailSender;
 import com.sparcs.teamf.email.EmailAuthentication;
 import com.sparcs.teamf.email.EmailAuthenticationRepository;
+import com.sparcs.teamf.email.EmailKeyBuilder;
 import com.sparcs.teamf.emailauth.Event;
 import com.sparcs.teamf.exception.DuplicateEmailException;
 import com.sparcs.teamf.exception.EmailSendLimitExceededException;
@@ -23,9 +24,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class EmailAuthService {
 
-    private static final String EMAIL_KEY_FORMAT = "%s:%s";
-
     private final AuthEmailSender authEmailSender;
+    private final EmailKeyBuilder emailKeyBuilder;
     private final EmailAuthenticationRepository emailAuthenticationRepository;
     private final MemberRepository memberRepository;
     private final TokenProvider tokenProvider;
@@ -35,7 +35,7 @@ public class EmailAuthService {
         if (isAlreadyRegistered(email)) {
             throw new DuplicateEmailException();
         }
-        String emailKey = getEmailKey(email, Event.REGISTRATION);
+        String emailKey = emailKeyBuilder.generate(email, Event.REGISTRATION);
         checkIfEmailAlreadySent(emailKey);
 
         int verificationCode = generateVerificationCode();
@@ -44,19 +44,19 @@ public class EmailAuthService {
     }
 
     public void authenticateEmailForSignup(String email, int inputVerificationCode) {
-        EmailAuthentication emailAuthentication = emailAuthenticationRepository.findById(
-            getEmailKey(email, Event.REGISTRATION)).orElseThrow(EmailVerificationNotFoundException::new);
+        EmailAuthentication emailAuth = emailAuthenticationRepository.findById(
+            emailKeyBuilder.generate(email, Event.REGISTRATION)).orElseThrow(EmailVerificationNotFoundException::new);
 
-        verifyVerificationCodeMismatch(emailAuthentication.getVerificationCode(), inputVerificationCode);
-        emailAuthentication.authenticate();
-        emailAuthenticationRepository.save(emailAuthentication);
+        verifyVerificationCodeMismatch(emailAuth.getVerificationCode(), inputVerificationCode);
+        emailAuth.authenticate();
+        emailAuthenticationRepository.save(emailAuth);
     }
 
     public void sendPasswordResetCode(String email) {
         if (!isAlreadyRegistered(email)) {
             throw new MemberNotFoundException();
         }
-        String emailKey = getEmailKey(email, Event.RESET_PASSWORD);
+        String emailKey = emailKeyBuilder.generate(email, Event.RESET_PASSWORD);
         checkIfEmailAlreadySent(emailKey);
 
         int verificationCode = generateVerificationCode();
@@ -65,12 +65,12 @@ public class EmailAuthService {
     }
 
     public OneTimeTokenResponse verifyPasswordResetCode(String email, Integer inputVerificationCode) {
-        EmailAuthentication emailAuthentication = emailAuthenticationRepository.findById(
-            getEmailKey(email, Event.RESET_PASSWORD)).orElseThrow(EmailVerificationNotFoundException::new);
+        EmailAuthentication emailAuth = emailAuthenticationRepository.findById(
+            emailKeyBuilder.generate(email, Event.RESET_PASSWORD)).orElseThrow(EmailVerificationNotFoundException::new);
         Member member = memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
 
-        verifyVerificationCodeMismatch(emailAuthentication.getVerificationCode(), inputVerificationCode);
-        emailAuthentication.authenticate();
+        verifyVerificationCodeMismatch(emailAuth.getVerificationCode(), inputVerificationCode);
+        emailAuth.authenticate();
         return tokenProvider.createOneTimeToken(member.getId(), email);
     }
 
@@ -80,10 +80,6 @@ public class EmailAuthService {
 
     private int generateVerificationCode() {
         return random.nextInt(100000, 999999);
-    }
-
-    private String getEmailKey(String email, Event event) {
-        return String.format(EMAIL_KEY_FORMAT, email, event);
     }
 
     private void checkIfEmailAlreadySent(String emailKey) {
