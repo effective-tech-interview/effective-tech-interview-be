@@ -37,11 +37,11 @@ public class AuthController {
     @PostMapping("login")
     @Operation(summary = "로그인")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "successful operation", content = {
-                    @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = TokenResponse.class))}),
-            @ApiResponse(responseCode = "500", description = "internal server error", content = @Content),
-            @ApiResponse(responseCode = "400", description = "bad request", content = @Content),
-            @ApiResponse(responseCode = "404", description = "not found", content = @Content)})
+        @ApiResponse(responseCode = "200", description = "successful operation", content = {
+            @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = TokenResponse.class))}),
+        @ApiResponse(responseCode = "500", description = "internal server error", content = @Content),
+        @ApiResponse(responseCode = "400", description = "bad request", content = @Content),
+        @ApiResponse(responseCode = "404", description = "not found", content = @Content)})
     public TokenResponse login(@RequestBody @Valid LoginRequest request) {
         return authService.login(request.email(), request.password());
     }
@@ -49,12 +49,12 @@ public class AuthController {
     @PostMapping("/refresh")
     @Operation(summary = "엑세스 토큰 재발급")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "successful operation", content = {
-                    @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = TokenResponse.class))}),
-            @ApiResponse(responseCode = "500", description = "internal server error", content = @Content),
-            @ApiResponse(responseCode = "400", description = "bad request", content = @Content),
-            @ApiResponse(responseCode = "401", description = "invalid refresh token", content = @Content),
-            @ApiResponse(responseCode = "404", description = "not found", content = @Content)})
+        @ApiResponse(responseCode = "200", description = "successful operation", content = {
+            @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = TokenResponse.class))}),
+        @ApiResponse(responseCode = "500", description = "internal server error", content = @Content),
+        @ApiResponse(responseCode = "400", description = "bad request", content = @Content),
+        @ApiResponse(responseCode = "401", description = "invalid refresh token", content = @Content),
+        @ApiResponse(responseCode = "404", description = "not found", content = @Content)})
     public TokenResponse refresh(@RequestHeader(value = "Authorization") String refreshToken) {
         return authService.refresh(getTokenFromHeader(refreshToken));
     }
@@ -62,10 +62,11 @@ public class AuthController {
     @PostMapping("/email/send")
     @Operation(summary = "회원가입 이메일 인증 코드 전송")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "successful operation"),
-            @ApiResponse(responseCode = "500", description = "internal server error"),
-            @ApiResponse(responseCode = "400", description = "bad request"),
-            @ApiResponse(responseCode = "409", description = "the email is already registered")})
+        @ApiResponse(responseCode = "200", description = "successful operation"),
+        @ApiResponse(responseCode = "500", description = "internal server error"),
+        @ApiResponse(responseCode = "400", description = "bad request"),
+        @ApiResponse(responseCode = "409", description = "the email is already registered"),
+        @ApiResponse(responseCode = "429", description = "too many requests")})
     public void sendEmailForSignup(@RequestBody @Valid SendEmailRequest request) {
         emailAuthService.sendEmailForSignup(request.email());
     }
@@ -73,10 +74,10 @@ public class AuthController {
     @PostMapping("/email/authenticate")
     @Operation(summary = "회원가입 이메일 인증 코드 확인")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "successful operation"),
-            @ApiResponse(responseCode = "500", description = "internal server error"),
-            @ApiResponse(responseCode = "400", description = "bad request"),
-            @ApiResponse(responseCode = "422", description = "invalid verification code")})
+        @ApiResponse(responseCode = "200", description = "successful operation"),
+        @ApiResponse(responseCode = "500", description = "internal server error"),
+        @ApiResponse(responseCode = "400", description = "bad request"),
+        @ApiResponse(responseCode = "422", description = "invalid verification code")})
     public void authenticateEmailForSignup(@RequestBody @Valid AuthenticateEmailRequest request) {
         emailAuthService.authenticateEmailForSignup(request.email(), request.verificationCode());
     }
@@ -84,10 +85,11 @@ public class AuthController {
     @PostMapping("/password-reset/email")
     @Operation(summary = "비밀번호 재설정 인증 코드 전송")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "successful operation"),
-            @ApiResponse(responseCode = "500", description = "internal server error"),
-            @ApiResponse(responseCode = "400", description = "bad request"),
-            @ApiResponse(responseCode = "404", description = "not found")})
+        @ApiResponse(responseCode = "200", description = "successful operation"),
+        @ApiResponse(responseCode = "500", description = "internal server error"),
+        @ApiResponse(responseCode = "400", description = "bad request"),
+        @ApiResponse(responseCode = "404", description = "not found"),
+        @ApiResponse(responseCode = "429", description = "too many requests")})
     public void sendPasswordResetCode(@RequestBody @Valid SendEmailRequest request) {
         emailAuthService.sendPasswordResetCode(request.email());
     }
@@ -95,11 +97,11 @@ public class AuthController {
     @PostMapping("/password-reset/email-verification")
     @Operation(summary = "비밀번호 재설정 인증 코드 검증")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "successful operation", content = {
-                    @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = OneTimeTokenResponse.class))}),
-            @ApiResponse(responseCode = "500", description = "internal server error", content = @Content),
-            @ApiResponse(responseCode = "400", description = "bad request", content = @Content),
-            @ApiResponse(responseCode = "404", description = "not found", content = @Content)})
+        @ApiResponse(responseCode = "200", description = "successful operation", content = {
+            @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = OneTimeTokenResponse.class))}),
+        @ApiResponse(responseCode = "500", description = "internal server error", content = @Content),
+        @ApiResponse(responseCode = "400", description = "bad request", content = @Content),
+        @ApiResponse(responseCode = "404", description = "not found", content = @Content)})
     public OneTimeTokenResponse verifyPasswordResetCode(@RequestBody @Valid AuthenticateEmailRequest request) {
         return emailAuthService.verifyPasswordResetCode(request.email(), request.verificationCode());
     }
@@ -114,18 +116,18 @@ public class AuthController {
     @PostMapping("/free")
     @Operation(summary = "토큰을 개발용으로 편하게 가져올 수 있는 api")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "successful operation", content = {
-                    @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = TokenResponse.class))}),
-            @ApiResponse(responseCode = "500", description = "internal server error", content = @Content),
-            @ApiResponse(responseCode = "400", description = "bad request", content = @Content),
-            @ApiResponse(responseCode = "404", description = "not found", content = @Content)})
+        @ApiResponse(responseCode = "200", description = "successful operation", content = {
+            @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = TokenResponse.class))}),
+        @ApiResponse(responseCode = "500", description = "internal server error", content = @Content),
+        @ApiResponse(responseCode = "400", description = "bad request", content = @Content),
+        @ApiResponse(responseCode = "404", description = "not found", content = @Content)})
     public TokenResponse free(@RequestBody @Valid FreeTokenDto freeTokenDto) {
         return authService.getFreeToken(freeTokenDto.memberId(), freeTokenDto.email());
     }
 
     @PostMapping("/logout")
     public void logout(@RequestHeader(value = "Authorization") String accessToken,
-            @RequestHeader(value = "refreshToken") String refreshToken) {
+                       @RequestHeader(value = "refreshToken") String refreshToken) {
         authService.logout(getTokenFromHeader(accessToken), getTokenFromHeader(refreshToken));
     }
 }
