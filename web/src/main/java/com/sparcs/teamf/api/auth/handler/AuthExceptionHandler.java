@@ -3,7 +3,9 @@ package com.sparcs.teamf.api.auth.handler;
 import com.sparcs.teamf.dto.ErrorResponseDto;
 import com.sparcs.teamf.exception.DuplicateEmailException;
 import com.sparcs.teamf.exception.EmailRequestRequiredException;
+import com.sparcs.teamf.exception.EmailSendLimitExceededException;
 import com.sparcs.teamf.exception.EmailSenderException;
+import com.sparcs.teamf.exception.EmailVerificationNotFoundException;
 import com.sparcs.teamf.exception.MemberNotFoundException;
 import com.sparcs.teamf.exception.PasswordMismatchException;
 import com.sparcs.teamf.exception.RefreshTokenValidationException;
@@ -74,5 +76,19 @@ public class AuthExceptionHandler {
         log.error("VerificationCodeMismatchException : {}", e);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponseDto(HttpStatus.BAD_REQUEST.value(), "verification code mismatch"));
+    }
+
+    @ExceptionHandler
+    private ResponseEntity<ErrorResponseDto> handleEmailVerificationNotFound(EmailVerificationNotFoundException e) {
+        log.error("EmailVerificationNotFoundException : {}", e);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(new ErrorResponseDto(HttpStatus.BAD_REQUEST.value(), "email request required before verifying your verification code."));
+    }
+
+    @ExceptionHandler
+    private ResponseEntity<ErrorResponseDto> handleEmailSendLimitExceeded(EmailSendLimitExceededException e) {
+        log.error("EmailSendLimitExceededException : {}", e);
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+            .body(new ErrorResponseDto(HttpStatus.TOO_MANY_REQUESTS.value(), "email sending limit exceeded. please try again in an hour."));
     }
 }

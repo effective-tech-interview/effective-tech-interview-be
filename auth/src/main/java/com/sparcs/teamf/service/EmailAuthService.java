@@ -2,11 +2,13 @@ package com.sparcs.teamf.service;
 
 import com.sparcs.teamf.dto.OneTimeTokenResponse;
 import com.sparcs.teamf.email.AuthEmailSender;
-import com.sparcs.teamf.emailauth.EmailAuth;
-import com.sparcs.teamf.emailauth.EmailAuthRepository;
-import com.sparcs.teamf.emailauth.Event;
+import com.sparcs.teamf.email.EmailAuthentication;
+import com.sparcs.teamf.email.EmailAuthenticationRepository;
+import com.sparcs.teamf.email.EmailKeyBuilder;
+import com.sparcs.teamf.email.Event;
 import com.sparcs.teamf.exception.DuplicateEmailException;
-import com.sparcs.teamf.exception.EmailRequestRequiredException;
+import com.sparcs.teamf.exception.EmailSendLimitExceededException;
+import com.sparcs.teamf.exception.EmailVerificationNotFoundException;
 import com.sparcs.teamf.exception.MemberNotFoundException;
 import com.sparcs.teamf.exception.VerificationCodeMismatchException;
 import com.sparcs.teamf.jwt.TokenProvider;
@@ -23,7 +25,8 @@ import org.springframework.stereotype.Service;
 public class EmailAuthService {
 
     private final AuthEmailSender authEmailSender;
-    private final EmailAuthRepository emailAuthRepository;
+    private final EmailKeyBuilder emailKeyBuilder;
+    private final EmailAuthenticationRepository emailAuthenticationRepository;
     private final MemberRepository memberRepository;
     private final TokenProvider tokenProvider;
     private final ThreadLocalRandom random = ThreadLocalRandom.current();
@@ -32,33 +35,38 @@ public class EmailAuthService {
         if (isAlreadyRegistered(email)) {
             throw new DuplicateEmailException();
         }
+        String emailKey = emailKeyBuilder.generate(email, Event.REGISTRATION);
+        checkIfEmailAlreadySent(emailKey);
+
         int verificationCode = generateVerificationCode();
         authEmailSender.sendSignupEmail(email, verificationCode);
-        emailAuthRepository.save(EmailAuth.of(email, Event.REGISTRATION, verificationCode));
+        emailAuthenticationRepository.save(new EmailAuthentication(emailKey, verificationCode));
     }
 
     public void authenticateEmailForSignup(String email, int inputVerificationCode) {
-        EmailAuth emailAuth = emailAuthRepository.findFirstByEmailAndEventOrderByCreatedDateDesc(email,
-                        Event.REGISTRATION)
-                .orElseThrow(EmailRequestRequiredException::new);
+        EmailAuthentication emailAuth = emailAuthenticationRepository.findById(
+            emailKeyBuilder.generate(email, Event.REGISTRATION)).orElseThrow(EmailVerificationNotFoundException::new);
 
         verifyVerificationCodeMismatch(emailAuth.getVerificationCode(), inputVerificationCode);
         emailAuth.authenticate();
+        emailAuthenticationRepository.save(emailAuth);
     }
 
     public void sendPasswordResetCode(String email) {
         if (!isAlreadyRegistered(email)) {
             throw new MemberNotFoundException();
         }
+        String emailKey = emailKeyBuilder.generate(email, Event.RESET_PASSWORD);
+        checkIfEmailAlreadySent(emailKey);
+
         int verificationCode = generateVerificationCode();
         authEmailSender.sendRegisterEmail(email, verificationCode);
-        emailAuthRepository.save(EmailAuth.of(email, Event.RESET_PASSWORD, verificationCode));
+        emailAuthenticationRepository.save(new EmailAuthentication(emailKey, verificationCode));
     }
 
     public OneTimeTokenResponse verifyPasswordResetCode(String email, Integer inputVerificationCode) {
-        EmailAuth emailAuth = emailAuthRepository.findFirstByEmailAndEventOrderByCreatedDateDesc(email,
-                        Event.RESET_PASSWORD)
-                .orElseThrow(EmailRequestRequiredException::new);
+        EmailAuthentication emailAuth = emailAuthenticationRepository.findById(
+            emailKeyBuilder.generate(email, Event.RESET_PASSWORD)).orElseThrow(EmailVerificationNotFoundException::new);
         Member member = memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
 
         verifyVerificationCodeMismatch(emailAuth.getVerificationCode(), inputVerificationCode);
@@ -72,6 +80,12 @@ public class EmailAuthService {
 
     private int generateVerificationCode() {
         return random.nextInt(100000, 999999);
+    }
+
+    private void checkIfEmailAlreadySent(String emailKey) {
+        if (emailAuthenticationRepository.existsById(emailKey)) {
+            throw new EmailSendLimitExceededException();
+        }
     }
 
     private void verifyVerificationCodeMismatch(int inputVerificationCode, int savedVerificationCode) {

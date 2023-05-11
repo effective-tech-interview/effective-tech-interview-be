@@ -1,9 +1,10 @@
 package com.sparcs.teamf.service;
 
 import com.sparcs.teamf.dto.MemberProfileResponse;
-import com.sparcs.teamf.emailauth.EmailAuth;
-import com.sparcs.teamf.emailauth.EmailAuthRepository;
-import com.sparcs.teamf.emailauth.Event;
+import com.sparcs.teamf.email.EmailAuthentication;
+import com.sparcs.teamf.email.EmailAuthenticationRepository;
+import com.sparcs.teamf.email.EmailKeyBuilder;
+import com.sparcs.teamf.email.Event;
 import com.sparcs.teamf.exception.EmailRequestRequiredException;
 import com.sparcs.teamf.exception.MemberNotFoundException;
 import com.sparcs.teamf.exception.PasswordMismatchException;
@@ -20,8 +21,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final EmailAuthRepository emailAuthRepository;
+    private final EmailAuthenticationRepository emailAuthenticationRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailKeyBuilder emailKeyBuilder;
 
     @Transactional
     public void resetPassword(String email, String password, String confirmPassword) {
@@ -41,14 +43,12 @@ public class MemberService {
     @Transactional
     public void delete(Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
-        emailAuthRepository.deleteAllByEmail(member.getEmail());
-        memberRepository.deleteById(memberId);
+        memberRepository.deleteById(member.getId());
     }
 
     private void handleUnverifiedEmail(String email) {
-        EmailAuth emailAuth = emailAuthRepository.findFirstByEmailAndEventOrderByCreatedDateDesc(email,
-                        Event.RESET_PASSWORD)
-                .orElseThrow(EmailRequestRequiredException::new);
+        EmailAuthentication emailAuth = emailAuthenticationRepository.findById(
+            emailKeyBuilder.generate(email, Event.RESET_PASSWORD)).orElseThrow(EmailRequestRequiredException::new);
         if (!emailAuth.getIsAuthenticated()) {
             throw new UnverifiedEmailException();
         }
