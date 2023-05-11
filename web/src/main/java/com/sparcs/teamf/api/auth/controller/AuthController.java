@@ -15,9 +15,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -42,8 +45,14 @@ public class AuthController {
         @ApiResponse(responseCode = "500", description = "internal server error", content = @Content),
         @ApiResponse(responseCode = "400", description = "bad request", content = @Content),
         @ApiResponse(responseCode = "404", description = "not found", content = @Content)})
-    public TokenResponse login(@RequestBody @Valid LoginRequest request) {
-        return authService.login(request.email(), request.password());
+    public TokenResponse login(@RequestBody @Valid LoginRequest request, HttpServletResponse httpServletResponse) {
+        TokenResponse tokenResponse = authService.login(request.email(), request.password());
+        Cookie cookie = new Cookie("refreshToken", tokenResponse.refreshToken());
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(60 * 60 * 24 * 30);
+        httpServletResponse.addCookie(cookie);
+        return tokenResponse;
     }
 
     @PostMapping("/refresh")
@@ -55,8 +64,16 @@ public class AuthController {
         @ApiResponse(responseCode = "400", description = "bad request", content = @Content),
         @ApiResponse(responseCode = "401", description = "invalid refresh token", content = @Content),
         @ApiResponse(responseCode = "404", description = "not found", content = @Content)})
-    public TokenResponse refresh(@RequestHeader(value = "Authorization") String refreshToken) {
-        return authService.refresh(getTokenFromHeader(refreshToken));
+    public TokenResponse refresh(@CookieValue("refreshToken") String refreshToken,
+                                 HttpServletResponse httpServletResponse) {
+        System.out.println("refreshToken = " + refreshToken);
+        TokenResponse tokenResponse = authService.refresh(getTokenFromHeader(refreshToken));
+        Cookie cookie = new Cookie("refreshToken", tokenResponse.refreshToken());
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(60 * 60 * 24 * 30);
+        httpServletResponse.addCookie(cookie);
+        return tokenResponse;
     }
 
     @PostMapping("/email/send")
