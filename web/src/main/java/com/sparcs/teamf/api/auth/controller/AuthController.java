@@ -3,7 +3,6 @@ package com.sparcs.teamf.api.auth.controller;
 import com.sparcs.teamf.api.auth.dto.AuthenticateEmailRequest;
 import com.sparcs.teamf.api.auth.dto.LoginRequest;
 import com.sparcs.teamf.api.auth.dto.SendEmailRequest;
-import com.sparcs.teamf.dto.FreeTokenDto;
 import com.sparcs.teamf.dto.OneTimeTokenResponse;
 import com.sparcs.teamf.dto.TokenResponse;
 import com.sparcs.teamf.service.AuthService;
@@ -15,7 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import javax.servlet.http.Cookie;
+import java.util.Date;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -47,11 +46,7 @@ public class AuthController {
         @ApiResponse(responseCode = "404", description = "not found", content = @Content)})
     public TokenResponse login(@RequestBody @Valid LoginRequest request, HttpServletResponse httpServletResponse) {
         TokenResponse tokenResponse = authService.login(request.email(), request.password());
-        Cookie cookie = new Cookie("refreshToken", tokenResponse.refreshToken());
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
-        cookie.setMaxAge(60 * 60 * 24 * 30);
-        httpServletResponse.addCookie(cookie);
+        setRefreshToken(httpServletResponse, tokenResponse.refreshToken());
         return tokenResponse;
     }
 
@@ -66,13 +61,8 @@ public class AuthController {
         @ApiResponse(responseCode = "404", description = "not found", content = @Content)})
     public TokenResponse refresh(@CookieValue("refreshToken") String refreshToken,
                                  HttpServletResponse httpServletResponse) {
-        System.out.println("refreshToken = " + refreshToken);
-        TokenResponse tokenResponse = authService.refresh(getTokenFromHeader(refreshToken));
-        Cookie cookie = new Cookie("refreshToken", tokenResponse.refreshToken());
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
-        cookie.setMaxAge(60 * 60 * 24 * 30);
-        httpServletResponse.addCookie(cookie);
+        TokenResponse tokenResponse = authService.refresh(refreshToken);
+        setRefreshToken(httpServletResponse, tokenResponse.refreshToken());
         return tokenResponse;
     }
 
@@ -123,6 +113,12 @@ public class AuthController {
         return emailAuthService.verifyPasswordResetCode(request.email(), request.verificationCode());
     }
 
+    @PostMapping("/logout")
+    public void logout(@RequestHeader(value = "Authorization") String accessToken,
+                       @CookieValue(value = "refreshToken") String refreshToken) {
+        authService.logout(getTokenFromHeader(accessToken), refreshToken);
+    }
+
     private String getTokenFromHeader(String token) {
         if (token != null && token.startsWith("Bearer ")) {
             return token.substring(7);
@@ -130,21 +126,10 @@ public class AuthController {
         return token;
     }
 
-    @PostMapping("/free")
-    @Operation(summary = "토큰을 개발용으로 편하게 가져올 수 있는 api")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "successful operation", content = {
-            @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = TokenResponse.class))}),
-        @ApiResponse(responseCode = "500", description = "internal server error", content = @Content),
-        @ApiResponse(responseCode = "400", description = "bad request", content = @Content),
-        @ApiResponse(responseCode = "404", description = "not found", content = @Content)})
-    public TokenResponse free(@RequestBody @Valid FreeTokenDto freeTokenDto) {
-        return authService.getFreeToken(freeTokenDto.memberId(), freeTokenDto.email());
-    }
-
-    @PostMapping("/logout")
-    public void logout(@RequestHeader(value = "Authorization") String accessToken,
-                       @RequestHeader(value = "refreshToken") String refreshToken) {
-        authService.logout(getTokenFromHeader(accessToken), getTokenFromHeader(refreshToken));
+    private void setRefreshToken(HttpServletResponse httpServletResponse, String refreshToken) {
+        //expire after 1 week
+        Date date = new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 7);
+        httpServletResponse.setHeader("Set-Cookie",
+            "refreshToken=" + refreshToken + "; Path=/; HttpOnly; SameSite=None; Secure; expires=" + date);
     }
 }
