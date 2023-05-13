@@ -3,7 +3,9 @@ name: develop-deploy
 on:
   workflow_dispatch:
   push:
-    branches: [ "develop","releases/**" ]
+    branches:
+      - develop
+      - pre-releases/**
 
 jobs:
   deploy:
