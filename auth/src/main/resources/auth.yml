@@ -3,4 +3,3 @@ jwt:
   access-token-validity-in-seconds: 86400
   refresh-token-validity-in-seconds: 604800
   one-time-token-validity-in-seconds: 300
-  

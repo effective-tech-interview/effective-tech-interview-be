@@ -4,12 +4,13 @@ spring:
     username: ENC(kSbVij29Q5IxlMTyH1g0rw==)
     password: ENC(f2DZKexIllOKp9G6wKa2T+E/dqGcnngS)
     driver-class-name: com.mysql.cj.jdbc.Driver
+
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     open-in-view: false
     hibernate:
       ddl-auto: validate
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         format_sql: true
