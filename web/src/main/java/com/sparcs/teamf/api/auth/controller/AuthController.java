@@ -20,6 +20,7 @@ import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -131,5 +132,19 @@ public class AuthController {
         Date date = new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 7);
         httpServletResponse.setHeader("Set-Cookie",
             "refreshToken=" + refreshToken + "; Path=/; HttpOnly; SameSite=None; Secure; expires=" + date);
+    }
+
+    @GetMapping("/test")
+    public String test(HttpServletResponse response) {
+        //expire after 3 days
+        Date date = new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 3);
+        response.setHeader("Set-Cookie",
+            "refreshToken=1234; Path=/; HttpOnly; SameSite=None; Secure; expires=" + date);
+        return "test";
+    }
+
+    @GetMapping("/test2")
+    public String cookieTest(@CookieValue(value = "refreshToken") String refreshToken) {
+        return refreshToken;
     }
 }
