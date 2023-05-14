@@ -1,5 +1,6 @@
 package com.sparcs.teamf.api.auth.controller;
 
+import com.sparcs.teamf.api.auth.dto.AccessTokenResponse;
 import com.sparcs.teamf.api.auth.dto.AuthenticateEmailRequest;
 import com.sparcs.teamf.api.auth.dto.LoginRequest;
 import com.sparcs.teamf.api.auth.dto.SendEmailRequest;
@@ -45,10 +46,11 @@ public class AuthController {
         @ApiResponse(responseCode = "500", description = "internal server error", content = @Content),
         @ApiResponse(responseCode = "400", description = "bad request", content = @Content),
         @ApiResponse(responseCode = "404", description = "not found", content = @Content)})
-    public TokenResponse login(@RequestBody @Valid LoginRequest request, HttpServletResponse httpServletResponse) {
+    public AccessTokenResponse login(@RequestBody @Valid LoginRequest request,
+                                     HttpServletResponse httpServletResponse) {
         TokenResponse tokenResponse = authService.login(request.email(), request.password());
         setRefreshToken(httpServletResponse, tokenResponse.refreshToken());
-        return tokenResponse;
+        return new AccessTokenResponse(tokenResponse.memberId(), tokenResponse.accessToken());
     }
 
     @PostMapping("/refresh")
@@ -60,11 +62,11 @@ public class AuthController {
         @ApiResponse(responseCode = "400", description = "bad request", content = @Content),
         @ApiResponse(responseCode = "401", description = "invalid refresh token", content = @Content),
         @ApiResponse(responseCode = "404", description = "not found", content = @Content)})
-    public TokenResponse refresh(@CookieValue("refreshToken") String refreshToken,
-                                 HttpServletResponse httpServletResponse) {
+    public AccessTokenResponse refresh(@CookieValue("refreshToken") String refreshToken,
+                                       HttpServletResponse httpServletResponse) {
         TokenResponse tokenResponse = authService.refresh(refreshToken);
         setRefreshToken(httpServletResponse, tokenResponse.refreshToken());
-        return tokenResponse;
+        return new AccessTokenResponse(tokenResponse.memberId(), tokenResponse.accessToken());
     }
 
     @PostMapping("/email/send")
