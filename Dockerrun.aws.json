@@ -1,7 +1,7 @@
 {
   "AWSEBDockerrunVersion": "1",
   "Image": {
-    "Name": "768103103627.dkr.ecr.ap-northeast-2.amazonaws.com/teamf-repository",
+    "Name": "962800668635.dkr.ecr.ap-northeast-2.amazonaws.com/effective-tech-interview",
     "Update": "true"
   },
   "Ports": [
