@@ -42,7 +42,7 @@ public class AuthController {
     @Operation(summary = "로그인")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "successful operation", content = {
-            @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = TokenResponse.class))}),
+            @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = AccessTokenResponse.class))}),
         @ApiResponse(responseCode = "500", description = "internal server error", content = @Content),
         @ApiResponse(responseCode = "400", description = "bad request", content = @Content),
         @ApiResponse(responseCode = "404", description = "not found", content = @Content)})
@@ -57,7 +57,7 @@ public class AuthController {
     @Operation(summary = "엑세스 토큰 재발급")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "successful operation", content = {
-            @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = TokenResponse.class))}),
+            @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = AccessTokenResponse.class))}),
         @ApiResponse(responseCode = "500", description = "internal server error", content = @Content),
         @ApiResponse(responseCode = "400", description = "bad request", content = @Content),
         @ApiResponse(responseCode = "401", description = "invalid refresh token", content = @Content),
