@@ -14,16 +14,18 @@ class KakaoOauth2ClientTest {
 
     @Test
     void 정상적으로_생성할_수_있다() {
-        KakaoOauth2Client kakaoOauth2Client = new KakaoOauth2Client("clientId", "clientSecret", "scope", "redirectUri");
+        KakaoOauth2Client kakaoOauth2Client = new KakaoOauth2Client("clientId", "clientSecret", "scope", "redirectUri",
+            "authorizeUri");
         Oauth2Client oauth2Client = kakaoOauth2Client.getClient();
 
         assertSoftly(
             softly -> {
                 assertNotNull(oauth2Client);
-                softly.assertThat(oauth2Client.getClientId()).isEqualTo("clientId");
-                softly.assertThat(oauth2Client.getClientSecret()).isEqualTo("clientSecret");
-                softly.assertThat(oauth2Client.getScope()).isEqualTo("scope");
-                softly.assertThat(oauth2Client.getRedirectUri()).isEqualTo("redirectUri");
+                softly.assertThat(oauth2Client.clientId()).isEqualTo("clientId");
+                softly.assertThat(oauth2Client.clientSecret()).isEqualTo("clientSecret");
+                softly.assertThat(oauth2Client.scope()).isEqualTo("scope");
+                softly.assertThat(oauth2Client.redirectUri()).isEqualTo("redirectUri");
+                softly.assertThat(oauth2Client.authorizeUri()).isEqualTo("authorizeUri");
             }
         );
     }

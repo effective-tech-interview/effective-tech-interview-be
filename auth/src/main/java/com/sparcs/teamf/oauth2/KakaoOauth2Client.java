@@ -10,17 +10,20 @@ public class KakaoOauth2Client {
     private final String clientSecret;
     private final String scope;
     private final String redirectUri;
+    private final String authorizeUri;
 
     public KakaoOauth2Client(
         @Value("${spring.security.oauth2.client.registration.kakao.client-id}") String clientId,
         @Value("${spring.security.oauth2.client.registration.kakao.client-secret}") String clientSecret,
         @Value("${spring.security.oauth2.client.registration.kakao.scope}") String scope,
-        @Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}") String redirectUri
+        @Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}") String redirectUri,
+        @Value("${spring.security.oauth2.client.provider.kakao.authorization-uri}") String authorizeUri
     ) {
         this.clientId = clientId;
         this.clientSecret = clientSecret;
         this.scope = scope;
         this.redirectUri = redirectUri;
+        this.authorizeUri = authorizeUri;
     }
 
     public Oauth2Client getClient() {
@@ -29,6 +32,7 @@ public class KakaoOauth2Client {
             .clientSecret(clientSecret)
             .redirectUri(redirectUri)
             .scope(scope)
+            .authorizeUri(authorizeUri)
             .build();
     }
 }
