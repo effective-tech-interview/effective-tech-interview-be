@@ -3,7 +3,9 @@ name: prod-deploy
 on:
   workflow_dispatch:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
+      - releases/**
 
 jobs:
   deploy:
@@ -53,7 +55,7 @@ jobs:
           ECR_REPOSITORY: effective-tech-interview
           IMAGE_TAG: latest
         run: |
-          docker buildx build --platform=linux/amd64 -f ./DockerFile-dev -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker buildx build --platform=linux/amd64 -f ./DockerFile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
       - name: Get current time
@@ -66,7 +68,7 @@ jobs:
       - name: Generate deployment package
         run: |
           mkdir -p deploy
-          cp ./Dockerrun.aws.dev.json deploy/Dockerrun.aws.json
+          cp ./Dockerrun.aws.json deploy/Dockerrun.aws.json
           cd deploy && zip -r deploy.zip .
 
       - name: Beanstalk Deploy

@@ -12,4 +12,4 @@ ENV PORT=8080
 
 EXPOSE $PORT
 
-CMD ["java","-Dspring.profiles.active=dev", "-jar", "/app/teamf-0.0.1-SNAPSHOT.jar"]
+CMD ["java","-Dspring.profiles.active=prod", "-jar", "/app/teamf-0.0.1-SNAPSHOT.jar"]
