@@ -6,6 +6,7 @@ import com.sparcs.teamf.api.auth.dto.LoginRequest;
 import com.sparcs.teamf.api.auth.dto.SendEmailRequest;
 import com.sparcs.teamf.dto.OneTimeTokenResponse;
 import com.sparcs.teamf.dto.TokenResponse;
+import com.sparcs.teamf.jwt.TokenUtil;
 import com.sparcs.teamf.service.AuthService;
 import com.sparcs.teamf.service.EmailAuthService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,7 +16,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.Date;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +36,7 @@ public class AuthController {
 
     private final AuthService authService;
     private final EmailAuthService emailAuthService;
+    private final TokenUtil tokenUtil;
 
     @PostMapping("login")
     @Operation(summary = "로그인")
@@ -48,7 +49,7 @@ public class AuthController {
     public AccessTokenResponse login(@RequestBody @Valid LoginRequest request,
                                      HttpServletResponse httpServletResponse) {
         TokenResponse tokenResponse = authService.login(request.email(), request.password());
-        setRefreshToken(httpServletResponse, tokenResponse.refreshToken());
+        tokenUtil.setRefreshTokenInCookie(httpServletResponse, tokenResponse.refreshToken());
         return new AccessTokenResponse(tokenResponse.memberId(), tokenResponse.accessToken());
     }
 
@@ -64,7 +65,7 @@ public class AuthController {
     public AccessTokenResponse refresh(@CookieValue("refreshToken") String refreshToken,
                                        HttpServletResponse httpServletResponse) {
         TokenResponse tokenResponse = authService.refresh(refreshToken);
-        setRefreshToken(httpServletResponse, tokenResponse.refreshToken());
+        tokenUtil.setRefreshTokenInCookie(httpServletResponse, tokenResponse.refreshToken());
         return new AccessTokenResponse(tokenResponse.memberId(), tokenResponse.accessToken());
     }
 
@@ -126,12 +127,5 @@ public class AuthController {
             return token.substring(7);
         }
         return token;
-    }
-
-    private void setRefreshToken(HttpServletResponse httpServletResponse, String refreshToken) {
-        //expire after 1 week
-        Date date = new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 7);
-        httpServletResponse.setHeader("Set-Cookie",
-            "refreshToken=" + refreshToken + "; Path=/; HttpOnly; SameSite=None; Secure; expires=" + date);
     }
 }

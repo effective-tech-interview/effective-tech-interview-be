@@ -1,5 +1,6 @@
 package com.sparcs.teamf.jwt;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -7,8 +8,10 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import java.security.Key;
 import java.time.Duration;
+import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
+import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +19,7 @@ import org.springframework.stereotype.Component;
 public class TokenUtil {
 
     private static final String MEMBER_ID = "memberId";
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     private final long accessTokenValidityInSeconds;
     private final long refreshTokenValidityInSeconds;
@@ -70,5 +74,23 @@ public class TokenUtil {
             .build()
             .parseClaimsJws(token)
             .getBody();
+    }
+
+    public void setRefreshTokenInCookie(HttpServletResponse response, String token) {
+        response.setHeader("Set-Cookie",
+            "refreshToken=" + token + "; Path=/; HttpOnly; SameSite=None; Secure; Max-Age="
+                + refreshTokenValidityInSeconds);
+    }
+
+    public String getProviderId(String token) {
+        String[] check = token.split("\\.");
+        Base64.Decoder decoder = Base64.getDecoder();
+        String payload = new String(decoder.decode(check[1]));
+        try {
+            Map<String, Object> map = objectMapper.readValue(payload, Map.class);
+            return map.get("sub").toString();
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 }
