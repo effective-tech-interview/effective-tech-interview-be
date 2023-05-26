@@ -1,5 +1,7 @@
 package com.sparcs.teamf.oauth2;
 
+import com.sparcs.teamf.member.ProviderType;
+
 public class Oauth2ClientFixture {
 
     public static final Oauth2Client oauth2Client = new Oauth2Client(
@@ -7,5 +9,9 @@ public class Oauth2ClientFixture {
         "clientSecret",
         "redirectUri",
         "scope",
-        "authorizeUri");
+        "host",
+        "authorizationPath",
+        "tokenPath",
+        ProviderType.KAKAO,
+        ProviderToken.class);
 }
