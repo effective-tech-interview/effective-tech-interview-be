@@ -12,6 +12,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Optional<Member> findByEmail(String email);
 
+    Optional<Member> findByProviderId(String providerId);
+
     @Override
     @Modifying
     @Query("UPDATE Member m SET m.deletedAt = CURRENT_TIMESTAMP WHERE m.id = :id")
