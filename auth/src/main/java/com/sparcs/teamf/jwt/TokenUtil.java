@@ -1,6 +1,7 @@
 package com.sparcs.teamf.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sparcs.teamf.config.JwtConfig;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -12,7 +13,6 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -26,15 +26,11 @@ public class TokenUtil {
     private final long oneTimeTokenValidityInSeconds;
     private final Key key;
 
-    public TokenUtil(@Value("${jwt.secret}") String secret,
-                     @Value("${jwt.access-token-validity-in-seconds}") long accessTokenValidityInSeconds,
-                     @Value("${jwt.refresh-token-validity-in-seconds}") long refreshTokenValidityInSeconds,
-                     @Value("${jwt.one-time-token-validity-in-seconds}") long oneTimeTokenValidityInSeconds
-    ) {
-        this.accessTokenValidityInSeconds = accessTokenValidityInSeconds * 1000;
-        this.refreshTokenValidityInSeconds = refreshTokenValidityInSeconds * 1000;
-        this.oneTimeTokenValidityInSeconds = oneTimeTokenValidityInSeconds * 1000;
-        byte[] keyBytes = Decoders.BASE64.decode(secret);
+    public TokenUtil(JwtConfig jwtConfig) {
+        accessTokenValidityInSeconds = jwtConfig.getAccessTokenValidityInSeconds() * 1000;
+        refreshTokenValidityInSeconds = jwtConfig.getRefreshTokenValidityInSeconds() * 1000;
+        oneTimeTokenValidityInSeconds = jwtConfig.getOneTimeTokenValidityInSeconds() * 1000;
+        byte[] keyBytes = Decoders.BASE64.decode(jwtConfig.getSecret());
         key = Keys.hmacShaKeyFor(keyBytes);
     }
 

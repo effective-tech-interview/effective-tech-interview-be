@@ -3,6 +3,7 @@ package com.sparcs.teamf.jwt;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+import com.sparcs.teamf.config.JwtConfig;
 import io.jsonwebtoken.Claims;
 import java.time.Duration;
 import java.util.Map;
@@ -13,7 +14,8 @@ import org.springframework.mock.web.MockHttpServletResponse;
 @SuppressWarnings("NonAsciiCharacters")
 class TokenUtilTest {
 
-    private final TokenUtil tokenUtil = new TokenUtil("secret".repeat(20), 10, 10, 10);
+    private final TokenUtil tokenUtil = new TokenUtil(new JwtConfig("secret".repeat(20),
+        10, 10, 10));
 
     @Test
     void 액세스_토큰이_정상적으로_생성된다() {
