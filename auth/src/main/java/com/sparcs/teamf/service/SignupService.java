@@ -11,6 +11,8 @@ import com.sparcs.teamf.exception.UnverifiedEmailException;
 import com.sparcs.teamf.member.Member;
 import com.sparcs.teamf.member.MemberRepository;
 import com.sparcs.teamf.nickname.NicknameGenerator;
+import com.sparcs.teamf.oauth2.EffectiveProfile;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -36,6 +38,16 @@ public class SignupService {
 
         Member member = Member.of(nicknameGenerator.generate(), email, passwordEncoder.encode(password));
         memberRepository.save(member);
+    }
+
+    public EffectiveProfile registerAndLogin(String providerId, String providerName) {
+        Optional<Member> existMember = memberRepository.findByProviderId(providerId);
+        if (existMember.isPresent()) {
+            return new EffectiveProfile(existMember.get().getId());
+        }
+        Member member = Member.ofOauth(nicknameGenerator.generate(), providerName, providerId);
+        Member result = memberRepository.save(member);
+        return new EffectiveProfile(result.getId());
     }
 
     private void validateAlreadyRegistered(String email) {

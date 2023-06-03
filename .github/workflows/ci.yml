@@ -6,7 +6,7 @@ on:
     branches: [ "main", "develop" ]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     services:
@@ -33,4 +33,4 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build with Gradle
-        run: ./gradlew build --scan
+        run: ./gradlew test

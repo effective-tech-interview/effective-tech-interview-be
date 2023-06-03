@@ -50,7 +50,7 @@ public class SecurityConfig {
                 return config;
             }).and()
             .authorizeRequests()
-            .antMatchers("/v1/auth/**", "/v1/auth", "/v1/signup", "/v1/members/password-reset")
+            .antMatchers("/v1/auth/**", "/v1/auth", "/v1/signup/**", "/v1/members/password-reset")
             .permitAll()
             .anyRequest().authenticated().and()
             .addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)

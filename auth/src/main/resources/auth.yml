@@ -3,3 +3,25 @@ jwt:
   access-token-validity-in-seconds: 86400
   refresh-token-validity-in-seconds: 604800
   one-time-token-validity-in-seconds: 300
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: ENC(qfpYFAnPy5fE9WXfXeVUDPdcmobqo5PIpTqU1sgkpl8r4TJXTCj2rdRUrGxdNohN)
+            client-secret: ENC(gWvMkbotBL34vQDr+eiMrp88G34WtC5QEKyapV56ELDt8kKV7nCo4I7FhdCsZzAK)
+            redirect-uri: http://localhost:8080/login/oauth2/code/kakao
+            authorization-grant-type: authorization_code
+            client-authentication-method: POST
+            client-name: Kakao
+            scope: openid
+        provider:
+          kakao:
+            host: kauth.kakao.com
+            authorization-path: /oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            token-path: /oauth/token
+
+            user-name-attribute: id

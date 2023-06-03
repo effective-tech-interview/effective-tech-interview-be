@@ -43,11 +43,11 @@ public class TokenProvider {
     private Key key;
 
     public TokenProvider(@Value("${jwt.secret}") String secret,
-            @Value("${jwt.access-token-validity-in-seconds}") long accessTokenValidityInSeconds,
-            @Value("${jwt.refresh-token-validity-in-seconds}") long refreshTokenValidityInSeconds,
-            @Value("${jwt.one-time-token-validity-in-seconds}") long oneTimeTokenValidityInSeconds,
-            AccessTokenRepository accessTokenRepository,
-            UserTokenRepository userTokenRepository
+                         @Value("${jwt.access-token-validity-in-seconds}") long accessTokenValidityInSeconds,
+                         @Value("${jwt.refresh-token-validity-in-seconds}") long refreshTokenValidityInSeconds,
+                         @Value("${jwt.one-time-token-validity-in-seconds}") long oneTimeTokenValidityInSeconds,
+                         AccessTokenRepository accessTokenRepository,
+                         UserTokenRepository userTokenRepository
     ) {
         this.secret = secret;
         this.accessTokenValidityInSeconds = accessTokenValidityInSeconds * 1000;
@@ -73,13 +73,23 @@ public class TokenProvider {
         return new TokenResponse(memberId, accessToken, refreshToken);
     }
 
+    public TokenResponse createToken(long memberId) {
+        String accessToken = buildTokenWithClaims(memberId, "accessToken", accessTokenValidityInSeconds);
+        String refreshToken = buildTokenWithClaims(memberId, "refreshToken", refreshTokenValidityInSeconds);
+        UserToken userToken = new UserToken(memberId, refreshToken);
+        AccessToken accessTokenEntity = new AccessToken(memberId, accessToken);
+        userTokenRepository.save(userToken);
+        accessTokenRepository.save(accessTokenEntity);
+        return new TokenResponse(memberId, accessToken, refreshToken);
+    }
+
     public Authentication getAuthentication(String accessToken) {
         Claims claims = Jwts
-                .parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(accessToken)
-                .getBody();
+            .parserBuilder()
+            .setSigningKey(key)
+            .build()
+            .parseClaimsJws(accessToken)
+            .getBody();
         Long memberId = claims.get(MEMBER_ID, Long.class);
 
         List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
@@ -92,10 +102,10 @@ public class TokenProvider {
             throw new RefreshTokenValidationException();
         }
         Claims claims = Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(refreshToken)
-                .getBody();
+            .setSigningKey(key)
+            .build()
+            .parseClaimsJws(refreshToken)
+            .getBody();
         Long memberId = claims.get(MEMBER_ID, Long.class);
         String email = claims.getSubject();
         userTokenRepository.deleteById(refreshToken);
@@ -139,14 +149,14 @@ public class TokenProvider {
         return false;
     }
 
-    private String buildTokenWithClaims(Long memberId, String email, long tokenValidityInSeconds) {
+    private String buildTokenWithClaims(Long memberId, String subject, long tokenValidityInSeconds) {
         long now = (new Date()).getTime();
         return Jwts.builder()
-                .setSubject(email)
-                .claim(MEMBER_ID, memberId)
-                .setExpiration(new Date(now + tokenValidityInSeconds))
-                .signWith(key, SignatureAlgorithm.HS512)
-                .compact();
+            .setSubject(subject)
+            .claim(MEMBER_ID, memberId)
+            .setExpiration(new Date(now + tokenValidityInSeconds))
+            .signWith(key, SignatureAlgorithm.HS512)
+            .compact();
     }
 
     public void deleteRefreshToken(String refreshToken) {

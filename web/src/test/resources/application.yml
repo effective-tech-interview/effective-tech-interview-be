@@ -21,7 +21,27 @@ spring:
           auth: true
           starttls:
             enable: true
-
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: clientId
+            client-secret: clientSecret
+            redirect-uri: redirectUri
+            authorization-grant-type: authorization_code
+            client-authentication-method: POST
+            client-name: Kakao
+            scope: profile_nickname
+        provider:
+          kakao:
+            host: https://kapi.kakao.com
+            authorization-path: /oauth/authorize
+            token-path: oauth/token
+            profile-path: v2/user/me
+  flyway:
+    enabled: false
+    baseline-on-migrate: false
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     open-in-view: false
