@@ -50,19 +50,8 @@ public class PageAnswerController {
         @ApiResponse(responseCode = "403", description = "forbidden"),
         @ApiResponse(responseCode = "404", description = "not found")})
     public ResponseEntity<FeedbackResponse> feedback(@PathVariable long pageId,
-                                                     @PathVariable long pageQuestionId,
-                                                     @RequestBody FeedbackRequest feedbackRequest) {
-        validateRequest(pageId, pageQuestionId, feedbackRequest);
-        FeedbackResponse feedback = pageAnswerService.feedback(feedbackRequest);
+                                                     @PathVariable long pageQuestionId) {
+        FeedbackResponse feedback = pageAnswerService.feedback(new FeedbackRequest(pageId, pageQuestionId));
         return ResponseEntity.ok(feedback);
-    }
-
-    private void validateRequest(long pageId, long pageQuestionId, FeedbackRequest feedbackRequest) {
-        if (pageId != feedbackRequest.pageId()) {
-            throw new IllegalArgumentException("pageId is not matched");
-        }
-        if (pageQuestionId != feedbackRequest.pageQuestionId()) {
-            throw new IllegalArgumentException("pageQuestionId is not matched");
-        }
     }
 }

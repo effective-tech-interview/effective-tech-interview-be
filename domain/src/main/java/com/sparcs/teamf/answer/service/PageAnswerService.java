@@ -2,6 +2,7 @@ package com.sparcs.teamf.answer.service;
 
 import com.sparcs.teamf.answer.dto.FeedbackRequest;
 import com.sparcs.teamf.answer.dto.FeedbackResponse;
+import com.sparcs.teamf.answer.exception.AnswerNotFoundException;
 import com.sparcs.teamf.answer.exception.PageQuestionNotFoundException;
 import com.sparcs.teamf.answer.exception.QuestionNotFoundException;
 import com.sparcs.teamf.member.Member;
@@ -60,9 +61,17 @@ public class PageAnswerService {
         Page page = pageRepository.findById(feedbackRequest.pageId())
             .orElseThrow(PageNotFountException::new);
         PageQuestion pageQuestion = findPageQuestionByQuestionId(page, feedbackRequest.pageQuestionId());
-        String feedback = gptQuestionService.generateFeedback(pageQuestion.getQuestion(), feedbackRequest.answer());
+        if (isMemberAnswerEmpty(pageQuestion)) {
+            throw new AnswerNotFoundException();
+        }
+        String feedback = gptQuestionService.generateFeedback(pageQuestion.getQuestion(),
+            pageQuestion.getMemberAnswer().getMemberAnswer());
         pageQuestion.updateFeedback(feedback);
         return new FeedbackResponse(feedback);
+    }
+
+    private boolean isMemberAnswerEmpty(PageQuestion pageQuestion) {
+        return pageQuestion.getMemberAnswer() == null || pageQuestion.getMemberAnswer().getMemberAnswer() == null;
     }
 
     private PageQuestion findPageQuestionByQuestionId(Page page, Long pageQuestionId) {
