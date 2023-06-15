@@ -1,6 +1,8 @@
 package com.sparcs.teamf.answer.service;
 
+import com.sparcs.teamf.answer.dto.FeedbackRequest;
 import com.sparcs.teamf.answer.exception.PageQuestionNotFoundException;
+import com.sparcs.teamf.answer.exception.QuestionNotFoundException;
 import com.sparcs.teamf.member.Member;
 import com.sparcs.teamf.member.MemberRepository;
 import com.sparcs.teamf.page.MemberAnswer;
@@ -12,6 +14,7 @@ import com.sparcs.teamf.page.PageRepository;
 import com.sparcs.teamf.question.exception.PageNotFountException;
 import com.sparcs.teamf.question.exception.PageOwnerMismatchException;
 import com.sparcs.teamf.question.exception.PageQuestionMismatchException;
+import com.sparcs.teamf.question.service.GptQuestionService;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,6 +25,7 @@ public class PageAnswerService {
 
     private final PageRepository pageRepository;
     private final MemberRepository memberRepository;
+    private final GptQuestionService gptQuestionService;
     private final PageQuestionRepository pageQuestionRepository;
     private final MemberAnswerRepository memberAnswerRepository;
 
@@ -30,7 +34,7 @@ public class PageAnswerService {
         Member member = memberRepository.findById(memberId).orElseThrow();
         Page page = pageRepository.findById(pageId).orElseThrow(PageNotFountException::new);
         PageQuestion pageQuestion = pageQuestionRepository.findById(pageQuestionId)
-                .orElseThrow(PageQuestionNotFoundException::new);
+            .orElseThrow(PageQuestionNotFoundException::new);
         validatePageQuestion(member, page, pageQuestion);
 
         if (pageQuestion.getMemberAnswer() != null) {
@@ -48,5 +52,20 @@ public class PageAnswerService {
         if (pageQuestion.getPage() != page) {
             throw new PageQuestionMismatchException();
         }
+    }
+
+    public void feedback(FeedbackRequest feedbackRequest) {
+        Page page = pageRepository.findById(feedbackRequest.pageId())
+            .orElseThrow(PageNotFountException::new);
+        PageQuestion pageQuestion = findPageQuestionByQuestionId(page, feedbackRequest.questionId());
+        String feedback = gptQuestionService.generateFeedback(pageQuestion.getQuestion(), feedbackRequest.answer());
+        pageQuestion.updateFeedback(feedback);
+    }
+
+    private PageQuestion findPageQuestionByQuestionId(Page page, Long questionId) {
+        return page.getPageQuestions().stream()
+            .filter(pageQuestion -> pageQuestion.getQuestion().getId().equals(questionId))
+            .findAny()
+            .orElseThrow(QuestionNotFoundException::new);
     }
 }
