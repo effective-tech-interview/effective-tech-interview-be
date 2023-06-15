@@ -18,7 +18,7 @@ public class TailQuestionService {
         if (needToRepeat(question)) {
 
         }
-//        List<Question> question = Repeat.repeat(() -> findQuestionById(questionId),
+//        List<Question> question = Repeat.repeat(() -> findQuestionById(pageQuestionId),
 //                this::needToRepeat,
 //                AnswerNotFoundException::new);
         return new TailQuestionResponse(question.get(0).getId(), question.get(0).getQuestion());

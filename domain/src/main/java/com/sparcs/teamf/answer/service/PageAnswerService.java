@@ -1,6 +1,7 @@
 package com.sparcs.teamf.answer.service;
 
 import com.sparcs.teamf.answer.dto.FeedbackRequest;
+import com.sparcs.teamf.answer.dto.FeedbackResponse;
 import com.sparcs.teamf.answer.exception.PageQuestionNotFoundException;
 import com.sparcs.teamf.answer.exception.QuestionNotFoundException;
 import com.sparcs.teamf.member.Member;
@@ -19,8 +20,9 @@ import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-@Service
 @RequiredArgsConstructor
+@Service
+@Transactional
 public class PageAnswerService {
 
     private final PageRepository pageRepository;
@@ -29,10 +31,10 @@ public class PageAnswerService {
     private final PageQuestionRepository pageQuestionRepository;
     private final MemberAnswerRepository memberAnswerRepository;
 
-    @Transactional
     public void saveMemberAnswer(long memberId, long pageId, long pageQuestionId, String memberAnswer) {
         Member member = memberRepository.findById(memberId).orElseThrow();
         Page page = pageRepository.findById(pageId).orElseThrow(PageNotFountException::new);
+
         PageQuestion pageQuestion = pageQuestionRepository.findById(pageQuestionId)
             .orElseThrow(PageQuestionNotFoundException::new);
         validatePageQuestion(member, page, pageQuestion);
@@ -54,17 +56,18 @@ public class PageAnswerService {
         }
     }
 
-    public void feedback(FeedbackRequest feedbackRequest) {
+    public FeedbackResponse feedback(FeedbackRequest feedbackRequest) {
         Page page = pageRepository.findById(feedbackRequest.pageId())
             .orElseThrow(PageNotFountException::new);
-        PageQuestion pageQuestion = findPageQuestionByQuestionId(page, feedbackRequest.questionId());
+        PageQuestion pageQuestion = findPageQuestionByQuestionId(page, feedbackRequest.pageQuestionId());
         String feedback = gptQuestionService.generateFeedback(pageQuestion.getQuestion(), feedbackRequest.answer());
         pageQuestion.updateFeedback(feedback);
+        return new FeedbackResponse(feedback);
     }
 
-    private PageQuestion findPageQuestionByQuestionId(Page page, Long questionId) {
+    private PageQuestion findPageQuestionByQuestionId(Page page, Long pageQuestionId) {
         return page.getPageQuestions().stream()
-            .filter(pageQuestion -> pageQuestion.getQuestion().getId().equals(questionId))
+            .filter(pageQuestion -> pageQuestion.getId().equals(pageQuestionId))
             .findAny()
             .orElseThrow(QuestionNotFoundException::new);
     }
