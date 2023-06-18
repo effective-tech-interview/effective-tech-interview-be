@@ -1,5 +1,5 @@
 jwt:
   secret: ENC(vtXQqpFzmMOU0LEzZAtvTclmTvMLzhfmOaL4g9nK+Q0/40Ja4ZhlmabPN6GqNbnnhfw/IDdr0nMT1zRVhUlzIT3Qn2B6S3BGAre61WLcHvPhaHJXYijicCy11npKMfzhnSXmWixqUgU=)
-  access-token-validity-in-seconds: 86400
-  refresh-token-validity-in-seconds: 604800
+  access-token-validity-in-seconds: 60
+  refresh-token-validity-in-seconds: 300
   one-time-token-validity-in-seconds: 300
