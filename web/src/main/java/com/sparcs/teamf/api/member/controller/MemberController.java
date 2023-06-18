@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "Members")
 @RestController
 @RequestMapping("v1/members")
 @RequiredArgsConstructor
@@ -30,40 +29,43 @@ public class MemberController {
 
     private final MemberService memberService;
 
+    @Tag(name = "Login")
     @PostMapping("/password-reset")
     @Operation(summary = "비밀번호 재설정")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "successful operation"),
-            @ApiResponse(responseCode = "500", description = "internal server error"),
-            @ApiResponse(responseCode = "400", description = "bad request"),
-            @ApiResponse(responseCode = "401", description = "invalid one time token"),
-            @ApiResponse(responseCode = "403", description = "forbidden"),
-            @ApiResponse(responseCode = "404", description = "not found")})
+        @ApiResponse(responseCode = "200", description = "successful operation"),
+        @ApiResponse(responseCode = "500", description = "internal server error"),
+        @ApiResponse(responseCode = "400", description = "bad request"),
+        @ApiResponse(responseCode = "401", description = "invalid one time token"),
+        @ApiResponse(responseCode = "403", description = "forbidden"),
+        @ApiResponse(responseCode = "404", description = "not found")})
     @SecurityRequirements
     public void resetPassword(@RequestBody @Valid ResetPasswordEmailRequest request) {
         memberService.resetPassword(request.email(), request.password(), request.confirmPassword());
     }
 
+    @Tag(name = "Profile")
     @GetMapping("/profile")
     @Operation(summary = "멤버 프로필 조회")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "successful operation", content = {
-                    @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = MemberProfileResponse.class))}),
-            @ApiResponse(responseCode = "500", description = "internal server error", content = @Content),
-            @ApiResponse(responseCode = "400", description = "bad request", content = @Content),
-            @ApiResponse(responseCode = "401", description = "unauthorized", content = @Content),
-            @ApiResponse(responseCode = "404", description = "not found", content = @Content)})
+        @ApiResponse(responseCode = "200", description = "successful operation", content = {
+            @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = MemberProfileResponse.class))}),
+        @ApiResponse(responseCode = "500", description = "internal server error", content = @Content),
+        @ApiResponse(responseCode = "400", description = "bad request", content = @Content),
+        @ApiResponse(responseCode = "401", description = "unauthorized", content = @Content),
+        @ApiResponse(responseCode = "404", description = "not found", content = @Content)})
     public MemberProfileResponse getMemberProfile(@AuthenticationPrincipal EffectiveMember member) {
         return memberService.getMemberProfile(member.getMemberId());
     }
 
+    @Tag(name = "Withdrawal")
     @DeleteMapping
     @Operation(summary = "멤버 탈퇴")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "successful operation"),
-            @ApiResponse(responseCode = "500", description = "internal server error"),
-            @ApiResponse(responseCode = "401", description = "unauthorized"),
-            @ApiResponse(responseCode = "404", description = "not found")})
+        @ApiResponse(responseCode = "200", description = "successful operation"),
+        @ApiResponse(responseCode = "500", description = "internal server error"),
+        @ApiResponse(responseCode = "401", description = "unauthorized"),
+        @ApiResponse(responseCode = "404", description = "not found")})
     public void delete(@AuthenticationPrincipal EffectiveMember member) {
         memberService.delete(member.getMemberId());
     }

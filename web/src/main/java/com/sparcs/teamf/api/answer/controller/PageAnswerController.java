@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("v2/pages")
 @RequiredArgsConstructor
-@Tag(name = "Answer-v2")
+@Tag(name = "Page")
 public class PageAnswerController {
 
     private final PageAnswerService pageAnswerService;

@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "Auth")
 @RestController
 @RequestMapping("v1/auth")
 @RequiredArgsConstructor
@@ -38,6 +37,7 @@ public class AuthController {
     private final EmailAuthService emailAuthService;
     private final TokenUtil tokenUtil;
 
+    @Tag(name = "Login")
     @PostMapping("login")
     @Operation(summary = "로그인")
     @ApiResponses(value = {
@@ -53,6 +53,7 @@ public class AuthController {
         return new AccessTokenResponse(tokenResponse.memberId(), tokenResponse.accessToken());
     }
 
+    @Tag(name = "Login")
     @PostMapping("/refresh")
     @Operation(summary = "엑세스 토큰 재발급")
     @ApiResponses(value = {
@@ -69,6 +70,7 @@ public class AuthController {
         return new AccessTokenResponse(tokenResponse.memberId(), tokenResponse.accessToken());
     }
 
+    @Tag(name = "Signup")
     @PostMapping("/email/send")
     @Operation(summary = "회원가입 이메일 인증 코드 전송")
     @ApiResponses(value = {
@@ -81,6 +83,7 @@ public class AuthController {
         emailAuthService.sendEmailForSignup(request.email());
     }
 
+    @Tag(name = "Signup")
     @PostMapping("/email/authenticate")
     @Operation(summary = "회원가입 이메일 인증 코드 확인")
     @ApiResponses(value = {
@@ -92,6 +95,7 @@ public class AuthController {
         emailAuthService.authenticateEmailForSignup(request.email(), request.verificationCode());
     }
 
+    @Tag(name = "Login")
     @PostMapping("/password-reset/email")
     @Operation(summary = "비밀번호 재설정 인증 코드 전송")
     @ApiResponses(value = {
@@ -104,6 +108,7 @@ public class AuthController {
         emailAuthService.sendPasswordResetCode(request.email());
     }
 
+    @Tag(name = "Login")
     @PostMapping("/password-reset/email-verification")
     @Operation(summary = "비밀번호 재설정 인증 코드 검증")
     @ApiResponses(value = {
@@ -116,6 +121,7 @@ public class AuthController {
         return emailAuthService.verifyPasswordResetCode(request.email(), request.verificationCode());
     }
 
+    @Tag(name = "Logout")
     @PostMapping("/logout")
     public void logout(@RequestHeader(value = "Authorization") String accessToken,
                        @CookieValue(value = "refreshToken") String refreshToken) {
