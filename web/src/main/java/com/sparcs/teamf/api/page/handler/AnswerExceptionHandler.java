@@ -1,8 +1,8 @@
 package com.sparcs.teamf.api.page.handler;
 
-import com.sparcs.teamf.answer.exception.AnswerNotFoundException;
-import com.sparcs.teamf.answer.exception.PageQuestionNotFoundException;
 import com.sparcs.teamf.dto.ErrorResponseDto;
+import com.sparcs.teamf.page.exception.AnswerNotFoundException;
+import com.sparcs.teamf.page.exception.PageQuestionNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,13 +17,13 @@ public class AnswerExceptionHandler {
     private ResponseEntity<ErrorResponseDto> handleAnswerNotFound(AnswerNotFoundException e) {
         log.warn("AnswerNotFoundException : {}", e);
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-            .body(new ErrorResponseDto(HttpStatus.NOT_FOUND.value(), "Answer not found"));
+                .body(new ErrorResponseDto(HttpStatus.NOT_FOUND.value(), "Answer not found"));
     }
 
     @ExceptionHandler
     private ResponseEntity<ErrorResponseDto> handlePageQuestionNotFound(PageQuestionNotFoundException e) {
         log.warn("PageQuestionNotFoundException : {}", e);
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-            .body(new ErrorResponseDto(HttpStatus.NOT_FOUND.value(), "no data found for this page and question"));
+                .body(new ErrorResponseDto(HttpStatus.NOT_FOUND.value(), "no data found for this page and question"));
     }
 }

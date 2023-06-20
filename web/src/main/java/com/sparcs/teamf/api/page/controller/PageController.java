@@ -1,15 +1,15 @@
 package com.sparcs.teamf.api.page.controller;
 
-import com.sparcs.teamf.answer.dto.FeedbackRequest;
-import com.sparcs.teamf.answer.dto.FeedbackResponse;
-import com.sparcs.teamf.answer.dto.SaveMemberAnswerRequest;
-import com.sparcs.teamf.answer.service.PageAnswerService;
 import com.sparcs.teamf.common.UriUtil;
 import com.sparcs.teamf.dto.EffectiveMember;
-import com.sparcs.teamf.question.dto.CreatePageRequest;
-import com.sparcs.teamf.question.dto.PageResponse;
-import com.sparcs.teamf.question.dto.QuestionsResponse;
-import com.sparcs.teamf.question.service.PageQuestionService;
+import com.sparcs.teamf.page.dto.CreatePageRequest;
+import com.sparcs.teamf.page.dto.FeedbackRequest;
+import com.sparcs.teamf.page.dto.FeedbackResponse;
+import com.sparcs.teamf.page.dto.PageResponse;
+import com.sparcs.teamf.page.dto.QuestionsResponse;
+import com.sparcs.teamf.page.dto.SaveMemberAnswerRequest;
+import com.sparcs.teamf.page.service.PageCommandService;
+import com.sparcs.teamf.page.service.PageQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -34,21 +34,8 @@ import java.net.URI;
 @Tag(name = "Page")
 @RequestMapping("/v2/pages")
 public class PageController {
-
-    private final PageQuestionService pageQuestionService;
-    private final PageAnswerService pageAnswerService;
-
-    @GetMapping
-    @Operation(summary = "페이지 생성 및 조회")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "successful operation", content = {
-                    @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = QuestionsResponse.class))}),
-            @ApiResponse(responseCode = "500", description = "internal server error", content = @Content),
-            @ApiResponse(responseCode = "401", description = "unauthorized", content = @Content),
-            @ApiResponse(responseCode = "404", description = "not found", content = @Content)})
-    public PageResponse getPage(@AuthenticationPrincipal EffectiveMember member) {
-        return pageQuestionService.getPage(member.getMemberId());
-    }
+    private final PageQueryService pageQueryService;
+    private final PageCommandService pageCommandService;
 
     @PostMapping
     @Operation(summary = "페이지 생성")
@@ -60,7 +47,7 @@ public class PageController {
             @ApiResponse(responseCode = "404", description = "not found", content = @Content)})
     public ResponseEntity<PageResponse> createPage(@AuthenticationPrincipal EffectiveMember member,
                                                    @RequestBody CreatePageRequest createPageRequest) {
-        PageResponse response = pageQuestionService.createPage(member.getMemberId(), createPageRequest);
+        PageResponse response = pageCommandService.createPage(member.getMemberId(), createPageRequest);
         URI uri = UriUtil.build("/{pageId}", response.id());
         return ResponseEntity.created(uri).body(response);
     }
@@ -76,7 +63,7 @@ public class PageController {
             @ApiResponse(responseCode = "404", description = "not found", content = @Content)})
     public QuestionsResponse getPageQuestions(@PathVariable("pageId") long pageId,
                                               @AuthenticationPrincipal EffectiveMember member) {
-        return pageQuestionService.getPageQuestions(member.getMemberId(), pageId);
+        return pageQueryService.getPageQuestions(member.getMemberId(), pageId);
     }
 
     @PostMapping("/{pageId}/questions/{pageQuestionId}")
@@ -87,11 +74,12 @@ public class PageController {
             @ApiResponse(responseCode = "401", description = "unauthorized"),
             @ApiResponse(responseCode = "403", description = "forbidden"),
             @ApiResponse(responseCode = "404", description = "not found")})
-    public void saveMemberAnswer(@PathVariable("pageId") long pageId,
-                                 @PathVariable("pageQuestionId") long pageQuestionId,
-                                 @RequestBody SaveMemberAnswerRequest request,
-                                 @AuthenticationPrincipal EffectiveMember member) {
-        pageAnswerService.saveMemberAnswer(member.getMemberId(), pageId, pageQuestionId, request.memberAnswer());
+    public ResponseEntity<Void> saveMemberAnswer(@PathVariable("pageId") long pageId,
+                                                 @PathVariable("pageQuestionId") long pageQuestionId,
+                                                 @RequestBody SaveMemberAnswerRequest request,
+                                                 @AuthenticationPrincipal EffectiveMember member) {
+        pageCommandService.saveMemberAnswer(member.getMemberId(), pageId, pageQuestionId, request.memberAnswer());
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{pageId}/questions/{pageQuestionId}/feedback")
@@ -104,7 +92,7 @@ public class PageController {
             @ApiResponse(responseCode = "404", description = "not found")})
     public ResponseEntity<FeedbackResponse> feedback(@PathVariable long pageId,
                                                      @PathVariable long pageQuestionId) {
-        FeedbackResponse feedback = pageAnswerService.feedback(new FeedbackRequest(pageId, pageQuestionId));
+        FeedbackResponse feedback = pageCommandService.feedback(new FeedbackRequest(pageId, pageQuestionId));
         return ResponseEntity.ok(feedback);
     }
 }

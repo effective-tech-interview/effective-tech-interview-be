@@ -3,6 +3,7 @@ package com.sparcs.teamf.page;
 import com.sparcs.teamf.BaseEntity;
 import com.sparcs.teamf.member.Member;
 import com.sparcs.teamf.midcategory.MidCategory;
+import com.sparcs.teamf.page.exception.PageQuestionNotFoundException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,6 +38,9 @@ public class Page extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @Column(name = "member_id", insertable = false, updatable = false)
+    private Long memberId;
+
     @OneToOne
     private MidCategory midCategory;
 
@@ -50,5 +54,17 @@ public class Page extends BaseEntity {
     public Page(Member member, MidCategory midCategory) {
         this.member = member;
         this.midCategory = midCategory;
+    }
+
+    public void addPageQuestion(PageQuestion pageQuestion) {
+        pageQuestions.add(pageQuestion);
+    }
+
+    public void addMemberAnswer(long pageQuestionId, String memberAnswer) {
+        PageQuestion pageQuestion = pageQuestions.stream()
+                .filter(pq -> pq.getId() == pageQuestionId)
+                .findFirst()
+                .orElseThrow(PageQuestionNotFoundException::new);
+        pageQuestion.updateFeedback(memberAnswer);
     }
 }

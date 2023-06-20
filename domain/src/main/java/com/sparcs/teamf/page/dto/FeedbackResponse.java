@@ -1,4 +1,4 @@
-package com.sparcs.teamf.answer.dto;
+package com.sparcs.teamf.page.dto;
 
 public record FeedbackResponse(String feedback) {
 

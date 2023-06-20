@@ -1,4 +1,4 @@
-package com.sparcs.teamf.question.service;
+package com.sparcs.teamf.page.service;
 
 import com.sparcs.teamf.gpt.Gpt;
 import com.sparcs.teamf.question.Question;
@@ -11,7 +11,7 @@ public class GptQuestionService {
 
     private static final String ANSWER_FORMAT = "%s %s 카테고리에 대한 질문 %s의 답을 알려 주세요.";
     private static final String NEXT_QUESTION_FORMAT =
-        "%s %s 카테고리에 에 대한 질문 %s 에 %s 라는 답을 했을 때 생길 수 있는 다음 질문을 하나 알려주세요";
+            "%s %s 카테고리에 에 대한 질문 %s 에 %s 라는 답을 했을 때 생길 수 있는 다음 질문을 하나 알려주세요";
     private static final String FEEDBACK_FORMAT = "%s 카테고리에 질문 %s 에 %s 라는 답을 했을 때, 좋은 점과 개선할 점 순으로 설명해주세요";
 
     private final Gpt gpt;
@@ -41,6 +41,6 @@ public class GptQuestionService {
 
     private String generatePromptForFeedback(Question question, String answer) {
         return String.format(FEEDBACK_FORMAT, question.getMidCategory().getName(),
-            question.getQuestion(), answer);
+                question.getQuestion(), answer);
     }
 }
