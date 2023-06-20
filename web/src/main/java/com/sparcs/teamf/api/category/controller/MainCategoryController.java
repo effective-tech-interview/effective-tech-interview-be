@@ -1,4 +1,4 @@
-package com.sparcs.teamf.api.maincategory.controller;
+package com.sparcs.teamf.api.category.controller;
 
 import com.sparcs.teamf.maincategory.MainCategoryService;
 import com.sparcs.teamf.maincategory.dto.MainCategoriesResponse;
@@ -25,10 +25,10 @@ public class MainCategoryController {
     @GetMapping
     @Operation(summary = "메인 카테고리 목록 조회")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "successful operation", content = {
-                    @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = MainCategoriesResponse.class))}),
-            @ApiResponse(responseCode = "500", description = "internal server error", content = @Content),
-            @ApiResponse(responseCode = "401", description = "unauthorized", content = @Content)})
+        @ApiResponse(responseCode = "200", description = "successful operation", content = {
+            @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = MainCategoriesResponse.class))}),
+        @ApiResponse(responseCode = "500", description = "internal server error", content = @Content),
+        @ApiResponse(responseCode = "401", description = "unauthorized", content = @Content)})
     public MainCategoriesResponse getMainCategories() {
         return mainCategoryService.getAll();
     }

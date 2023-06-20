@@ -1,4 +1,4 @@
-package com.sparcs.teamf.api.maincategory.handler;
+package com.sparcs.teamf.api.category.handler;
 
 import com.sparcs.teamf.dto.ErrorResponseDto;
 import com.sparcs.teamf.maincategory.exception.MainCategoryNotFoundException;
@@ -16,6 +16,6 @@ public class MainCategoryExceptionHandler {
     private ResponseEntity<ErrorResponseDto> handleMainCategoryNotFound(MainCategoryNotFoundException e) {
         log.error("MainCategoryNotFoundException", e);
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(new ErrorResponseDto(HttpStatus.NOT_FOUND.value(), "MainCategory not found"));
+            .body(new ErrorResponseDto(HttpStatus.NOT_FOUND.value(), "MainCategory not found"));
     }
 }

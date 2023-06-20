@@ -1,11 +1,14 @@
 package com.sparcs.teamf.api.auth.controller;
 
 import com.sparcs.teamf.api.auth.dto.AccessTokenResponse;
+import com.sparcs.teamf.api.auth.dto.AuthenticateEmailRequest;
 import com.sparcs.teamf.api.auth.dto.Oauth2CodeRequest;
+import com.sparcs.teamf.api.auth.dto.SendEmailRequest;
 import com.sparcs.teamf.api.auth.dto.SignupRequest;
 import com.sparcs.teamf.dto.TokenResponse;
 import com.sparcs.teamf.jwt.TokenUtil;
 import com.sparcs.teamf.oauth2.kakao.KakaoOauth2Client;
+import com.sparcs.teamf.service.EmailAuthService;
 import com.sparcs.teamf.service.Oauth2Service;
 import com.sparcs.teamf.service.SignupService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,11 +32,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("v1/signup")
 @RequiredArgsConstructor
 @SecurityRequirements
-public class SignupController {
+public class LogoutController {
 
     private final SignupService signupService;
     private final Oauth2Service oauth2Service;
     private final KakaoOauth2Client kakaoOauth2Client;
+    private final EmailAuthService emailAuthService;
     private final TokenUtil tokenUtil;
 
     @PostMapping
@@ -64,5 +68,28 @@ public class SignupController {
             oauth2CodeRequest.redirectUri());
         tokenUtil.setRefreshTokenInCookie(response, tokenResponse.refreshToken());
         return ResponseEntity.ok(new AccessTokenResponse(tokenResponse.memberId(), tokenResponse.accessToken()));
+    }
+
+    @PostMapping("/email/send")
+    @Operation(summary = "회원가입 이메일 인증 코드 전송")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "successful operation"),
+        @ApiResponse(responseCode = "500", description = "internal server error"),
+        @ApiResponse(responseCode = "400", description = "bad request"),
+        @ApiResponse(responseCode = "409", description = "the email is already registered"),
+        @ApiResponse(responseCode = "429", description = "too many requests")})
+    public void sendEmailForSignup(@RequestBody @Valid SendEmailRequest request) {
+        emailAuthService.sendEmailForSignup(request.email());
+    }
+
+    @PostMapping("/email/authenticate")
+    @Operation(summary = "회원가입 이메일 인증 코드 확인")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "successful operation"),
+        @ApiResponse(responseCode = "500", description = "internal server error"),
+        @ApiResponse(responseCode = "400", description = "bad request"),
+        @ApiResponse(responseCode = "422", description = "invalid verification code")})
+    public void authenticateEmailForSignup(@RequestBody @Valid AuthenticateEmailRequest request) {
+        emailAuthService.authenticateEmailForSignup(request.email(), request.verificationCode());
     }
 }

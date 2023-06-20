@@ -1,4 +1,4 @@
-package com.sparcs.teamf.api.midcategory.handler;
+package com.sparcs.teamf.api.category.handler;
 
 import com.sparcs.teamf.dto.ErrorResponseDto;
 import com.sparcs.teamf.midcategory.exception.MidCategoryNotFoundException;
@@ -16,6 +16,6 @@ public class MidCategoryExceptionHandler {
     private ResponseEntity<ErrorResponseDto> handleMainCategoryNotFound(MidCategoryNotFoundException e) {
         log.error("MidCategoryNotFoundException", e);
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(new ErrorResponseDto(HttpStatus.NOT_FOUND.value(), "MainCategory not found"));
+            .body(new ErrorResponseDto(HttpStatus.NOT_FOUND.value(), "MainCategory not found"));
     }
 }
