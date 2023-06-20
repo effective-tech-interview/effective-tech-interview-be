@@ -18,13 +18,12 @@ import com.sparcs.teamf.question.dto.QuestionsResponse;
 import com.sparcs.teamf.question.exception.MemberNotFoundException;
 import com.sparcs.teamf.question.exception.PageNotFountException;
 import com.sparcs.teamf.question.exception.PageOwnerMismatchException;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
-import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 @RequiredArgsConstructor
@@ -46,24 +45,15 @@ public class PageQuestionService {
     }
 
     @Transactional
-    public QuestionsResponse getPageQuestions(Long memberId, long midCategoryId, long pageId) {
+    public QuestionsResponse getPageQuestions(long memberId, long pageId) {
         Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
         Page page = pageRepository.findById(pageId).orElseThrow(PageNotFountException::new);
         validateMember(member, page);
-
         List<PageQuestion> existedPageQuestions = page.getPageQuestions();
-        List<QuestionResponse> questionResponses;
-        if (existedPageQuestions.isEmpty()) {
-            PageQuestion savedPageQuestion = savedPageBasicQuestionByMidCategory(midCategoryId, page);
-            return new QuestionsResponse(page.getId(),
-                Collections.singletonList(QuestionResponse.from(savedPageQuestion)));
-        }
-        questionResponses = existedPageQuestions.stream().map(QuestionResponse::from).collect(Collectors.toList());
-        if (!existedPageQuestions.isEmpty() && existedPageQuestions.size() < 4) {
-            Question parentQuestion = existedPageQuestions.get(existedPageQuestions.size() - 1).getQuestion();
-            questionResponses.add(QuestionResponse.from(savedPageTailQuestionByParentQuestion(page, parentQuestion)));
-        }
-        return new QuestionsResponse(page.getId(), questionResponses);
+        List<QuestionResponse> questionResponses = existedPageQuestions.stream()
+                .map(QuestionResponse::from)
+                .toList();
+        return new QuestionsResponse(page.getId(), page.getMidCategoryId(), questionResponses);
     }
 
     private void validateMember(Member member, Page page) {
@@ -73,8 +63,14 @@ public class PageQuestionService {
     }
 
     private PageQuestion savedPageBasicQuestionByMidCategory(long midCategoryId, Page page) {
+        //        if (existedPageQuestions.isEmpty()) {
+//            PageQuestion savedPageQuestion = savedPageBasicQuestionByMidCategory(midCategoryId, page);
+//            return new QuestionsResponse(page.getId(),
+//                    page.getMidCategory().getId(),
+//                    Collections.singletonList(QuestionResponse.from(savedPageQuestion)));
+//        }
         List<Question> questions = questionRepository.findQuestionByParentQuestionIdIsNullAndMidCategory_Id(
-            midCategoryId);
+                midCategoryId);
         Question basicQuestion = questions.get(random.nextInt(questions.size()));
         return pageQuestionRepository.save(new PageQuestion(basicQuestion, page));
     }
@@ -83,12 +79,12 @@ public class PageQuestionService {
         List<Question> questionPage = questionRepository.findQuestionByParentQuestionId(parentQuestion.getId());
         if (questionPage.isEmpty()) {
             String nextQuestion = gptQuestionService.generateQuestion(
-                parentQuestion.getMidCategory().getMainCategory().getName(),
-                parentQuestion.getMidCategory().getName(),
-                parentQuestion.getQuestion(),
-                parentQuestion.getAnswer());
+                    parentQuestion.getMidCategory().getMainCategory().getName(),
+                    parentQuestion.getMidCategory().getName(),
+                    parentQuestion.getQuestion(),
+                    parentQuestion.getAnswer());
             Question savedQuestion = questionRepository.save(
-                new Question(nextQuestion, parentQuestion.getMidCategory()));
+                    new Question(nextQuestion, parentQuestion.getMidCategory()));
             return pageQuestionRepository.save(new PageQuestion(savedQuestion, page));
         }
         Question question = questionPage.get(0);
@@ -98,7 +94,7 @@ public class PageQuestionService {
     public PageResponse createPage(long memberId, CreatePageRequest createPageRequest) {
         Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
         MidCategory midCategory = midCategoryRepository.findById(createPageRequest.midCategoryId())
-            .orElseThrow(MidCategoryNotFoundException::new);
+                .orElseThrow(MidCategoryNotFoundException::new);
         Page page = new Page(member, midCategory);
         Page savedPage = pageRepository.save(page);
         return new PageResponse(savedPage.getId());
