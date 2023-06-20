@@ -2,12 +2,16 @@ package com.sparcs.teamf.question.service;
 
 import com.sparcs.teamf.member.Member;
 import com.sparcs.teamf.member.MemberRepository;
+import com.sparcs.teamf.midcategory.MidCategory;
+import com.sparcs.teamf.midcategory.MidCategoryRepository;
+import com.sparcs.teamf.midcategory.exception.MidCategoryNotFoundException;
 import com.sparcs.teamf.page.Page;
 import com.sparcs.teamf.page.PageQuestion;
 import com.sparcs.teamf.page.PageQuestionRepository;
 import com.sparcs.teamf.page.PageRepository;
 import com.sparcs.teamf.question.Question;
 import com.sparcs.teamf.question.QuestionRepository;
+import com.sparcs.teamf.question.dto.CreatePageRequest;
 import com.sparcs.teamf.question.dto.PageResponse;
 import com.sparcs.teamf.question.dto.QuestionResponse;
 import com.sparcs.teamf.question.dto.QuestionsResponse;
@@ -30,6 +34,7 @@ public class PageQuestionService {
     private final MemberRepository memberRepository;
     private final QuestionRepository questionRepository;
     private final PageRepository pageRepository;
+    private final MidCategoryRepository midCategoryRepository;
     private final PageQuestionRepository pageQuestionRepository;
     private final ThreadLocalRandom random = ThreadLocalRandom.current();
 
@@ -51,7 +56,7 @@ public class PageQuestionService {
         if (existedPageQuestions.isEmpty()) {
             PageQuestion savedPageQuestion = savedPageBasicQuestionByMidCategory(midCategoryId, page);
             return new QuestionsResponse(page.getId(),
-                    Collections.singletonList(QuestionResponse.from(savedPageQuestion)));
+                Collections.singletonList(QuestionResponse.from(savedPageQuestion)));
         }
         questionResponses = existedPageQuestions.stream().map(QuestionResponse::from).collect(Collectors.toList());
         if (!existedPageQuestions.isEmpty() && existedPageQuestions.size() < 4) {
@@ -69,7 +74,7 @@ public class PageQuestionService {
 
     private PageQuestion savedPageBasicQuestionByMidCategory(long midCategoryId, Page page) {
         List<Question> questions = questionRepository.findQuestionByParentQuestionIdIsNullAndMidCategory_Id(
-                midCategoryId);
+            midCategoryId);
         Question basicQuestion = questions.get(random.nextInt(questions.size()));
         return pageQuestionRepository.save(new PageQuestion(basicQuestion, page));
     }
@@ -78,15 +83,24 @@ public class PageQuestionService {
         List<Question> questionPage = questionRepository.findQuestionByParentQuestionId(parentQuestion.getId());
         if (questionPage.isEmpty()) {
             String nextQuestion = gptQuestionService.generateQuestion(
-                    parentQuestion.getMidCategory().getMainCategory().getName(),
-                    parentQuestion.getMidCategory().getName(),
-                    parentQuestion.getQuestion(),
-                    parentQuestion.getAnswer());
+                parentQuestion.getMidCategory().getMainCategory().getName(),
+                parentQuestion.getMidCategory().getName(),
+                parentQuestion.getQuestion(),
+                parentQuestion.getAnswer());
             Question savedQuestion = questionRepository.save(
-                    new Question(nextQuestion, parentQuestion.getMidCategory()));
+                new Question(nextQuestion, parentQuestion.getMidCategory()));
             return pageQuestionRepository.save(new PageQuestion(savedQuestion, page));
         }
         Question question = questionPage.get(0);
         return pageQuestionRepository.save(new PageQuestion(question, page));
+    }
+
+    public PageResponse createPage(long memberId, CreatePageRequest createPageRequest) {
+        Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
+        MidCategory midCategory = midCategoryRepository.findById(createPageRequest.midCategoryId())
+            .orElseThrow(MidCategoryNotFoundException::new);
+        Page page = new Page(member, midCategory);
+        Page savedPage = pageRepository.save(page);
+        return new PageResponse(savedPage.getId());
     }
 }

@@ -2,6 +2,7 @@ package com.sparcs.teamf.page;
 
 import com.sparcs.teamf.BaseEntity;
 import com.sparcs.teamf.member.Member;
+import com.sparcs.teamf.midcategory.MidCategory;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -13,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,7 +35,15 @@ public class Page extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @OneToOne
+    private MidCategory midCategory;
+
     public Page(Member member) {
         this.member = member;
+    }
+
+    public Page(Member member, MidCategory midCategory) {
+        this.member = member;
+        this.midCategory = midCategory;
     }
 }
