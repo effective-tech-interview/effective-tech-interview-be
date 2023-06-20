@@ -4,7 +4,6 @@ import com.sparcs.teamf.common.UriUtil;
 import com.sparcs.teamf.dto.EffectiveMember;
 import com.sparcs.teamf.page.dto.CreatePageRequest;
 import com.sparcs.teamf.page.dto.FeedbackRequest;
-import com.sparcs.teamf.page.dto.FeedbackResponse;
 import com.sparcs.teamf.page.dto.PageResponse;
 import com.sparcs.teamf.page.dto.QuestionsResponse;
 import com.sparcs.teamf.page.dto.SaveMemberAnswerRequest;
@@ -90,9 +89,9 @@ public class PageController {
             @ApiResponse(responseCode = "401", description = "unauthorized"),
             @ApiResponse(responseCode = "403", description = "forbidden"),
             @ApiResponse(responseCode = "404", description = "not found")})
-    public ResponseEntity<FeedbackResponse> feedback(@PathVariable long pageId,
-                                                     @PathVariable long pageQuestionId) {
-        FeedbackResponse feedback = pageCommandService.feedback(new FeedbackRequest(pageId, pageQuestionId));
-        return ResponseEntity.ok(feedback);
+    public ResponseEntity<Void> feedback(@PathVariable long pageId,
+                                         @PathVariable long pageQuestionId) {
+        pageCommandService.feedback(new FeedbackRequest(pageId, pageQuestionId));
+        return ResponseEntity.ok().build();
     }
 }

@@ -10,13 +10,10 @@ import com.sparcs.teamf.page.PageQuestion;
 import com.sparcs.teamf.page.PageRepository;
 import com.sparcs.teamf.page.dto.CreatePageRequest;
 import com.sparcs.teamf.page.dto.FeedbackRequest;
-import com.sparcs.teamf.page.dto.FeedbackResponse;
 import com.sparcs.teamf.page.dto.PageResponse;
-import com.sparcs.teamf.page.exception.AnswerNotFoundException;
 import com.sparcs.teamf.page.exception.MemberNotFoundException;
 import com.sparcs.teamf.page.exception.PageNotFountException;
 import com.sparcs.teamf.page.exception.PageOwnerMismatchException;
-import com.sparcs.teamf.page.exception.QuestionNotFoundException;
 import com.sparcs.teamf.question.Question;
 import com.sparcs.teamf.question.QuestionRepository;
 import lombok.RequiredArgsConstructor;
@@ -68,27 +65,9 @@ public class PageCommandService {
         }
     }
 
-    public FeedbackResponse feedback(FeedbackRequest feedbackRequest) {
+    public void feedback(FeedbackRequest feedbackRequest) {
         Page page = pageRepository.findById(feedbackRequest.pageId())
                 .orElseThrow(PageNotFountException::new);
-        PageQuestion pageQuestion = findPageQuestionByQuestionId(page, feedbackRequest.pageQuestionId());
-        if (isMemberAnswerEmpty(pageQuestion)) {
-            throw new AnswerNotFoundException();
-        }
-        String feedback = gptQuestionService.generateFeedback(pageQuestion.getQuestion(),
-                pageQuestion.getMemberAnswer().getMemberAnswer());
-        pageQuestion.updateFeedback(feedback);
-        return new FeedbackResponse(feedback);
-    }
-
-    private boolean isMemberAnswerEmpty(PageQuestion pageQuestion) {
-        return pageQuestion.getMemberAnswer() == null || pageQuestion.getMemberAnswer().getMemberAnswer() == null;
-    }
-
-    private PageQuestion findPageQuestionByQuestionId(Page page, Long pageQuestionId) {
-        return page.getPageQuestions().stream()
-                .filter(pageQuestion -> pageQuestion.getId().equals(pageQuestionId))
-                .findAny()
-                .orElseThrow(QuestionNotFoundException::new);
+        page.addFeedback(feedbackRequest.pageQuestionId(), gptQuestionService);
     }
 }

@@ -1,7 +1,13 @@
 package com.sparcs.teamf.page;
 
 import com.sparcs.teamf.BaseEntity;
+import com.sparcs.teamf.page.exception.AnswerNotFoundException;
+import com.sparcs.teamf.page.generator.FeedbackGenerator;
 import com.sparcs.teamf.question.Question;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,9 +18,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
@@ -46,5 +49,12 @@ public class PageQuestion extends BaseEntity {
 
     public void updateFeedback(String feedback) {
         this.feedback = feedback;
+    }
+
+    public void addFeedback(FeedbackGenerator feedbackGenerator) {
+        if (memberAnswer == null || memberAnswer.getMemberAnswer() == null) {
+            throw new AnswerNotFoundException();
+        }
+        feedback = feedbackGenerator.generateFeedback(question, memberAnswer.getMemberAnswer());
     }
 }

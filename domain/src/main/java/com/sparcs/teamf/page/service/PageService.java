@@ -5,6 +5,7 @@ import com.sparcs.teamf.midcategory.MidCategoryRepository;
 import com.sparcs.teamf.page.MemberAnswerRepository;
 import com.sparcs.teamf.page.PageQuestionRepository;
 import com.sparcs.teamf.page.PageRepository;
+import com.sparcs.teamf.page.generator.AnswerGenerator;
 import com.sparcs.teamf.question.QuestionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,7 @@ import java.util.concurrent.ThreadLocalRandom;
 @RequiredArgsConstructor
 @Service
 public class PageService {
-    private final GptQuestionService gptQuestionService;
+    private final AnswerGenerator gptQuestionService;
     private final MemberRepository memberRepository;
     private final QuestionRepository questionRepository;
     private final PageRepository pageRepository;

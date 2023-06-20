@@ -4,6 +4,7 @@ import com.sparcs.teamf.BaseEntity;
 import com.sparcs.teamf.member.Member;
 import com.sparcs.teamf.midcategory.MidCategory;
 import com.sparcs.teamf.page.exception.PageQuestionNotFoundException;
+import com.sparcs.teamf.page.generator.FeedbackGenerator;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -66,5 +67,13 @@ public class Page extends BaseEntity {
                 .findFirst()
                 .orElseThrow(PageQuestionNotFoundException::new);
         pageQuestion.updateFeedback(memberAnswer);
+    }
+
+    public void addFeedback(long pageQuestionId, FeedbackGenerator feedbackGenerator) {
+        PageQuestion pageQuestion = pageQuestions.stream()
+                .filter(pq -> pq.getId() == pageQuestionId)
+                .findFirst()
+                .orElseThrow(PageQuestionNotFoundException::new);
+        pageQuestion.addFeedback(feedbackGenerator);
     }
 }
