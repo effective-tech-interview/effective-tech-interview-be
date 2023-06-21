@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Entity
@@ -52,6 +53,23 @@ public class Page extends BaseEntity {
         pageQuestions.add(pageQuestion);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Page page = (Page) o;
+        return Objects.equals(id, page.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
     public void addMemberAnswer(long pageQuestionId, String memberAnswer) {
         PageQuestion pageQuestion = pageQuestions.stream()
                 .filter(pq -> pq.getId() == pageQuestionId)
@@ -81,5 +99,9 @@ public class Page extends BaseEntity {
                 .filter(pq -> pq.getId() == pageQuestionId)
                 .findFirst()
                 .orElseThrow(PageQuestionNotFoundException::new);
+    }
+
+    public PageQuestion getLastQuestion() {
+        return pageQuestions.get(pageQuestions.size() - 1);
     }
 }

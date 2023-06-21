@@ -14,7 +14,7 @@ public record QuestionResponse(Long pageQuestionId,
         String memberAnswerResponse = (memberAnswer != null) ? memberAnswer.getMemberAnswer() : "";
         return new QuestionResponse(pageQuestion.getId(), pageQuestion.getQuestion().getQuestion(),
                 memberAnswerResponse,
-                pageQuestion.getQuestion().getAnswer(),
+                pageQuestion.getAiAnswer(),
                 pageQuestion.getFeedback());
     }
 }

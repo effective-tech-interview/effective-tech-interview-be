@@ -80,6 +80,9 @@ public class PageCommandService {
         Page page = pageRepository.findById(pageId).orElseThrow(PageNotFountException::new);
         validateMember(memberId, page);
         PageQuestion question = page.getQuestionByPageQuestionId(pageQuestionId);
+        if (page.getLastQuestion().getId() != pageQuestionId) {
+            return;
+        }
         List<Question> tailQuestion = questionRepository.findQuestionByParentQuestionId(question.getQuestion().getId());
         PageQuestion tailPageQuestion = new PageQuestion(tailQuestion.get(0), page);
         page.addPageQuestion(tailPageQuestion);
