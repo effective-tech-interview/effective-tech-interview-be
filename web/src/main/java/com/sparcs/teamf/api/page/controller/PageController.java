@@ -2,11 +2,7 @@ package com.sparcs.teamf.api.page.controller;
 
 import com.sparcs.teamf.common.UriUtil;
 import com.sparcs.teamf.dto.EffectiveMember;
-import com.sparcs.teamf.page.dto.CreatePageRequest;
-import com.sparcs.teamf.page.dto.FeedbackRequest;
-import com.sparcs.teamf.page.dto.PageResponse;
-import com.sparcs.teamf.page.dto.QuestionsResponse;
-import com.sparcs.teamf.page.dto.SaveMemberAnswerRequest;
+import com.sparcs.teamf.page.dto.*;
 import com.sparcs.teamf.page.service.PageCommandService;
 import com.sparcs.teamf.page.service.PageQueryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,12 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 
@@ -33,6 +24,7 @@ import java.net.URI;
 @Tag(name = "Page")
 @RequestMapping("/v2/pages")
 public class PageController {
+
     private final PageQueryService pageQueryService;
     private final PageCommandService pageCommandService;
 
@@ -65,7 +57,7 @@ public class PageController {
         return pageQueryService.getPageQuestions(member.getMemberId(), pageId);
     }
 
-    @PostMapping("/{pageId}/questions/{pageQuestionId}")
+    @PostMapping("/{pageId}/questions/{pageQuestionId}/member-answer")
     @Operation(summary = "멤버 답변 저장 및 업데이트")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "successful operation"),
@@ -92,6 +84,20 @@ public class PageController {
     public ResponseEntity<Void> feedback(@PathVariable long pageId,
                                          @PathVariable long pageQuestionId) {
         pageCommandService.feedback(new FeedbackRequest(pageId, pageQuestionId));
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{pageId}/questions/{pageQuestionId}/ai-answer")
+    @Operation(summary = "AI 답변 저장 및 업데이트")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "successful operation"),
+            @ApiResponse(responseCode = "500", description = "internal server error"),
+            @ApiResponse(responseCode = "401", description = "unauthorized"),
+            @ApiResponse(responseCode = "403", description = "forbidden"),
+            @ApiResponse(responseCode = "404", description = "not found")})
+    public ResponseEntity<Void> saveAiAnswer(@PathVariable("pageId") long pageId,
+                                             @PathVariable("pageQuestionId") long pageQuestionId) {
+        pageCommandService.saveAiAnswer(pageId, pageQuestionId);
         return ResponseEntity.ok().build();
     }
 }

@@ -4,22 +4,13 @@ import com.sparcs.teamf.BaseEntity;
 import com.sparcs.teamf.member.Member;
 import com.sparcs.teamf.midcategory.MidCategory;
 import com.sparcs.teamf.page.exception.PageQuestionNotFoundException;
+import com.sparcs.teamf.page.generator.AnswerGenerator;
 import com.sparcs.teamf.page.generator.FeedbackGenerator;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,5 +66,13 @@ public class Page extends BaseEntity {
                 .findFirst()
                 .orElseThrow(PageQuestionNotFoundException::new);
         pageQuestion.addFeedback(feedbackGenerator);
+    }
+
+    public void addAiAnswer(long pageQuestionId, AnswerGenerator answerGenerator) {
+        PageQuestion pageQuestion = pageQuestions.stream()
+                .filter(pq -> pq.getId() == pageQuestionId)
+                .findFirst()
+                .orElseThrow(PageQuestionNotFoundException::new);
+        pageQuestion.addAiAnswer(answerGenerator);
     }
 }

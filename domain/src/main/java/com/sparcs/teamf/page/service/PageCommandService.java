@@ -70,4 +70,9 @@ public class PageCommandService {
                 .orElseThrow(PageNotFountException::new);
         page.addFeedback(feedbackRequest.pageQuestionId(), gptQuestionService);
     }
+
+    public void saveAiAnswer(long pageId, long pageQuestionId) {
+        Page page = pageRepository.findById(pageId).orElseThrow(PageNotFountException::new);
+        page.addAiAnswer(pageQuestionId, gptQuestionService);
+    }
 }

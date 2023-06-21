@@ -2,22 +2,14 @@ package com.sparcs.teamf.page;
 
 import com.sparcs.teamf.BaseEntity;
 import com.sparcs.teamf.page.exception.AnswerNotFoundException;
+import com.sparcs.teamf.page.generator.AnswerGenerator;
 import com.sparcs.teamf.page.generator.FeedbackGenerator;
 import com.sparcs.teamf.question.Question;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 
 @Getter
 @Entity
@@ -42,6 +34,9 @@ public class PageQuestion extends BaseEntity {
     @Column(length = 2000)
     private String feedback;
 
+    @Column(length = 2000)
+    private String aiAnswer;
+
     public PageQuestion(Question question, Page page) {
         this.question = question;
         this.page = page;
@@ -56,5 +51,15 @@ public class PageQuestion extends BaseEntity {
             throw new AnswerNotFoundException();
         }
         feedback = feedbackGenerator.generateFeedback(question, memberAnswer.getMemberAnswer());
+    }
+
+    public void addAiAnswer(AnswerGenerator answerGenerator) {
+        if (question.getAnswer() == null) {
+            String generatedAnswer = answerGenerator.generateAnswer(question.getMidCategory().getMainCategory().getName(),
+                    question.getMidCategory().getName(),
+                    question.getQuestion());
+            question.updateAnswer(generatedAnswer);
+        }
+        aiAnswer = question.getAnswer();
     }
 }

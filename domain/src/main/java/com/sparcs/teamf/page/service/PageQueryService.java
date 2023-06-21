@@ -1,6 +1,5 @@
 package com.sparcs.teamf.page.service;
 
-import com.sparcs.teamf.member.MemberRepository;
 import com.sparcs.teamf.page.Page;
 import com.sparcs.teamf.page.PageQuestion;
 import com.sparcs.teamf.page.PageRepository;
@@ -18,7 +17,6 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 public class PageQueryService {
-    private final MemberRepository memberRepository;
     private final PageRepository pageRepository;
 
     public QuestionsResponse getPageQuestions(long memberId, long pageId) {
