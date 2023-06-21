@@ -75,4 +75,13 @@ public class PageCommandService {
         Page page = pageRepository.findById(pageId).orElseThrow(PageNotFountException::new);
         page.addAiAnswer(pageQuestionId, gptQuestionService);
     }
+
+    public void createTailQuestion(long memberId, long pageId, long pageQuestionId) {
+        Page page = pageRepository.findById(pageId).orElseThrow(PageNotFountException::new);
+        validateMember(memberId, page);
+        PageQuestion question = page.getQuestionByPageQuestionId(pageQuestionId);
+        List<Question> tailQuestion = questionRepository.findQuestionByParentQuestionId(question.getQuestion().getId());
+        PageQuestion tailPageQuestion = new PageQuestion(tailQuestion.get(0), page);
+        page.addPageQuestion(tailPageQuestion);
+    }
 }

@@ -100,4 +100,19 @@ public class PageController {
         pageCommandService.saveAiAnswer(pageId, pageQuestionId);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/{pageId}/questions/{pageQuestionId}/tails")
+    @Operation(summary = "꼬리 질문 생성")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "successful operation"),
+            @ApiResponse(responseCode = "500", description = "internal server error"),
+            @ApiResponse(responseCode = "401", description = "unauthorized"),
+            @ApiResponse(responseCode = "403", description = "forbidden"),
+            @ApiResponse(responseCode = "404", description = "not found")})
+    public ResponseEntity<Void> createTailQuestion(@PathVariable("pageId") long pageId,
+                                                   @PathVariable("pageQuestionId") long pageQuestionId,
+                                                   @AuthenticationPrincipal EffectiveMember member) {
+        pageCommandService.createTailQuestion(member.getMemberId(), pageId, pageQuestionId);
+        return ResponseEntity.ok().build();
+    }
 }

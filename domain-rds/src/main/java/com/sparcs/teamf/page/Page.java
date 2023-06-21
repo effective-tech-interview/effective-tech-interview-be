@@ -75,4 +75,11 @@ public class Page extends BaseEntity {
                 .orElseThrow(PageQuestionNotFoundException::new);
         pageQuestion.addAiAnswer(answerGenerator);
     }
+
+    public PageQuestion getQuestionByPageQuestionId(long pageQuestionId) {
+        return pageQuestions.stream()
+                .filter(pq -> pq.getId() == pageQuestionId)
+                .findFirst()
+                .orElseThrow(PageQuestionNotFoundException::new);
+    }
 }
