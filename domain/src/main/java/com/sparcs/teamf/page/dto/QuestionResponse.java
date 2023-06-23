@@ -5,7 +5,7 @@ import com.sparcs.teamf.page.PageQuestion;
 
 public record QuestionResponse(Long pageQuestionId,
                                String question,
-                               String userAnswer,
+                               String memberAnswer,
                                String aiAnswer,
                                String feedback) {
 
