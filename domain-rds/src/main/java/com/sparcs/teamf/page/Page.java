@@ -75,7 +75,7 @@ public class Page extends BaseEntity {
                 .filter(pq -> pq.getId() == pageQuestionId)
                 .findFirst()
                 .orElseThrow(PageQuestionNotFoundException::new);
-        pageQuestion.updateFeedback(memberAnswer);
+        pageQuestion.updateMemberAnswer(memberAnswer);
     }
 
     public void addFeedback(long pageQuestionId, FeedbackGenerator feedbackGenerator) {

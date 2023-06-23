@@ -62,4 +62,12 @@ public class PageQuestion extends BaseEntity {
         }
         aiAnswer = question.getAnswer();
     }
+
+    public void updateMemberAnswer(String memberAnswer) {
+        if (this.memberAnswer == null) {
+            this.memberAnswer = new MemberAnswer(memberAnswer, this);
+        } else {
+            this.memberAnswer.updateMemberAnswer(memberAnswer);
+        }
+    }
 }
