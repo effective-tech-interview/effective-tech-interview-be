@@ -7,7 +7,8 @@ public record QuestionResponse(Long pageQuestionId,
                                String question,
                                String memberAnswer,
                                String aiAnswer,
-                               String feedback) {
+                               String positiveFeedback,
+                               String improvementFeedback) {
 
     public static QuestionResponse from(PageQuestion pageQuestion) {
         MemberAnswer memberAnswer = pageQuestion.getMemberAnswer();
@@ -15,6 +16,7 @@ public record QuestionResponse(Long pageQuestionId,
         return new QuestionResponse(pageQuestion.getId(), pageQuestion.getQuestion().getQuestion(),
                 memberAnswerResponse,
                 pageQuestion.getAiAnswer(),
-                pageQuestion.getFeedback());
+                pageQuestion.getPositiveFeedback(),
+                pageQuestion.getImprovementFeedback());
     }
 }

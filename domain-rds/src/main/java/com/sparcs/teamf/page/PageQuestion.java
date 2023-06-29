@@ -9,7 +9,17 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import java.util.concurrent.Future;
 
 @Getter
 @Entity
@@ -32,7 +42,10 @@ public class PageQuestion extends BaseEntity {
     private MemberAnswer memberAnswer;
 
     @Column(length = 2000)
-    private String feedback;
+    private String improvementFeedback;
+
+    @Column(length = 2000)
+    private String positiveFeedback;
 
     @Column(length = 2000)
     private String aiAnswer;
@@ -42,15 +55,18 @@ public class PageQuestion extends BaseEntity {
         this.page = page;
     }
 
-    public void updateFeedback(String feedback) {
-        this.feedback = feedback;
-    }
-
     public void addFeedback(FeedbackGenerator feedbackGenerator) {
         if (memberAnswer == null || memberAnswer.getMemberAnswer() == null) {
             throw new AnswerNotFoundException();
         }
-        feedback = feedbackGenerator.generateFeedback(question, memberAnswer.getMemberAnswer());
+        Future<String> positiveFeedback = feedbackGenerator.generatePositiveFeedback(question, memberAnswer.getMemberAnswer());
+        Future<String> improvementFeedback = feedbackGenerator.generateImprovementFeedback(question, memberAnswer.getMemberAnswer());
+        try {
+            this.positiveFeedback = positiveFeedback.get();
+            this.improvementFeedback = improvementFeedback.get();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void addAiAnswer(AnswerGenerator answerGenerator) {
