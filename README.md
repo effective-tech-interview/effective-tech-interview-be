@@ -84,7 +84,7 @@
 
 - Database
 
-  > Mysql, RDS
+  > Mysql, RDS, Redis
 
 >
 
@@ -108,7 +108,7 @@
 
 - 문서화
 
-  > [Swagger](https://qtail.hackathon.sparcs.org/api/swagger-ui/index.html)
+  > [Swagger]([https://qtail.hackathon.sparcs.org/api/swagger-ui/index.html](https://api.bview.store/api/swagger-ui/index.html))
   
 
 >
